@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>College Courses - Deep Sea V3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" id="favicon" href="">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+ <link rel="stylesheet" href="css/game.css"/>
+</head>
+<body>
+
+<div id="startupOverlay">
+    <div class="startup-box" id="startupBox"></div>
+</div>
+
+<div class="top-bar-container">
+    <div id="sysStatus"></div>
+    <div class="search-bar">
+        <i class="fas fa-search" style="opacity: 0.5"></i>
+        <input id="searchBar" placeholder="Search the depths..." oninput="filterZones()">
+        <span id="liveCount">0</span>
+    </div>
+</div>
+
+<div id="settingsBtn" onclick="toggleSettings()"><i class="fas fa-gear"></i></div>
+
+<div id="settingsOverlay" onclick="toggleSettings(event)">
+    <div class="settings-panel" onclick="event.stopPropagation()">
+        <h3 style="margin-top:0; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Archive Source</h3>
+        <div class="setting-row">
+            <select id="sourceSelect" onchange="toggleSource(this.value)"></select>
+        </div>
+    </div>
+</div>
+
+<div id="container"></div>
+
+<div id="zoneViewer">
+    <div id="loaderBar"></div>
+    <div id="closeBtn" onclick="closeViewer()"><i class="fas fa-times"></i></div>
+    <iframe id="zoneFrame"></iframe>
+</div>
+
+<div id="themeGridContainer" style="display: none;"></div>
+<div id="themeTransitionOverlay" style="display: none;"><div id="themeWaveContainer"><g id="themeWaveParallax"></g></div></div>
+
+
+<script src="js/game.js"></script>
+<script src="/theme.js"></script>
+<script src="/security.js"></script>
+</body>
+</html>

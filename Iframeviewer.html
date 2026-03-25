@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Viewer Count</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; margin-top: 50px; }
+        .counter-box { padding: 20px; border: 1px solid #ccc; border-radius: 8px; font-size: 24px; text-align: center;}
+        .status { font-size: 14px; color: gray; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="counter-box">
+        Live Viewers: <strong id="viewer-count">Loading...</strong>
+        <div id="status-text" class="status">Connecting to Firebase...</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        // THE FIX: We imported setDoc instead of updateDoc
+        import { getFirestore, doc, onSnapshot, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsl0f4AZkNimOjbHRw0p50yg97r_1cb0o",
+            authDomain: "liev-coutn-ciewer.firebaseapp.com",
+            projectId: "liev-coutn-ciewer",
+            storageBucket: "liev-coutn-ciewer.firebasestorage.app",
+            messagingSenderId: "941337336673",
+            appId: "1:941337336673:web:73b17c57fdc5f4a6b3c320"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const counterRef = doc(db, "stats", "viewers");
+        const statusText = document.getElementById('status-text');
+
+        let hasJoined = false;
+
+        signInAnonymously(auth).then(() => {
+            statusText.innerText = "Authenticated! Creating/Updating database...";
+            
+            // THE FIX: setDoc with { merge: true } creates the document if it's missing!
+            return setDoc(counterRef, { count: increment(1) }, { merge: true });
+        }).then(() => {
+            statusText.innerText = "Success! Listening for live updates...";
+            hasJoined = true;
+            
+            // Listen for changes
+            onSnapshot(counterRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    document.getElementById('viewer-count').innerText = docSnap.data().count;
+                }
+            });
+
+        }).catch((error) => {
+            console.error("Firebase Error:", error);
+            statusText.innerText = "FAILED: " + error.message;
+            statusText.style.color = "red";
+        });
+
+        // Try to subtract 1 when leaving
+        window.addEventListener("beforeunload", () => {
+            if (hasJoined) {
+                setDoc(counterRef, { count: increment(-1) }, { merge: true });
+            }
+        });
+    </script>
+</body>
+</html>
