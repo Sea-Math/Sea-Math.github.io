@@ -469,12 +469,13 @@
 
     <nav id="sidebar" onmouseenter="openSidebar()" onmouseleave="closeSidebar()">
         <div style="display: flex; flex-direction: column; height: 100%;">
-            <a class="nav-item active" onclick="loadPage('home.html', 'Home', this)"><i data-lucide="home"></i> <span class="nav-text">Home</span></a>
+            <a class="nav-item active" onclick="loadPage('/pages/home/', 'Home', this)"><i data-lucide="home"></i> <span class="nav-text">Home</span></a>
             <a class="nav-item" onclick="loadPage('/pages/games/', 'Games', this)"><i data-lucide="gamepad-2"></i> <span class="nav-text">Games</span></a>
-           
-            <div class="nav-item bottom-link" style="cursor: default; margin-top: auto;">
-                <i data-lucide="users"></i> <span class="nav-text">Viewers: <strong id="viewer-count">Loading...</strong></span>
-            </div>
+           <a class="nav-item" onclick="loadPage('text.html', 'Chat', this)"><i data-lucide="message-square"></i> <span class="nav-text">Chat</span></a>
+            <a class="nav-item" onclick="loadPage('/dvdvdvfvds', 'Browse', this)"><i data-lucide="compass"></i> <span class="nav-text">Browse</span></a>
+            <a class="nav-item" onclick="loadPage('/indec', 'SGA', this)"><i data-lucide="gamepad"></i> <span class="nav-text">SGA</span></a>
+            <a class="nav-item" onclick="openSettings()"><i data-lucide="settings"></i> <span class="nav-text">Settings</span></a>
+            
         </div>
     </nav>
 
