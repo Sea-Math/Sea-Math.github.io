@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,8 +16,8 @@
       rel="stylesheet"
     />
     <script src="https://unpkg.com/alpinejs" defer></script>
-    <script type="module" src="/shader-client.js"></script>
-    <script type="module" src="/shader-canvas.js"></script>
+    <script type="module" src="shader-client.js"></script>
+    <script type="module" src="shader-canvas.js"></script>
     <style>
       /* Light Theme Variables */
       :root {
@@ -584,12 +585,8 @@
 
             try {
               const [canvasModule, clientModule] = await Promise.all([
-  const [canvasModule, clientModule] = await Promise.all([
-  import('./shader-canvas.js'),
-  import('./shader-client.js'),
-])
-// ... later down ...
-
+                import('./shader-canvas.js'),
+                import('./shader-client.js'),
               ])
               this.canvas = new canvasModule.ShaderCanvas('canvas-container')
               
