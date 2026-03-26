@@ -1,0 +1,651 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarkChat - Enterprise Edition</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-deep: #050505; --bg-sidebar: #0a0a0a; --bg-panel: #111111;
+      --bg-hover: #1a1a1a; --border-color: #222222;
+      --text-main: #f0f0f0; --text-muted: #808080;
+      
+      --accent-green: #2ecc71; --bg-green-pill: #0a2e15; --text-green-pill: #4ae57a;
+      --accent-blue: #007aff; --bg-blue-pill: #00274d; --text-blue-pill: #4da6ff;
+      --accent-red: #e74c3c;
+      
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body, html { margin: 0; padding: 0; height: 100%; font-family: var(--font-family); background-color: var(--bg-deep); color: var(--text-main); overflow: hidden; }
+
+    /* Login Modal */
+    #login-overlay { position: fixed; inset: 0; background: var(--bg-deep); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+    .login-box { background: var(--bg-sidebar); border: 1px solid var(--border-color); padding: 30px; border-radius: 12px; width: 340px; display: flex; flex-direction: column; gap: 15px; }
+    .input-dark { background: var(--bg-deep); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px; border-radius: 8px; outline: none; transition: border 0.2s; width: 100%; }
+    .input-dark:focus { border-color: var(--accent-blue); }
+    .btn-white { background: white; color: black; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn-white:hover { background: #e0e0e0; }
+
+    /* Layout */
+    .app-layout { display: flex; height: 100vh; width: 100vw; position: relative; }
+    .sidebar-left { width: 260px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 16px; z-index: 10; overflow-y: auto; }
+    
+    .sidebar-right { width: 260px; background-color: var(--bg-sidebar); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 16px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; right: 0; overflow-y: auto; }
+    .sidebar-right.hidden { transform: translateX(100%); position: absolute; height: 100%; border-left: none; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
+
+    /* Channels & Invites */
+    .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-shrink: 0; }
+    .icon-btn { background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-muted); width: 32px; height: 32px; border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+    .icon-btn:hover { background: var(--bg-hover); color: white; }
+    .category-label { font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin: 16px 0 8px 0; }
+    
+    .channel-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; cursor: pointer; color: var(--text-muted); font-weight: 500; transition: 0.1s; margin-bottom: 4px; position: relative; }
+    .channel-item:hover, .channel-item.active { background: var(--bg-panel); color: var(--text-main); }
+    .channel-icon { width: 20px; height: 20px; border-radius: 50%; background: #333; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+    
+    .unread-dot { width: 8px; height: 8px; background: var(--accent-blue); border-radius: 50%; margin-left: auto; box-shadow: 0 0 8px var(--accent-blue); }
+
+    .invite-item { background: var(--bg-panel); border: 1px solid var(--accent-blue); padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+    .invite-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .btn-small { flex: 1; padding: 6px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; font-size: 11px; }
+    .btn-accept { background: var(--accent-blue); color: white; }
+    .btn-decline { background: #333; color: white; }
+
+    /* Main Chat */
+    .main-chat { flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .chat-header { height: 64px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 24px; flex-shrink: 0; }
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .connection-pill { background: var(--bg-green-pill); color: var(--text-green-pill); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+    .action-icon { color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+    .action-icon:hover { color: white; }
+
+    /* Messages */
+    .messages-container { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth; }
+    
+    .message-wrapper { display: flex; gap: 12px; align-items: flex-end; width: 100%; }
+    .message-wrapper.received { justify-content: flex-start; }
+    .message-wrapper.received .message-box { background: var(--bg-panel); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; }
+    .message-wrapper.sent { flex-direction: row-reverse; }
+    .message-wrapper.sent .message-box { background: var(--bg-blue-pill); border: 1px solid var(--accent-blue); border-bottom-right-radius: 4px; }
+    .message-wrapper.sent .message-content { color: var(--text-main); }
+    .message-wrapper.sent .timestamp { color: rgba(255,255,255,0.5); }
+    
+    .message-box { padding: 12px 16px; border-radius: 12px; max-width: 70%; transition: 0.3s; }
+    .message-box.mentioned { box-shadow: 0 0 15px rgba(0, 122, 255, 0.3); border-color: var(--accent-blue); }
+    
+    .message-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+    .message-wrapper.received .message-header { justify-content: flex-start; }
+    .message-wrapper.sent .message-header { justify-content: flex-end; flex-direction: row-reverse; }
+    
+    .user-info .name { font-weight: 600; font-size: 13px; color: var(--text-muted); }
+    .timestamp { font-size: 11px; color: var(--text-muted); }
+    .message-content { font-size: 15px; color: #ddd; line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word; }
+    
+    .avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #333; flex-shrink: 0; border: 1px solid var(--border-color); }
+    .msg-attached-image { max-width: 100%; border-radius: 8px; margin-top: 8px; display: block; border: 1px solid #333; cursor: pointer; }
+
+    /* System Messages (Discord Style Join/Leave) */
+    .msg-system { display: flex; justify-content: center; margin: 8px 0; width: 100%; }
+    .msg-system-content { font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 12px; background: var(--bg-panel); display: flex; align-items: center; gap: 8px; }
+    .msg-system.join .msg-system-content { color: var(--accent-green); border: 1px solid rgba(46, 204, 113, 0.2); }
+    .msg-system.leave .msg-system-content { color: var(--accent-red); border: 1px solid rgba(231, 76, 60, 0.2); }
+
+    /* Input */
+    .input-container { padding: 0 24px 24px 24px; flex-shrink: 0; }
+    .input-box { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; display: flex; align-items: center; padding: 8px 16px; gap: 10px; }
+    .input-box input[type="text"] { flex: 1; background: transparent; border: none; color: var(--text-main); font-size: 14px; outline: none; padding: 8px 0; }
+    .send-btn { background: white; color: black; border: none; width: 36px; height: 36px; border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+    .send-btn:hover { background: var(--accent-blue); color: white; }
+
+    /* Right Sidebar (Users) */
+    .right-header { font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 16px; display: flex; justify-content: space-between; flex-shrink: 0; }
+    .online-user { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .online-user:hover { background: var(--bg-hover); }
+    .online-user .name-tag { font-size: 14px; color: #ccc; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .avatar-wrapper { position: relative; flex-shrink: 0; }
+    .status-dot { position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; background: var(--accent-green); border: 2px solid var(--bg-sidebar); border-radius: 50%; }
+
+    /* Modals */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); }
+    .modal-overlay.active { display: flex; }
+    .modal-content { background: var(--bg-sidebar); border: 1px solid var(--border-color); padding: 24px; border-radius: 12px; width: 450px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .search-results { flex: 1; overflow-y: auto; margin-top: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-deep); max-height: 250px; }
+    .search-user-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); cursor: pointer; }
+    .search-user-item:hover { background: var(--bg-hover); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+    .btn-cancel { background: var(--bg-panel); color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; }
+
+  </style>
+</head>
+<body>
+
+  <div id="login-overlay">
+    <div class="login-box">
+      <h2>DarkChat Systems</h2>
+      <input type="text" id="login-user" class="input-dark" placeholder="Username (3-20 chars)">
+      <input type="password" id="login-pass" class="input-dark" placeholder="Password">
+      <label style="font-size: 13px; color: var(--text-muted);">Profile Picture:</label>
+      <input type="file" id="login-icon" class="input-dark" accept="image/*" style="padding: 8px;">
+      <button id="btn-enter" class="btn-white">Initialize Secure Connection</button>
+    </div>
+  </div>
+
+  <div id="search-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title" style="margin:0; font-size:18px;">Find User / Create Group</h2>
+        <i data-lucide="x" style="cursor:pointer; color:var(--text-muted);" id="close-search-btn"></i>
+      </div>
+      <div style="margin-bottom: 16px;" id="group-name-container">
+        <label style="font-size:12px; color:var(--text-muted);">Group Name (Optional for DMs):</label>
+        <input type="text" id="new-group-name" class="input-dark" placeholder="e.g. Project Alpha">
+      </div>
+      <input type="text" id="user-search-input" class="input-dark" placeholder="Search for users...">
+      <div class="search-results" id="search-results-list"></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancel-search-btn">Cancel</button>
+        <button class="btn-white" id="create-invite-btn" style="display:none; background: var(--accent-blue); color: white;" data-mode="new">Send Group Invites</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-layout">
+    <nav class="sidebar-left">
+      <div class="sidebar-header">
+        <h1 style="margin:0; font-size:20px;">Chats</h1>
+        <button class="icon-btn" id="open-search-btn" title="Search / New Chat"><i data-lucide="search" size="16"></i></button>
+      </div>
+      <div id="invites-section" style="display: none;">
+        <div class="category-label" style="color: var(--accent-blue);">Pending Invites</div>
+        <div id="invites-list"></div>
+      </div>
+      <div class="category-label">Public</div>
+      <div id="channel-list-public">
+        <div class="channel-item active" data-room="global">
+          <div class="channel-icon"><i data-lucide="globe" size="14"></i></div>
+          <span>Global Chat</span>
+        </div>
+      </div>
+      <div class="category-label" style="margin-top: 24px;">Direct Messages & Groups</div>
+      <div id="channel-list-dms"></div>
+    </nav>
+
+    <main class="main-chat">
+      <header class="chat-header">
+        <h2 class="chat-title" id="current-room-title">Global Chat</h2>
+        <div class="header-actions">
+          <i data-lucide="user-plus" class="action-icon" id="add-to-group-btn" title="Add People to Group" style="display: none;"></i>
+          
+          <div class="connection-pill" id="status-pill"><span class="dot"></span> <span id="online-count">0</span> connected</div>
+          <i data-lucide="users" class="action-icon" id="toggle-users-btn"></i>
+        </div>
+      </header>
+      <div class="messages-container" id="msg-container"></div>
+      <div class="input-container">
+        <div class="input-box">
+          <input type="file" id="image-upload" accept="image/*" style="display:none;">
+          <i data-lucide="paperclip" class="action-icon" id="attach-btn" title="Attach Image"></i>
+          <input type="text" placeholder="Type a message... (Use @Name to mention)" id="msg-input">
+          <button class="send-btn" id="send-btn"><i data-lucide="send" stroke-width="2.5"></i></button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar-right hidden" id="right-sidebar">
+      <div class="right-header">
+        <span>Network — Online</span>
+        <i data-lucide="layout-panel-right" size="14" style="cursor:pointer;" id="close-right-sidebar"></i>
+      </div>
+      <div id="online-users-list"></div>
+    </aside>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, setDoc, getDoc, getDocs, where, deleteDoc, limit } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyCbm8kEHYW5Yq_uqQWc602oIUhsBFa8Qa0",
+  authDomain: "chat-1e794.firebaseapp.com",
+  projectId: "chat-1e794",
+  storageBucket: "chat-1e794.firebasestorage.app",
+  messagingSenderId: "28811401532",
+  appId: "1:28811401532:web:5aa189d6b446ea66952639",
+  measurementId: "G-67VSY5ZV5P"
+};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    lucide.createIcons();
+
+    // App State
+    let currentUser = { uid: "", name: "", imageBase64: "" };
+    let currentRoomId = "global";
+    let unsubscribeMessages = null;
+    let selectedUsersForGroup = [];
+    let hasSentJoinMessage = false;
+    
+    const activeListeners = {};
+    const sessionStartTime = Date.now();
+
+    const msgContainer = document.getElementById('msg-container');
+    const msgInput = document.getElementById('msg-input');
+
+    // -- MEMORY & NOTIFICATIONS --
+    function saveSidebarState() {
+      const dms = [];
+      document.querySelectorAll('#channel-list-dms .channel-item').forEach(el => {
+        dms.push({ id: el.dataset.room, name: el.querySelector('span').innerText });
+      });
+      localStorage.setItem(`darkchat_dms_${currentUser.uid}`, JSON.stringify(dms));
+    }
+
+    function loadSidebarState() {
+      const saved = localStorage.getItem(`darkchat_dms_${currentUser.uid}`);
+      if (saved) {
+        const dms = JSON.parse(saved);
+        dms.forEach(dm => addChannelToSidebar(dm.id, dm.name, true, true));
+      }
+      listenForUnread('global');
+    }
+
+    function listenForUnread(roomId) {
+      if (activeListeners[roomId]) return; 
+      const q = query(collection(db, `rooms/${roomId}/messages`), orderBy("timestamp", "desc"), limit(1));
+      
+      activeListeners[roomId] = onSnapshot(q, (snapshot) => {
+        if (roomId === currentRoomId) return; 
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            const data = change.doc.data();
+            const msgTime = data.timestamp ? data.timestamp.toDate().getTime() : Date.now();
+            if (msgTime > sessionStartTime && data.senderId !== currentUser.uid && !data.isSystem) {
+              const sidebarItem = document.querySelector(`[data-room="${roomId}"]`);
+              if (sidebarItem && !sidebarItem.querySelector('.unread-dot')) {
+                sidebarItem.insertAdjacentHTML('beforeend', '<div class="unread-dot"></div>');
+              }
+            }
+          }
+        });
+      });
+    }
+
+    // -- NEW: SYSTEM MESSAGES --
+    async function sendSystemMessage(text, type) {
+      try {
+        await addDoc(collection(db, `rooms/global/messages`), {
+          isSystem: true,
+          text: text,
+          type: type, // 'join' or 'leave'
+          timestamp: serverTimestamp()
+        });
+      } catch (e) { console.error("System message failed"); }
+    }
+
+    // 1. AUTO SIGN-IN
+    const savedSession = localStorage.getItem('darkchat_session');
+    if (savedSession) {
+      currentUser = JSON.parse(savedSession);
+      document.getElementById('login-overlay').style.display = "none";
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        if (!currentUser.name || !currentUser.imageBase64) {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if(userDoc.exists()) {
+            currentUser = { uid: user.uid, ...userDoc.data() };
+            localStorage.setItem('darkchat_session', JSON.stringify(currentUser));
+          }
+        }
+        document.getElementById('login-overlay').style.display = "none";
+        
+        loadSidebarState(); 
+        await setPresence(true);
+        startFailSafeHeartbeat();
+        loadMessages(currentRoomId);
+        listenToPresence();
+        listenToInvites();
+        
+        // Broadcast Join Message
+        if (!hasSentJoinMessage) {
+          sendSystemMessage(`${currentUser.name} slid into the server.`, 'join');
+          hasSentJoinMessage = true;
+        }
+      } else {
+        document.getElementById('login-overlay').style.display = "flex";
+      }
+    });
+
+    document.getElementById('login-icon').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => { currentUser.imageBase64 = event.target.result; };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('btn-enter').addEventListener('click', async () => {
+      const username = document.getElementById('login-user').value.trim();
+      const password = document.getElementById('login-pass').value.trim();
+      if (username.length < 3) return alert("Username must be at least 3 chars");
+      if (!currentUser.imageBase64) return alert("Upload an avatar");
+
+      const fakeEmail = `${username.toLowerCase().replace(/[^a-z0-9]/g, '')}@darkchat.app`;
+      try {
+        let userCredential;
+        try { userCredential = await signInWithEmailAndPassword(auth, fakeEmail, password); } 
+        catch (e) { userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, password); }
+        
+        currentUser.uid = userCredential.user.uid; currentUser.name = username;
+        localStorage.setItem('darkchat_session', JSON.stringify(currentUser));
+        await setDoc(doc(db, "users", currentUser.uid), { name: currentUser.name, imageBase64: currentUser.imageBase64 }, { merge: true });
+      } catch (error) { alert("Login Error: " + error.message); }
+    });
+
+    // 2. SENDING MESSAGES
+    async function sendMessage(textOverride = null, attachmentBase64 = null) {
+      const text = textOverride !== null ? textOverride : msgInput.value.trim();
+      if(!text && !attachmentBase64) return;
+      msgInput.value = '';
+
+      let payload = { senderId: currentUser.uid, senderName: currentUser.name, imageBase64: currentUser.imageBase64, timestamp: serverTimestamp() };
+      if (text) payload.text = text;
+      if (attachmentBase64) payload.attachedImageBase64 = attachmentBase64;
+
+      try { await addDoc(collection(db, `rooms/${currentRoomId}/messages`), payload); } 
+      catch (error) { alert("Error: " + error.message); }
+    }
+
+    document.getElementById('send-btn').addEventListener('click', () => sendMessage());
+    msgInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+    document.getElementById('attach-btn').addEventListener('click', () => document.getElementById('image-upload').click());
+    document.getElementById('image-upload').addEventListener('change', (e) => {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => { sendMessage(null, event.target.result); };
+      reader.readAsDataURL(file);
+    });
+
+    // 3. SEARCH & DMs & ADD TO GROUP
+    const searchModal = document.getElementById('search-modal');
+    const searchInput = document.getElementById('user-search-input');
+    const searchResultsList = document.getElementById('search-results-list');
+    const groupNameInput = document.getElementById('new-group-name');
+    const createInviteBtn = document.getElementById('create-invite-btn');
+
+    // Default New Chat Modal
+    document.getElementById('open-search-btn').addEventListener('click', () => {
+      searchModal.classList.add('active'); searchInput.value = ''; groupNameInput.value = '';
+      document.getElementById('group-name-container').style.display = 'block';
+      document.getElementById('modal-title').innerText = "Find User / Create Group";
+      selectedUsersForGroup = []; createInviteBtn.style.display = 'none'; createInviteBtn.dataset.mode = 'new';
+      renderSearchResults(); 
+    });
+
+    // Add to Existing Group Modal
+    document.getElementById('add-to-group-btn').addEventListener('click', () => {
+      searchModal.classList.add('active'); searchInput.value = '';
+      document.getElementById('group-name-container').style.display = 'none';
+      document.getElementById('modal-title').innerText = "Invite to Group";
+      selectedUsersForGroup = []; createInviteBtn.style.display = 'none'; createInviteBtn.dataset.mode = 'add';
+      renderSearchResults();
+    });
+
+    document.getElementById('close-search-btn').addEventListener('click', () => searchModal.classList.remove('active'));
+    document.getElementById('cancel-search-btn').addEventListener('click', () => searchModal.classList.remove('active'));
+    searchInput.addEventListener('input', renderSearchResults);
+
+    async function renderSearchResults() {
+      const filter = searchInput.value.toLowerCase();
+      searchResultsList.innerHTML = '<div style="padding:10px; color:#666;">Searching database...</div>';
+      const snap = await getDocs(collection(db, 'users'));
+      searchResultsList.innerHTML = '';
+      
+      snap.docs.forEach(docSnap => {
+        const userData = docSnap.data(); const uid = docSnap.id;
+        if (uid === currentUser.uid) return; 
+        if (filter && !userData.name.toLowerCase().includes(filter)) return; 
+        
+        const isSelected = selectedUsersForGroup.includes(uid);
+        const mode = createInviteBtn.dataset.mode;
+        const btnText = (groupNameInput.value.trim() !== '' || mode === 'add') ? (isSelected ? 'Selected' : 'Select') : 'Message';
+
+        const html = `
+          <div class="search-user-item" style="background: ${isSelected ? 'var(--bg-hover)' : 'transparent'}; border-left: ${isSelected ? '3px solid var(--accent-blue)' : 'none'}">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <img src="${userData.imageBase64}" style="width:24px; height:24px; border-radius:50%;">
+              <span>${userData.name}</span>
+            </div>
+            <button class="btn-cancel" style="padding: 4px 8px; font-size:11px; background: ${isSelected ? 'var(--accent-blue)' : 'var(--bg-panel)'};" onclick="handleUserSelect('${uid}', '${userData.name}')">${btnText}</button>
+          </div>
+        `;
+        searchResultsList.insertAdjacentHTML('beforeend', html);
+      });
+    }
+
+    groupNameInput.addEventListener('input', () => {
+      if(groupNameInput.value.trim() === '') { selectedUsersForGroup = []; createInviteBtn.style.display = 'none'; }
+      renderSearchResults();
+    });
+
+    window.handleUserSelect = function(targetUid, targetName) {
+      const mode = createInviteBtn.dataset.mode;
+      if (mode === 'new' && groupNameInput.value.trim() === '') {
+        startDirectMessage(targetUid, targetName); searchModal.classList.remove('active');
+      } else {
+        if (selectedUsersForGroup.includes(targetUid)) selectedUsersForGroup = selectedUsersForGroup.filter(id => id !== targetUid);
+        else selectedUsersForGroup.push(targetUid);
+        createInviteBtn.style.display = selectedUsersForGroup.length > 0 ? 'block' : 'none'; renderSearchResults();
+      }
+    };
+
+    createInviteBtn.addEventListener('click', async () => {
+      const mode = createInviteBtn.dataset.mode;
+      let roomId, roomName;
+      
+      if (mode === 'new') {
+        roomName = groupNameInput.value.trim();
+        roomId = `group_${Date.now()}_${currentUser.uid.substring(0,5)}`;
+        addChannelToSidebar(roomId, roomName, true); switchRoom(roomId, roomName);
+      } else {
+        roomId = currentRoomId;
+        roomName = document.getElementById('current-room-title').innerText;
+      }
+
+      for (const targetUid of selectedUsersForGroup) {
+        await addDoc(collection(db, 'invites'), { targetUid: targetUid, senderId: currentUser.uid, senderName: currentUser.name, roomId: roomId, roomName: roomName, type: 'group', timestamp: serverTimestamp() });
+      }
+      searchModal.classList.remove('active');
+    });
+
+    window.startDirectMessage = async function(targetUid, targetName) {
+      if (targetUid === currentUser.uid) return;
+      const uids = [currentUser.uid, targetUid].sort();
+      const dmRoomId = `dm_${uids[0]}_${uids[1]}`;
+      
+      addChannelToSidebar(dmRoomId, `@${targetName}`, true);
+      switchRoom(dmRoomId, `@${targetName}`);
+      if(window.innerWidth < 768) document.getElementById('right-sidebar').classList.add('hidden');
+
+      // NEW: Send a Silent DM Invite to force notification on their end
+      await addDoc(collection(db, 'invites'), {
+        targetUid: targetUid, senderId: currentUser.uid, senderName: currentUser.name, 
+        roomId: dmRoomId, roomName: `@${currentUser.name}`, type: 'dm', timestamp: serverTimestamp()
+      });
+    };
+
+    function listenToInvites() {
+      const q = query(collection(db, "invites"), where("targetUid", "==", currentUser.uid));
+      onSnapshot(q, (snapshot) => {
+        const invitesList = document.getElementById('invites-list'); const invitesSection = document.getElementById('invites-section');
+        let visibleInvites = 0; invitesList.innerHTML = '';
+        
+        snapshot.docs.forEach(docSnap => {
+          const invite = docSnap.data(); const inviteId = docSnap.id;
+          
+          // NEW: Auto-accept DMs for instant notifications
+          if (invite.type === 'dm') {
+            addChannelToSidebar(invite.roomId, invite.roomName, true);
+            const sidebarItem = document.querySelector(`[data-room="${invite.roomId}"]`);
+            if (sidebarItem && !sidebarItem.querySelector('.unread-dot') && currentRoomId !== invite.roomId) {
+              sidebarItem.insertAdjacentHTML('beforeend', '<div class="unread-dot"></div>');
+            }
+            deleteDoc(doc(db, "invites", inviteId)); // Clean up silent invite
+            return;
+          }
+
+          visibleInvites++;
+          const html = `<div class="invite-item"><strong style="color:var(--text-main)">${invite.senderName}</strong> invited you to:<br><span style="font-weight:bold; color:var(--text-blue-pill)">#${invite.roomName}</span><div class="invite-actions"><button class="btn-small btn-accept" onclick="handleInvite('${inviteId}', '${invite.roomId}', '${invite.roomName}', true)">Accept</button><button class="btn-small btn-decline" onclick="handleInvite('${inviteId}', null, null, false)">Decline</button></div></div>`;
+          invitesList.insertAdjacentHTML('beforeend', html);
+        });
+        invitesSection.style.display = visibleInvites > 0 ? 'block' : 'none';
+      });
+    }
+
+    window.handleInvite = async function(inviteId, roomId, roomName, isAccepted) {
+      if (isAccepted) { addChannelToSidebar(roomId, roomName, true); switchRoom(roomId, roomName); }
+      await deleteDoc(doc(db, "invites", inviteId));
+    };
+
+    // 4. PRESENCE & UI
+    async function setPresence(isOnline) {
+      if (!currentUser.uid) return;
+      try { await setDoc(doc(db, "presence", currentUser.uid), { online: isOnline, lastActive: serverTimestamp(), name: currentUser.name }, { merge: true }); } catch(e) {}
+    }
+
+    function startFailSafeHeartbeat() {
+      setInterval(() => { if (!document.hidden) setPresence(true); }, 15000);
+      document.addEventListener("visibilitychange", () => setPresence(document.visibilityState === 'visible'));
+    }
+
+    window.addEventListener('beforeunload', () => {
+      setPresence(false);
+      sendSystemMessage(`${currentUser.name} disconnected.`, 'leave');
+    });
+
+    function listenToPresence() {
+      const q = query(collection(db, "presence"), where("online", "==", true));
+      onSnapshot(q, async (snapshot) => {
+        const listEl = document.getElementById('online-users-list'); listEl.innerHTML = '';
+        let activeCount = 0; const now = new Date().getTime();
+
+        for (const presenceDoc of snapshot.docs) {
+          const data = presenceDoc.data();
+          const lastActiveTime = data.lastActive ? data.lastActive.toDate().getTime() : now;
+          if (now - lastActiveTime > 60000) continue; 
+          activeCount++;
+          const userSnap = await getDoc(doc(db, "users", presenceDoc.id));
+          if (userSnap.exists()) {
+            const userData = userSnap.data();
+            const html = `<div class="online-user" onclick="startDirectMessage('${presenceDoc.id}', '${userData.name}')"><div class="avatar-wrapper"><img src="${userData.imageBase64}" class="avatar" style="width:32px;height:32px;"><div class="status-dot"></div></div><span class="name-tag">${userData.name}</span></div>`;
+            listEl.insertAdjacentHTML('beforeend', html);
+          }
+        }
+        document.getElementById('online-count').innerText = activeCount;
+      });
+    }
+
+    function loadMessages(roomId) {
+      if(unsubscribeMessages) unsubscribeMessages();
+      msgContainer.innerHTML = ''; 
+      const q = query(collection(db, `rooms/${roomId}/messages`), orderBy("timestamp", "asc"));
+      
+      unsubscribeMessages = onSnapshot(q, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            const data = change.doc.data();
+            
+            // NEW: System Message Rendering
+            if (data.isSystem) {
+              const arrow = data.type === 'join' ? '→' : '←';
+              const html = `
+                <div class="msg-system ${data.type}">
+                  <div class="msg-system-content">${arrow} ${data.text}</div>
+                </div>
+              `;
+              msgContainer.insertAdjacentHTML('beforeend', html);
+              msgContainer.scrollTop = msgContainer.scrollHeight;
+              return;
+            }
+
+            // Normal Messages
+            const time = data.timestamp ? data.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "Now";
+            const attachmentHtml = data.attachedImageBase64 ? `<img src="${data.attachedImageBase64}" class="msg-attached-image" onclick="window.open(this.src)">` : '';
+            const isMentioned = data.text && currentUser.name && data.text.includes(`@${currentUser.name}`);
+            const textHtml = data.text ? `<div class="message-content">${data.text}</div>` : '';
+            const isSentByMe = data.senderId === currentUser.uid;
+            const alignmentClass = isSentByMe ? 'sent' : 'received';
+
+            const html = `
+              <div class="message-wrapper ${alignmentClass}">
+                <img src="${data.imageBase64}" class="avatar">
+                <div class="message-box ${isMentioned ? 'mentioned' : ''}">
+                  <div class="message-header">
+                    <div class="user-info"><span class="name">${isSentByMe ? 'You' : data.senderName}</span></div>
+                    <span class="timestamp">${time}</span>
+                  </div>
+                  ${textHtml}${attachmentHtml}
+                </div>
+              </div>
+            `;
+            msgContainer.insertAdjacentHTML('beforeend', html);
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+          }
+        });
+      });
+    }
+
+    function addChannelToSidebar(roomId, roomName, isCustom = false, skipSave = false) {
+      if(document.querySelector(`[data-room="${roomId}"]`)) return; 
+      const icon = roomId.startsWith('dm_') ? 'user' : 'hash';
+      const containerId = isCustom ? 'channel-list-dms' : 'channel-list-public';
+      const html = `<div class="channel-item" data-room="${roomId}"><div class="channel-icon"><i data-lucide="${icon}" size="14"></i></div><span>${roomName}</span></div>`;
+      
+      document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
+      lucide.createIcons();
+      listenForUnread(roomId);
+      if (isCustom && !skipSave) saveSidebarState();
+    }
+
+    document.querySelector('.sidebar-left').addEventListener('click', (e) => {
+      const item = e.target.closest('.channel-item');
+      if (item) switchRoom(item.dataset.room, item.querySelector('span').innerText);
+    });
+
+    function switchRoom(roomId, roomName) {
+      currentRoomId = roomId; document.getElementById('current-room-title').innerText = roomName;
+      document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
+      
+      const activeItem = document.querySelector(`[data-room="${roomId}"]`);
+      if (activeItem) {
+        activeItem.classList.add('active');
+        const dot = activeItem.querySelector('.unread-dot');
+        if (dot) dot.remove();
+      }
+      
+      const isDM = roomId.startsWith('dm_');
+      const isGroup = roomId.startsWith('group_');
+      
+      // Show/Hide Add Users button
+      document.getElementById('add-to-group-btn').style.display = isGroup ? 'block' : 'none';
+
+      document.getElementById('status-pill').style.background = isDM ? 'rgba(0, 122, 255, 0.2)' : 'var(--bg-green-pill)';
+      document.querySelector('#status-pill .dot').style.background = isDM ? 'var(--accent-blue)' : 'var(--accent-green)';
+      document.querySelector('#status-pill .dot').style.boxShadow = isDM ? '0 0 8px var(--accent-blue)' : '0 0 8px var(--accent-green)';
+      loadMessages(roomId);
+    }
+
+    document.getElementById('toggle-users-btn').addEventListener('click', () => document.getElementById('right-sidebar').classList.toggle('hidden'));
+    document.getElementById('close-right-sidebar').addEventListener('click', () => document.getElementById('right-sidebar').classList.add('hidden'));
+
+  </script>
+</body>
+</html>
