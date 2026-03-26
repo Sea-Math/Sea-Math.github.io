@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Proxy Loader</title>
+  <style>
+    /* Make the proxy fill the entire screen */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #000; /* Black background while loading */
+      overflow: hidden;
+    }
+
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Ensure the proxy iframe takes up the full container */
+    #canvas-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    #loading-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #7dd3fc;
+      font-family: monospace;
+      font-size: 16px;
+      z-index: -1; /* Will hide automatically when the iframe loads over it */
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loading-text">Initializing Proxy Engine...</div>
+
+  <div id="canvas-container"></div>
+
+  <script type="module">
+    import { ShaderCanvas } from './shader-canvas.js';
+    import { ShaderClient } from './shader-client.js';
+
+    // 🔴 CHANGE THIS TO THE URL YOU WANT TO AUTO-LOAD 🔴
+    const TARGET_URL = 'https://latte-x.neocities.org/chat'; 
+
+    async function initProxy() {
+      try {
+        // 1. Initialize the Sea Bean Canvas Engine
+        const canvas = new ShaderCanvas('canvas-container');
+
+        // 2. Create a new hidden proxy tab/surface
+        const surfaceId = canvas.createSurface();
+
+        // 3. Switch to that surface so it displays on screen
+        canvas.switchSurface(surfaceId);
+
+        // 4. Automatically navigate to your target URL
+        canvas.navigate(TARGET_URL);
+
+      } catch (err) {
+        console.error("Failed to start proxy engine:", err);
+        document.getElementById('loading-text').innerText = "Error loading proxy: " + err.message;
+        document.getElementById('loading-text').style.color = "red";
+      }
+    }
+
+    // Start the engine as soon as the module loads
+    initProxy();
+  </script>
+
+</body>
+</html>
