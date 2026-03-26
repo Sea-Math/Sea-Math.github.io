@@ -3,89 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Auto Proxy Loader</title>
+  <title>Auto Proxy</title>
   <style>
     body, html { 
-      margin: 0; padding: 0; height: 100%; width: 100%; 
-      background-color: #060c12; color: #7dd3fc; 
-      font-family: monospace; overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
+      margin: 0; 
+      padding: 0; 
+      height: 100%; 
+      width: 100%;
+      background: #000; 
+      overflow: hidden; 
     }
-
-    #canvas-container {
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: none; /* Hidden until ready */
-    }
-
-    #canvas-container iframe {
-      width: 100%; height: 100%;
-      border: none; display: block;
-    }
-
-    .spinner {
-      width: 24px; height: 24px;
-      border: 2px solid rgba(125,211,252,0.15);
-      border-top-color: #7dd3fc;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 12px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
     
-    #status-box { text-align: center; }
+    #canvas-container { 
+      width: 100%; 
+      height: 100%; 
+      background: #000; /* Black background while proxy loads */
+    }
+    
+    #canvas-container iframe { 
+      display: block; 
+      width: 100%; 
+      height: 100%; 
+      border: none; 
+    }
+
+    #loading-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #7dd3fc;
+      font-family: monospace;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
 
-  <div id="status-box">
-    <div class="spinner" style="margin: 0 auto 15px auto;"></div>
-    <div id="status-text">Booting proxy engine...</div>
-  </div>
-
+  <div id="loading-text">Starting Sea Bean Engine...</div>
   <div id="canvas-container"></div>
 
   <script type="module">
-    // Dynamically importing exactly how your seabeansearch.html does it
-    async function boot() {
-      const statusText = document.getElementById('status-text');
-      
+    async function initAutoProxy() {
       try {
-        statusText.innerText = "Loading modules...";
-        const canvasModule = await import('./shader-canvas.js');
+        // 1. Dynamically import exactly how seabeansearch.html does it
+        const [canvasModule, clientModule] = await Promise.all([
+          import('./shader-canvas.js'),
+          import('./shader-client.js')
+        ]);
+        
         const ShaderCanvas = canvasModule.ShaderCanvas;
-
-        statusText.innerText = "Initializing engine...";
+        
+        // 2. Initialize the Canvas onto our container
         const canvas = new ShaderCanvas('canvas-container');
+        
+        // 3. Create the tab/surface IMMEDIATELY (like the original code does)
+        const id = canvas.createSurface();
+        canvas.switchSurface(id);
 
-        // 🔴 CHANGE THIS TO YOUR URL 🔴
-        const TARGET_URL = 'https://latte-x.neocities.org/chat'; 
-
-        // WAIT FOR THE PROXY TO BE READY BEFORE NAVIGATING!
+        // 4. Wait for the engine to declare it is ready, then navigate
         canvas.on(ShaderCanvas.EVENTS.READY, () => {
-          document.getElementById('status-box').style.display = 'none';
-          document.getElementById('canvas-container').style.display = 'block';
+          document.getElementById('loading-text').style.display = 'none';
           
-          const surfaceId = canvas.createSurface();
-          canvas.switchSurface(surfaceId);
-          canvas.navigate(TARGET_URL);
+          // 🔴 PUT YOUR TARGET URL HERE 🔴
+          canvas.navigate('https://latte-x.neocities.org/chat');
         });
 
-        // Catch any internal proxy errors
+        // Optional: Catch errors to display on screen instead of failing silently
         canvas.on(ShaderCanvas.EVENTS.ERROR, (e) => {
-          console.error('Shader error:', e);
-          statusText.innerText = 'Proxy Error: ' + e.message;
-          statusText.style.color = '#ff6b6b';
+          document.getElementById('loading-text').innerText = "Proxy Error: " + e;
+          document.getElementById('loading-text').style.color = "red";
         });
 
-      } catch (err) {
-        console.error("Boot failed:", err);
-        statusText.innerText = "Critical Error: " + err.message + "\n\n(Are you running this on a web server?)";
-        statusText.style.color = '#ff6b6b';
+      } catch (e) {
+        document.getElementById('loading-text').innerText = "Module Error: " + e.message + " (Are you running this on a web server?)";
+        document.getElementById('loading-text').style.color = "red";
       }
     }
 
-    boot();
+    initAutoProxy();
   </script>
 
 </body>
