@@ -45,7 +45,53 @@
 
 <div id="themeGridContainer" style="display: none;"></div>
 <div id="themeTransitionOverlay" style="display: none;"><div id="themeWaveContainer"><g id="themeWaveParallax"></g></div></div>
+<script>
+(function () {
+  // Block window.open popups
+  const originalOpen = window.open;
+  window.open = function () {
+    console.warn("Popup blocked:", arguments);
+    return null;
+  };
 
+  // Block alert, confirm, prompt (optional but included)
+  window.alert = function () {
+    console.warn("Alert blocked:", arguments);
+  };
+  window.confirm = function () {
+    console.warn("Confirm blocked:", arguments);
+    return false;
+  };
+  window.prompt = function () {
+    console.warn("Prompt blocked:", arguments);
+    return null;
+  };
+
+  // Block new tabs via target="_blank"
+  document.addEventListener("click", function (e) {
+    let el = e.target.closest("a");
+    if (el && el.target === "_blank") {
+      e.preventDefault();
+      console.warn("Blocked new tab:", el.href);
+    }
+  }, true);
+
+  // Remove annoying popup elements (basic filter)
+  const observer = new MutationObserver(() => {
+    document.querySelectorAll("[class*='popup'], [id*='popup'], [class*='modal'], [id*='modal']").forEach(el => {
+      el.remove();
+      console.warn("Removed popup element:", el);
+    });
+  });
+
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
+
+  console.log("🚫 Popup blocker active");
+})();
+</script>
 
 <script src="js/game.js"></script>
 <script src="/theme.js"></script>
