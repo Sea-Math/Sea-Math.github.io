@@ -617,7 +617,13 @@
             this.$watch('customBgUrl', val => localStorage.setItem('sb_bg', val));
             this.$watch('userWantsBookmarkBar', val => localStorage.setItem('sb_bmbar', val));
             this.$watch('isDarkMode', val => localStorage.setItem('sb_darkmode', val));
-            this.$watch('proxyEngine', val => localStorage.setItem('sb_proxy', val));
+            
+            // Watch Engine Change -> RELOAD the page to strictly isolate Scramjet and Shader Service Workers
+            this.$watch('proxyEngine', val => {
+                localStorage.setItem('sb_proxy', val);
+                alert('Proxy engine changed. Sea Bean will now reload to safely isolate environments.');
+                window.location.reload();
+            });
             
             // Watch Server change & reapply BareMux transport
             this.$watch('scramjetServer', val => {
@@ -657,11 +663,17 @@
               
               this.canvas.on(canvasModule.ShaderCanvas.EVENTS.SURFACE_CHANGE, (s) => {
                 this.activeTabId = s ? s.id : null
-                if (s && s.client && this.proxyEngine === 'shader') {
-                  try {
-                    const url = s.client.decode(s.client._lastUrl || '');
-                    this.currentUrlInput = url === 'about:blank' ? '' : url; 
-                  } catch (err) {}
+                if (s) {
+                  if (this.proxyEngine === 'shader' && s.client) {
+                    try {
+                      const url = s.client.decode(s.client._lastUrl || '');
+                      this.currentUrlInput = url === 'about:blank' ? '' : url; 
+                    } catch (err) {}
+                  } else if (this.proxyEngine === 'scramjet') {
+                    // For Scramjet, sync happens separately in the interval
+                    const t = this.tabs.find(x => x.id === s.id);
+                    this.currentUrlInput = (t && t.url) ? t.url : '';
+                  }
                 }
               })
               this.canvas.on(canvasModule.ShaderCanvas.EVENTS.URL_CHANGE, () => this.refreshTabs())
@@ -670,6 +682,9 @@
 
               this.addTab()
               this.setupZoomListeners()
+              
+              // Scramjet Polling Loop to sync URL Bar
+              setInterval(() => this.syncScramjetState(), 500);
             } catch (e) { console.error(e) }
           },
 
@@ -704,10 +719,58 @@
           },
           resetZoom() { this.zoomLevel = 1.0; },
 
+          getActiveIframe() {
+              const container = document.getElementById('canvas-container');
+              if (!container) return null;
+              const iframes = container.querySelectorAll('iframe');
+              for (let i = 0; i < iframes.length; i++) {
+                  if (iframes[i].style.display !== 'none') return iframes[i];
+              }
+              return null;
+          },
+
+          syncScramjetState() {
+              if (this.proxyEngine !== 'scramjet' || !window.scramjetObj) return;
+              const frame = this.getActiveIframe();
+              if (frame && frame.contentWindow) {
+                  try {
+                      const loc = frame.contentWindow.location.href;
+                      if (loc.includes('/sail/go/')) {
+                          const pathPart = loc.substring(loc.indexOf('/sail/go/'));
+                          const decoded = window.scramjetObj.decodeUrl(pathPart);
+                          if (decoded) {
+                              if (decoded !== this.currentUrlInput && !this.urlBarFocused) {
+                                  this.currentUrlInput = decoded;
+                              }
+                              // Fix New Tab UI state
+                              const activeTab = this.tabs.find(t => t.id === this.activeTabId);
+                              if (activeTab) activeTab.url = decoded;
+                          }
+                      }
+                      
+                      if (frame.contentDocument && frame.contentDocument.title) {
+                          const activeTab = this.tabs.find(t => t.id === this.activeTabId);
+                          if (activeTab && activeTab.title !== frame.contentDocument.title) {
+                              activeTab.title = frame.contentDocument.title;
+                          }
+                      }
+                  } catch(e) {}
+              }
+          },
+
           refreshTabs() {
-            this.tabs = Array.from(this.canvas.surfaces.values()).map((s) => ({
-              id: s.id, title: s.title, favicon: s.favicon, url: s.client ? s.client.decode(s.client._lastUrl || '') : ''
-            }))
+            this.tabs = Array.from(this.canvas.surfaces.values()).map((s) => {
+              let url = '';
+              // Only decode via Shader client if Shader is active. Scramjet sync happens in interval.
+              if (this.proxyEngine === 'shader' && s.client) {
+                try { url = s.client.decode(s.client._lastUrl || ''); } catch (err) {}
+              } else {
+                 // Retain old URL if we are scramjet so it doesn't flicker empty
+                 const existing = this.tabs.find(t => t.id === s.id);
+                 if (existing) url = existing.url;
+              }
+              return { id: s.id, title: s.title, favicon: s.favicon, url: url };
+            });
           },
 
           addTab() { 
@@ -734,7 +797,6 @@
             this.canvas.switchSurface(id);
           },
 
-          // JS INJECTION ENGINE FOR BOOKMARKLETS
           navigateBookmark(url) { 
             if (url.trim().startsWith('javascript:')) {
                 this.injectJS(url);
@@ -748,13 +810,9 @@
             let code = scriptUrl.trim().substring(11); // remove "javascript:"
             code = decodeURIComponent(code);
             try {
-                // Find all iframes and inject into the active one
-                const container = document.getElementById('canvas-container');
-                const iframes = container.getElementsByTagName('iframe');
-                for (let iframe of iframes) {
-                    if (iframe.style.display !== 'none' && iframe.contentWindow) {
-                         iframe.contentWindow.eval(code);
-                    }
+                const frame = this.getActiveIframe();
+                if (frame && frame.contentWindow) {
+                     frame.contentWindow.eval(code);
                 }
             } catch(e) {
                 console.warn("Could not inject JS (Security Constraint):", e);
@@ -809,12 +867,28 @@
                 targetUrl = "https://" + targetUrl;
             }
 
-            // Route through Scramjet if enabled
-            if (this.proxyEngine === 'scramjet' && window.scramjetObj && !targetUrl.startsWith("javascript:")) {
-                targetUrl = window.scramjetObj.encodeUrl(targetUrl);
+            if (targetUrl.startsWith("javascript:")) {
+                this.injectJS(targetUrl);
+                this.closeDropdowns();
+                return;
             }
 
-            this.canvas.navigate(targetUrl);
+            // CRITICAL FIX: Bypass ShaderCanvas completely when Scramjet is on
+            if (this.proxyEngine === 'scramjet' && window.scramjetObj) {
+                const encodedUrl = window.scramjetObj.encodeUrl(targetUrl);
+                const activeIframe = this.getActiveIframe();
+                
+                if (activeIframe) {
+                    activeIframe.src = encodedUrl;
+                    // Update tab state instantly so New Tab UI disappears
+                    const activeTab = this.tabs.find(t => t.id === this.activeTabId);
+                    if (activeTab) activeTab.url = targetUrl;
+                    this.currentUrlInput = targetUrl;
+                }
+            } else {
+                // Default to Shader processing
+                this.canvas.navigate(targetUrl);
+            }
             this.closeDropdowns();
           },
 
@@ -827,9 +901,30 @@
             }
           },
 
-          reloadTab() { this.canvas.reload() },
-          goBack()    { this.canvas.goBack() },
-          goForward() { this.canvas.goForward() },
+          reloadTab() { 
+              if (this.proxyEngine === 'scramjet') {
+                  const frame = this.getActiveIframe();
+                  if (frame) { try { frame.contentWindow.location.reload(); } catch(e) { frame.src = frame.src; } }
+              } else {
+                  this.canvas.reload(); 
+              }
+          },
+          goBack() { 
+              if (this.proxyEngine === 'scramjet') {
+                  const frame = this.getActiveIframe();
+                  if (frame && frame.contentWindow) { try { frame.contentWindow.history.back(); } catch(e){} }
+              } else {
+                  this.canvas.goBack(); 
+              }
+          },
+          goForward() { 
+              if (this.proxyEngine === 'scramjet') {
+                  const frame = this.getActiveIframe();
+                  if (frame && frame.contentWindow) { try { frame.contentWindow.history.forward(); } catch(e){} }
+              } else {
+                  this.canvas.goForward(); 
+              }
+          },
 
           handleFileUpload(event) {
               const file = event.target.files[0];
