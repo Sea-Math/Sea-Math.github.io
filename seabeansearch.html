@@ -18,9 +18,7 @@
     <script src="/sail/baremux/index.js"></script>
     <script src="/sail/scram/scramjet.all.js"></script>
     <script>
-      if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register("/sail/sw.js").catch(err => console.warn("SW config:", err));
-      }
     </script>
 
     <script src="https://unpkg.com/alpinejs" defer></script>
@@ -511,11 +509,26 @@
           
           <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px;">
               <p style="font-size: 14px; font-weight: 500; margin-bottom: 8px;">Proxy Engine</p>
-              <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Switch between Shader (default) and Scramjet.</p>
-              <select x-model="proxyEngine" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); outline:none;">
+              <select x-model="proxyEngine" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); outline:none; margin-bottom: 12px;">
                   <option value="shader">Shader</option>
                   <option value="scramjet">Scramjet</option>
               </select>
+
+              <div x-show="proxyEngine === 'scramjet'">
+                  <p style="font-size: 14px; font-weight: 500; margin-bottom: 8px;">Scramjet Server (Wisp)</p>
+                  <select x-model="scramjetServer" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); outline:none;">
+                      <option value="wss://wisp.rhw.one/">Server 1 (wisp.rhw.one)</option>
+                      <option value="wss://wisp.mercurywork.shop/">Server 2 (mercurywork.shop)</option>
+                      <option value="wss://wisp3.example.com/">Server 3 (Placeholder)</option>
+                      <option value="wss://wisp4.example.com/">Server 4 (Placeholder)</option>
+                      <option value="wss://wisp5.example.com/">Server 5 (Placeholder)</option>
+                      <option value="wss://wisp6.example.com/">Server 6 (Placeholder)</option>
+                      <option value="wss://wisp7.example.com/">Server 7 (Placeholder)</option>
+                      <option value="wss://wisp8.example.com/">Server 8 (Placeholder)</option>
+                      <option value="wss://wisp9.example.com/">Server 9 (Placeholder)</option>
+                      <option value="wss://wisp10.example.com/">Server 10 (Placeholder)</option>
+                  </select>
+              </div>
           </div>
 
           <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px;">
@@ -573,8 +586,12 @@
           isDarkMode: localStorage.getItem('sb_darkmode') === 'true',
           customBgUrl: localStorage.getItem('sb_bg') || '',
           userWantsBookmarkBar: localStorage.getItem('sb_bmbar') !== 'false', // Default to true
+          
+          // Proxy Configuration
           proxyEngine: localStorage.getItem('sb_proxy') || 'shader', // 'shader' or 'scramjet'
+          scramjetServer: localStorage.getItem('sb_scramjet_server') || 'wss://wisp.rhw.one/',
           scramjetObj: null,
+          bareMuxConnection: null,
 
           showCustomBookmarkModal: false,
           customBookmarkForm: { name: '', url: '' },
@@ -603,12 +620,21 @@
             this.$watch('userWantsBookmarkBar', val => localStorage.setItem('sb_bmbar', val));
             this.$watch('isDarkMode', val => localStorage.setItem('sb_darkmode', val));
             this.$watch('proxyEngine', val => localStorage.setItem('sb_proxy', val));
+            
+            // Watch Server change & reapply BareMux transport
+            this.$watch('scramjetServer', val => {
+                localStorage.setItem('sb_scramjet_server', val);
+                if (this.bareMuxConnection) {
+                    this.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: val }]);
+                }
+            });
 
-            // Scramjet setup
+            // Exact Scramjet & BareMux Implementation 
             try {
-                if (window.BareMuxConnection && window.$scramjetLoadController) {
-                    const connection = new BareMuxConnection("/sail/baremux/worker.js");
-                    connection.setTransport("/sail/libcurl/index.mjs", [{ websocket: "wss://wisp.rhw.one/" }]);
+                if (window.BareMux && window.$scramjetLoadController) {
+                    this.bareMuxConnection = new BareMux.BareMuxConnection("/sail/baremux/worker.js");
+                    this.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
+                    
                     const { ScramjetController } = $scramjetLoadController();
                     this.scramjetObj = new ScramjetController({
                         files: {
