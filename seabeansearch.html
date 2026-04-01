@@ -17,8 +17,15 @@
     
     <script src="/sail/baremux/index.js"></script>
     <script src="/sail/scram/scramjet.all.js"></script>
+    <script src="/uv/uv.bundle.js"></script>
+    <script src="/uv/uv.config.js"></script>
     <script>
         navigator.serviceWorker.register("/sail/sw.js").catch(err => console.warn("SW config:", err));
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/uv/sw.js").catch(err => console.warn("UV SW config:", err));
+            });
+        }
     </script>
 
     <script src="https://unpkg.com/alpinejs" defer></script>
@@ -512,15 +519,17 @@
               <select x-model="proxyEngine" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); outline:none; margin-bottom: 12px;">
                   <option value="shader">Shader</option>
                   <option value="scramjet">Scramjet</option>
+                  <option value="uv">Ultraviolet</option>
               </select>
 
-              <div x-show="proxyEngine === 'scramjet'">
-                  <p style="font-size: 14px; font-weight: 500; margin-bottom: 8px;">Scramjet Server (Wisp)</p>
+              <div x-show="proxyEngine === 'scramjet' || proxyEngine === 'uv'">
+                  <p style="font-size: 14px; font-weight: 500; margin-bottom: 8px;">Wisp Server (Scramjet/UV)</p>
                   <select x-model="scramjetServer" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); outline:none;">
                       <option value="wss://wisp.rhw.one/">Splash</option>
                       <option value="wss://portable.splash.best/wisp/">Portable Splash Wisp</option>
-                    <option value="wss://technonyte-loves-x8r.installgentoo.com/wisp/">🛡️ FortiGuard/🚦Lightspeed</option>
-                    <option value="wss://v5-soon-plz-2764827364186354128.govt.hu/wisp/">🔥 Palo Alto/🧱 Blocksi Web/🧱 Blocksi Ai</option>
+                      <option value="wss://technonyte-loves-x8r.installgentoo.com/wisp/">🛡️ FortiGuard/🚦Lightspeed</option>
+                      <option value="wss://v5-soon-plz-2764827364186354128.govt.hu/wisp/">🔥 Palo Alto/🧱 Blocksi Web/🧱 Blocksi Ai</option>
+                      <option value="wss://wedvbmath.help/wisp/">Terbium Wisp</option>
                   </select>
               </div>
           </div>
@@ -582,7 +591,7 @@
           userWantsBookmarkBar: localStorage.getItem('sb_bmbar') !== 'false', // Default to true
           
           // Proxy Configuration
-          proxyEngine: localStorage.getItem('sb_proxy') || 'shader', // 'shader' or 'scramjet'
+          proxyEngine: localStorage.getItem('sb_proxy') || 'shader', // 'shader', 'scramjet', or 'uv'
           scramjetServer: localStorage.getItem('sb_scramjet_server') || 'wss://wisp.rhw.one/',
 
           showCustomBookmarkModal: false,
@@ -612,7 +621,7 @@
             this.$watch('userWantsBookmarkBar', val => localStorage.setItem('sb_bmbar', val));
             this.$watch('isDarkMode', val => localStorage.setItem('sb_darkmode', val));
             
-            // Watch Engine Change -> RELOAD the page to strictly isolate Scramjet and Shader Service Workers
+            // Watch Engine Change -> RELOAD the page to strictly isolate Scramjet, Shader, and UV Service Workers
             this.$watch('proxyEngine', val => {
                 localStorage.setItem('sb_proxy', val);
                 alert('Proxy engine changed. Sea Bean will now reload to safely isolate environments.');
@@ -629,23 +638,25 @@
 
             // Exact Scramjet & BareMux Implementation (Stored outside of Alpine Reactivity loop)
             try {
-                if (window.BareMux && window.$scramjetLoadController) {
+                if (window.BareMux) {
                     window.bareMuxConnection = new BareMux.BareMuxConnection("/sail/baremux/worker.js");
                     window.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
                     
-                    const { ScramjetController } = $scramjetLoadController();
-                    window.scramjetObj = new ScramjetController({
-                        files: {
-                            all: "/sail/scram/scramjet.all.js",
-                            wasm: "/sail/scram/scramjet.wasm.wasm",
-                            sync: "/sail/scram/scramjet.sync.js"
-                        },
-                        prefix: "/sail/go/" 
-                    });
-                    window.scramjetObj.init();
+                    if (window.$scramjetLoadController) {
+                        const { ScramjetController } = $scramjetLoadController();
+                        window.scramjetObj = new ScramjetController({
+                            files: {
+                                all: "/sail/scram/scramjet.all.js",
+                                wasm: "/sail/scram/scramjet.wasm.wasm",
+                                sync: "/sail/scram/scramjet.sync.js"
+                            },
+                            prefix: "/sail/go/" 
+                        });
+                        window.scramjetObj.init();
+                    }
                 }
             } catch(e) {
-                console.warn("Failed to load Scramjet capabilities:", e);
+                console.warn("Failed to load Proxy capabilities:", e);
             }
 
             try {
@@ -663,8 +674,8 @@
                       const url = s.client.decode(s.client._lastUrl || '');
                       this.currentUrlInput = url === 'about:blank' ? '' : url; 
                     } catch (err) {}
-                  } else if (this.proxyEngine === 'scramjet') {
-                    // For Scramjet, sync happens separately in the interval
+                  } else if (this.proxyEngine === 'scramjet' || this.proxyEngine === 'uv') {
+                    // For Scramjet & UV, sync happens separately in the interval
                     const t = this.tabs.find(x => x.id === s.id);
                     this.currentUrlInput = (t && t.url) ? t.url : '';
                   }
@@ -677,8 +688,8 @@
               this.addTab()
               this.setupZoomListeners()
               
-              // Scramjet Polling Loop to sync URL Bar
-              setInterval(() => this.syncScramjetState(), 500);
+              // Polling Loop to sync URL Bar for UV and Scramjet
+              setInterval(() => this.syncProxyState(), 500);
             } catch (e) { console.error(e) }
           },
 
@@ -723,23 +734,30 @@
               return null;
           },
 
-          syncScramjetState() {
-              if (this.proxyEngine !== 'scramjet' || !window.scramjetObj) return;
+          syncProxyState() {
+              if (this.proxyEngine === 'shader') return;
+              
               const frame = this.getActiveIframe();
               if (frame && frame.contentWindow) {
                   try {
                       const loc = frame.contentWindow.location.href;
-                      if (loc.includes('/sail/go/')) {
+                      let decoded = null;
+
+                      if (this.proxyEngine === 'scramjet' && window.scramjetObj && loc.includes('/sail/go/')) {
                           const pathPart = loc.substring(loc.indexOf('/sail/go/'));
-                          const decoded = window.scramjetObj.decodeUrl(pathPart);
-                          if (decoded) {
-                              if (decoded !== this.currentUrlInput && !this.urlBarFocused) {
-                                  this.currentUrlInput = decoded;
-                              }
-                              // Fix New Tab UI state
-                              const activeTab = this.tabs.find(t => t.id === this.activeTabId);
-                              if (activeTab) activeTab.url = decoded;
+                          decoded = window.scramjetObj.decodeUrl(pathPart);
+                      } else if (this.proxyEngine === 'uv' && window.__uv$config && loc.includes(__uv$config.prefix)) {
+                          const pathPart = loc.substring(loc.indexOf(__uv$config.prefix) + __uv$config.prefix.length);
+                          decoded = __uv$config.decodeUrl(pathPart);
+                      }
+
+                      if (decoded) {
+                          if (decoded !== this.currentUrlInput && !this.urlBarFocused) {
+                              this.currentUrlInput = decoded;
                           }
+                          // Fix New Tab UI state
+                          const activeTab = this.tabs.find(t => t.id === this.activeTabId);
+                          if (activeTab) activeTab.url = decoded;
                       }
                       
                       if (frame.contentDocument && frame.contentDocument.title) {
@@ -755,11 +773,11 @@
           refreshTabs() {
             this.tabs = Array.from(this.canvas.surfaces.values()).map((s) => {
               let url = '';
-              // Only decode via Shader client if Shader is active. Scramjet sync happens in interval.
+              // Only decode via Shader client if Shader is active. Proxy sync happens in interval.
               if (this.proxyEngine === 'shader' && s.client) {
                 try { url = s.client.decode(s.client._lastUrl || ''); } catch (err) {}
               } else {
-                 // Retain old URL if we are scramjet so it doesn't flicker empty
+                 // Retain old URL if we are scramjet or uv so it doesn't flicker empty
                  const existing = this.tabs.find(t => t.id === s.id);
                  if (existing) url = existing.url;
               }
@@ -867,14 +885,23 @@
                 return;
             }
 
-            // CRITICAL FIX: Bypass ShaderCanvas completely when Scramjet is on
-            if (this.proxyEngine === 'scramjet' && window.scramjetObj) {
+            // CRITICAL FIX: Bypass ShaderCanvas completely when Scramjet or UV is on
+            if (this.proxyEngine === 'uv' && window.__uv$config) {
+                const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(targetUrl);
+                const activeIframe = this.getActiveIframe();
+                
+                if (activeIframe) {
+                    activeIframe.src = encodedUrl;
+                    const activeTab = this.tabs.find(t => t.id === this.activeTabId);
+                    if (activeTab) activeTab.url = targetUrl;
+                    this.currentUrlInput = targetUrl;
+                }
+            } else if (this.proxyEngine === 'scramjet' && window.scramjetObj) {
                 const encodedUrl = window.scramjetObj.encodeUrl(targetUrl);
                 const activeIframe = this.getActiveIframe();
                 
                 if (activeIframe) {
                     activeIframe.src = encodedUrl;
-                    // Update tab state instantly so New Tab UI disappears
                     const activeTab = this.tabs.find(t => t.id === this.activeTabId);
                     if (activeTab) activeTab.url = targetUrl;
                     this.currentUrlInput = targetUrl;
@@ -896,7 +923,7 @@
           },
 
           reloadTab() { 
-              if (this.proxyEngine === 'scramjet') {
+              if (this.proxyEngine === 'scramjet' || this.proxyEngine === 'uv') {
                   const frame = this.getActiveIframe();
                   if (frame) { try { frame.contentWindow.location.reload(); } catch(e) { frame.src = frame.src; } }
               } else {
@@ -904,7 +931,7 @@
               }
           },
           goBack() { 
-              if (this.proxyEngine === 'scramjet') {
+              if (this.proxyEngine === 'scramjet' || this.proxyEngine === 'uv') {
                   const frame = this.getActiveIframe();
                   if (frame && frame.contentWindow) { try { frame.contentWindow.history.back(); } catch(e){} }
               } else {
@@ -912,7 +939,7 @@
               }
           },
           goForward() { 
-              if (this.proxyEngine === 'scramjet') {
+              if (this.proxyEngine === 'scramjet' || this.proxyEngine === 'uv') {
                   const frame = this.getActiveIframe();
                   if (frame && frame.contentWindow) { try { frame.contentWindow.history.forward(); } catch(e){} }
               } else {
