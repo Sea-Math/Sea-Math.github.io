@@ -128,11 +128,11 @@
 
       .nav-btn {
         background: transparent; border: none; color: var(--text-secondary); cursor: pointer;
-        width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
         transition: background 0.2s, color 0.2s; flex-shrink: 0;
       }
       .nav-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
-      .nav-btn svg { width: 18px; height: 18px; fill: currentColor; }
+      .nav-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
       .url-bar { flex: 1; position: relative; height: 38px; margin: 0 4px; }
 
@@ -236,6 +236,10 @@
       .app-icon img { width: 100%; height: 100%; object-fit: contain; }
       .app-name { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90px; }
 
+      .action-btn { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; background: var(--bg-primary); color: var(--text-secondary); display: none; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+      .app-card:hover .action-btn { display: flex; }
+      .action-btn:hover { background: var(--bg-secondary); }
+
       .customize-btn {
         position: absolute; bottom: 20px; right: 20px; display: flex; align-items: center; gap: 8px; background: var(--bg-secondary); color: var(--text-secondary); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.2s, color 0.2s; user-select: none; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); z-index: 2;
       }
@@ -304,7 +308,7 @@
               <svg @click="sharePage()" style="width:20px;height:20px;fill:var(--text-secondary);cursor:pointer;margin-right:12px;transition:fill 0.2s;" viewBox="0 0 24 24" title="Share this page"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92zM18 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7.02c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
               <svg @click="toggleBookmark()" :style="{ fill: isBookmarked ? 'var(--accent)' : 'var(--text-secondary)' }" style="width:22px;height:22px;cursor:pointer; transition: fill 0.2s;" viewBox="0 0 24 24" title="Bookmark this tab">
                 <path x-show="!isBookmarked" d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
-                <path x-show="isBookmarked" style="display: none;" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                <path x-show="isBookmarked" style="display: none;" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
               </svg>
             </div>
             <div class="suggestions-dropdown" x-show="showUrlSuggestions && suggestions.length > 0" style="display: none;">
@@ -559,36 +563,35 @@
 
             // --- STRICT ISOLATED INITIALIZATION ---
             if (this.proxyEngine === 'uv') {
-                if (window.__uv$config) __uv$config.bare = this.uvBareServer; // No Wisp for UV
+                if (window.__uv$config) __uv$config.bare = this.uvBareServer;
                 
                 if ("serviceWorker" in navigator) {
                     navigator.serviceWorker.register("/uv/sw.js", { scope: __uv$config.prefix }).catch(e => console.warn(e));
                 }
-                // UV standard bare does not inherently need libcurl/wisp via baremux here unless explicitly built that way.
                 
                 this.addTab();
                 setInterval(() => this.syncNativeProxyState(), 500);
                 this.ready = true;
 
             } else if (this.proxyEngine === 'scramjet') {
-                // SCRAMJET strictly relies on BareMux + libcurl + Wisp
+                // SCRAMJET EXACT LOGIC FROM TEMPLATE
                 if ("serviceWorker" in navigator) {
                     navigator.serviceWorker.register("/sail/sw.js").catch(e => console.warn(e));
                 }
+                
                 window.bareMuxConnection = new BareMux.BareMuxConnection("/sail/baremux/worker.js");
                 window.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.wispServer }]);
                 
-                let initScramjet = () => {
-                    if (window.$scramjetLoadController) {
-                        const { ScramjetController } = $scramjetLoadController();
-                        window.scramjetObj = new ScramjetController({
-                            files: { all: "/sail/scram/scramjet.all.js", wasm: "/sail/scram/scramjet.wasm.wasm", sync: "/sail/scram/scramjet.sync.js" },
-                            prefix: "/sail/go/"
-                        });
-                        window.scramjetObj.init();
-                    } else { setTimeout(initScramjet, 100); }
-                };
-                initScramjet();
+                const { ScramjetController } = $scramjetLoadController();
+                window.scramjetObj = new ScramjetController({
+                    files: {
+                        all: "/sail/scram/scramjet.all.js",
+                        wasm: "/sail/scram/scramjet.wasm.wasm",
+                        sync: "/sail/scram/scramjet.sync.js"
+                    },
+                    prefix: "/sail/go/" 
+                });
+                window.scramjetObj.init();
                 
                 this.addTab();
                 setInterval(() => this.syncNativeProxyState(), 500);
