@@ -590,8 +590,6 @@
           // Proxy Configuration
           proxyEngine: localStorage.getItem('sb_proxy') || 'shader', // 'shader' or 'scramjet'
           scramjetServer: localStorage.getItem('sb_scramjet_server') || 'wss://wisp.rhw.one/',
-          scramjetObj: null,
-          bareMuxConnection: null,
 
           showCustomBookmarkModal: false,
           customBookmarkForm: { name: '', url: '' },
@@ -624,19 +622,19 @@
             // Watch Server change & reapply BareMux transport
             this.$watch('scramjetServer', val => {
                 localStorage.setItem('sb_scramjet_server', val);
-                if (this.bareMuxConnection) {
-                    this.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: val }]);
+                if (window.bareMuxConnection) {
+                    window.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: val }]);
                 }
             });
 
-            // Exact Scramjet & BareMux Implementation 
+            // Exact Scramjet & BareMux Implementation (Stored outside of Alpine Reactivity loop)
             try {
                 if (window.BareMux && window.$scramjetLoadController) {
-                    this.bareMuxConnection = new BareMux.BareMuxConnection("/sail/baremux/worker.js");
-                    this.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
+                    window.bareMuxConnection = new BareMux.BareMuxConnection("/sail/baremux/worker.js");
+                    window.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
                     
                     const { ScramjetController } = $scramjetLoadController();
-                    this.scramjetObj = new ScramjetController({
+                    window.scramjetObj = new ScramjetController({
                         files: {
                             all: "/sail/scram/scramjet.all.js",
                             wasm: "/sail/scram/scramjet.wasm.wasm",
@@ -644,7 +642,7 @@
                         },
                         prefix: "/sail/go/" 
                     });
-                    this.scramjetObj.init();
+                    window.scramjetObj.init();
                 }
             } catch(e) {
                 console.warn("Failed to load Scramjet capabilities:", e);
@@ -812,8 +810,8 @@
             }
 
             // Route through Scramjet if enabled
-            if (this.proxyEngine === 'scramjet' && this.scramjetObj && !targetUrl.startsWith("javascript:")) {
-                targetUrl = this.scramjetObj.encodeUrl(targetUrl);
+            if (this.proxyEngine === 'scramjet' && window.scramjetObj && !targetUrl.startsWith("javascript:")) {
+                targetUrl = window.scramjetObj.encodeUrl(targetUrl);
             }
 
             this.canvas.navigate(targetUrl);
