@@ -329,15 +329,23 @@
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div style="color: var(--accent-blue); font-size: 3rem; font-weight: 600; margin-bottom: 10px; letter-spacing: -1px;">sea bean</div>
                 
-                <div class="clock-container">
-                    <span class="clock-time" x-text="clock.h"></span>
-                    <span class="clock-colon">:</span>
-                    <span class="clock-time" x-text="clock.m"></span>
-                    <span class="clock-ampm" x-text="clock.ampm"></span>
-                </div>
-            </div>
-        </div>
+                <div class="main-content">
 
+        <div class="new-tab-ui" x-show="showNewTabUI">
+
+            <div class="clock-container">
+
+                <span class="clock-time" x-text="clock.h"></span>
+
+                <span class="clock-colon">:</span>
+
+                <span class="clock-time" x-text="clock.m"></span>
+
+                <span class="clock-ampm" x-text="clock.ampm"></span>
+
+            </div>
+
+        </div>
         <template x-for="tab in tabs" :key="tab.id">
             <iframe 
                 class="browser-frame" 
