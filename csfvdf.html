@@ -18,11 +18,11 @@
     <style>
         /* Matte Black Theme Variables */
         :root {
-            --bg-base: #0f111a;          /* Deep matte black/blue */
-            --bg-panel: #1a1d27;         /* Slightly lighter panel background */
-            --bg-element: #232838;       /* Input & button background */
+            --bg-base: #0f111a;
+            --bg-panel: #1a1d27;
+            --bg-element: #232838;
             --bg-element-hover: #2d3447;
-            --accent-blue: #3b82f6;      /* Blue outline/accent */
+            --accent-blue: #3b82f6;
             --accent-blue-dim: rgba(59, 130, 246, 0.15);
             --text-primary: #e2e8f0;
             --text-muted: #64748b;
@@ -33,7 +33,8 @@
         }
 
         * {
-            margin: 0; padding: 0; box-sizing: border-box;
+            margin: 0;
+            padding: 0; box-sizing: border-box;
             font-family: 'Inter', sans-serif;
         }
 
@@ -150,7 +151,8 @@
             border-color: var(--accent-blue);
         }
         .url-bar svg {
-            width: 16px; height: 16px; fill: var(--text-muted); margin-right: 12px;
+            width: 16px;
+            height: 16px; fill: var(--text-muted); margin-right: 12px;
         }
         .url-bar input {
             flex: 1;
@@ -184,7 +186,8 @@
             color: var(--text-primary);
         }
         .bookmark-item img {
-            width: 14px; height: 14px; border-radius: 2px;
+            width: 14px;
+            height: 14px; border-radius: 2px;
         }
 
         /* --- Main Content Area --- */
@@ -227,45 +230,47 @@
             color: #94a3b8;
             letter-spacing: -2px;
         }
-        .clock-colon {
-            font-size: 6rem;
-            font-weight: 600;
-            color: #475569;
-            margin: 0 8px;
-            transform: translateY(-8px);
-        }
-        .clock-ampm {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #475569;
-            margin-left: 16px;
-        }
 
         /* --- Settings Modal --- */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            position: fixed;
+            inset: 0; background: rgba(0,0,0,0.6);
             backdrop-filter: blur(4px);
             display: flex; align-items: center; justify-content: center; z-index: 2000;
         }
         .modal {
-            background: var(--bg-panel); border: 1px solid var(--border-color);
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-md); width: 400px; padding: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .modal h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
-        .form-group select, .form-group input {
-            width: 100%; padding: 10px; background: var(--bg-element); border: 1px solid var(--border-color);
+        .form-group select, .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px; background: var(--bg-element); border: 1px solid var(--border-color);
             border-radius: var(--radius-sm); color: var(--text-primary); outline: none; font-size: 14px;
         }
-        .form-group select:focus, .form-group input:focus { border-color: var(--accent-blue); }
+        .form-group select:focus, .form-group input[type="text"]:focus { border-color: var(--accent-blue); }
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
-        .btn { padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; border: none; }
-        .btn-cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); }
+        .btn { padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500;
+        cursor: pointer; border: none; }
+        .btn-cancel { background: transparent; color: var(--text-muted);
+        border: 1px solid var(--border-color); }
         .btn-cancel:hover { background: var(--bg-element); color: var(--text-primary); }
         .btn-primary { background: var(--accent-blue); color: #fff; }
         .btn-primary:hover { filter: brightness(1.1); }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px !important;
+            color: var(--text-primary) !important;
+            cursor: pointer;
+        }
+        .checkbox-label input { width: 16px; height: 16px; cursor: pointer; }
     </style>
 </head>
 
@@ -324,34 +329,25 @@
         </template>
     </div>
 
-<div class="main-content">
+    <div class="main-content">
         <div class="new-tab-ui" x-show="showNewTabUI">
             <div style="display: flex; flex-direction: column; align-items: center;">
-                <div style="color: var(--accent-blue); font-size: 3rem; font-weight: 600; margin-bottom: 10px; letter-spacing: -1px;">sea bean</div>
-                
-                <div class="main-content">
+                <div class="clock-container">
+                    <span class="clock-time">sea bean</span>
+                </div>
+            </div>
+        </div>
 
-<div class="new-tab-ui" x-show="showNewTabUI">
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <div style="color: var(--accent-blue); font-size: 3rem; font-weight: 600; margin-bottom: 10px; letter-spacing: -1px;">sea bean</div>
-        
-        <div class="clock-container">
-            <span class="clock-time" x-text="clock.h"></span>
-            <span class="clock-colon">:</span>
-            <span class="clock-time" x-text="clock.m"></span>
-            <span class="clock-ampm" x-text="clock.ampm"></span>
-        </div>
+        <template x-for="tab in tabs" :key="tab.id">
+            <iframe 
+                class="browser-frame" 
+                x-show="tab.id === activeTabId && tab.url !== ''" 
+                :src="tab.proxyUrl" 
+                @load="handleIframeLoad(tab.id, $event)">
+            </iframe>
+        </template>
     </div>
-</div>
-
-        </div>
-     <div class="new-tab-ui" x-show="showNewTabUI">
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <div class="clock-container">
-            <span class="clock-time">sea bean</span>
-        </div>
-    </div>
-</div>
+    
     <div class="modal-overlay" x-show="showSettings" style="display: none;" @click="showSettings = false">
         <div class="modal" @click.stop>
             <h2>Browser Settings</h2>
@@ -366,10 +362,17 @@
                     <option value="wss://wedvbmath.help/wisp/">Terbium Wisp</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" x-model="adBlockEnabled">
+                    Enable Ad & Popup Blocker
+                </label>
+            </div>
             
             <div class="modal-actions">
-                <button class="btn btn-cancel" @click="showSettings = false">Close</button>
-                <button class="btn btn-primary" @click="applySettings()">Apply Settings</button>
+                <button class="btn btn-cancel" @click="showSettings = false">Cancel</button>
+                <button class="btn btn-primary" @click="applySettings()">Apply & Reload</button>
             </div>
         </div>
     </div>
@@ -381,9 +384,11 @@
                 activeTabId: null,
                 urlInput: '',
                 showSettings: false,
-                scramjetServer: localStorage.getItem('sb_scramjet_server') || 'wss://wisp.rhw.one/',
                 
-               
+                // Load saved preferences
+                scramjetServer: localStorage.getItem('sb_scramjet_server') || 'wss://wisp.rhw.one/',
+                adBlockEnabled: localStorage.getItem('sb_adblock') === 'true',
+                
                 // Persistent Bookmarks
                 bookmarks: [
                     { id: 1, name: 'GitHub', url: 'https://github.com' },
@@ -395,26 +400,8 @@
                 get showNewTabUI() { return !this.activeTab || this.activeTab.url === ''; },
 
                 init() {
-                    this.initClock();
-                    this.addTab(); // Start with one new tab
-                    
-                    // Initialize Scramjet/BareMux Core logic
+                    this.addTab(); 
                     this.initProxy();
-                },
-
-                initClock() {
-                    const updateTime = () => {
-                        const now = new Date();
-                        let hours = now.getHours();
-                        let minutes = now.getMinutes();
-                        const ampm = hours >= 12 ? 'PM' : 'AM';
-                        hours = hours % 12;
-                        hours = hours ? hours : 12; 
-                        minutes = minutes < 10 ? '0' + minutes : minutes;
-                        this.clock = { h: hours.toString(), m: minutes.toString(), ampm: ampm };
-                    };
-                    updateTime();
-                    setInterval(updateTime, 1000);
                 },
 
                 initProxy() {
@@ -442,11 +429,19 @@
                 },
 
                 applySettings() {
+                    // Save to local storage
                     localStorage.setItem('sb_scramjet_server', this.scramjetServer);
+                    localStorage.setItem('sb_adblock', this.adBlockEnabled);
+                    
+                    // Set transport immediately just in case
                     if (window.bareMuxConnection) {
                         window.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
                     }
+                    
                     this.showSettings = false;
+                    
+                    // Force a reload so the Service Worker fully resets with the new Wisp WebSocket
+                    window.location.reload();
                 },
 
                 addTab() {
@@ -488,8 +483,6 @@
 
                 navigate(url) {
                     let targetUrl = url.trim();
-
-                    // Basic formatting
                     if (!targetUrl.includes(".") && !targetUrl.startsWith("http")) {
                         targetUrl = "https://search.brave.com/search?q=" + encodeURIComponent(targetUrl);
                     } else if (!targetUrl.startsWith("http")) {
@@ -505,22 +498,54 @@
                         if (window.scramjetObj) {
                             tab.proxyUrl = window.scramjetObj.encodeUrl(targetUrl);
                         } else {
-                            // Fallback if scramjet is still loading
                             tab.proxyUrl = "/sail/go/" + btoa(targetUrl);
                         }
                     }
                 },
 
-                syncTitle(tabId, event) {
+                handleIframeLoad(tabId, event) {
+                    const iframe = event.target;
+                    
+                    // 1. Sync the Title
                     try {
-                        const iframe = event.target;
                         const doc = iframe.contentDocument || iframe.contentWindow.document;
                         const tab = this.tabs.find(t => t.id === tabId);
                         if (tab && doc.title) {
                             tab.title = doc.title;
                         }
-                    } catch(e) {
-                        // Cross-origin errors expected when proxying some sites directly.
+                    } catch(e) {} // Ignore cross-origin issues
+                    
+                    // 2. Inject Ad & Popup Blocker
+                    if (this.adBlockEnabled) {
+                        try {
+                            const win = iframe.contentWindow;
+                            const doc = win.document;
+                            
+                            // Block window.open popups
+                            win.open = function() {
+                                console.log("Sea Bean Blocked a Popup");
+                                return null;
+                            };
+
+                            // Inject CSS to hide common ad frames/classes
+                            const style = doc.createElement('style');
+                            style.textContent = `
+                                iframe[src*="doubleclick"], 
+                                iframe[src*="ads"], 
+                                [id*="google_ads"], 
+                                [class*="ad-container"], 
+                                .ad, .ads, .ad-banner {
+                                    display: none !important;
+                                    pointer-events: none !important;
+                                    height: 0 !important;
+                                    width: 0 !important;
+                                }
+                            `;
+                            doc.head.appendChild(style);
+                        } catch (err) {
+                            // If cross-origin restrictions apply, we can't inject.
+                            // Scramjet normally proxies everything as same-origin, so this should usually work.
+                        }
                     }
                 },
 
