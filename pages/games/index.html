@@ -1,100 +1,445 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>College Courses - Deep Sea V3</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" id="favicon" href="">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
- <link rel="stylesheet" href="css/game.css"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>we love college</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,600;0,800;0,900;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-outer: #02040a;
+            --bg-panel: #060b15;
+            --border-color: #121b2e;
+            --accent-cyan: #00e5ff;
+            --accent-glow: rgba(0, 229, 255, 0.6);
+            --text-main: #ffffff;
+            --text-sub: #5a708a;
+            --grid-color: rgba(255, 255, 255, 0.02);
+            --wave-1: #0066cc;
+            --wave-2: #0099ff;
+            --wave-3: #00d2ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background-color: var(--bg-outer);
+            color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .panel-container {
+            width: 100%;
+            padding: 0; /* Removed padding to make it fill the tab */
+            height: 100vh;
+            display: flex;
+        }
+
+        .main-panel {
+            flex-grow: 1;
+            background-color: var(--bg-panel);
+            border: none; /* Removed border to sit flush */
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grid-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px), 
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Animated Waves */
+        .waves {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            height: 120px;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .wave-layer {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 200%;
+            height: 100%;
+            display: flex;
+        }
+
+        .wave-layer svg {
+            width: 50%;
+            height: 100%;
+            display: block;
+        }
+
+        .wave-layer-1 { animation: waveMove 15s linear infinite; }
+        .wave-layer-2 { animation: waveMove 10s linear infinite; }
+        .wave-layer-3 { animation: waveMove 20s linear infinite; }
+
+        @keyframes waveMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .content-scroll {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 60px 40px 150px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .content-scroll::-webkit-scrollbar { width: 8px; }
+        .content-scroll::-webkit-scrollbar-track { background: transparent; }
+        .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+        .content-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        .header-titles { text-align: center; margin-bottom: 40px; }
+        
+        .glow-title {
+            font-size: 5.5rem;
+            font-weight: 900;
+            letter-spacing: 8px;
+            color: #ffffff;
+            text-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow), 0 0 60px var(--accent-cyan);
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            color: var(--text-sub);
+            font-size: 1.2rem;
+            font-weight: 400;
+            font-style: italic;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .search-wrapper { width: 100%; max-width: 700px; margin: 0 auto 50px auto; }
+        
+        .inputcontainer {
+            background: rgba(11, 20, 38, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .inputcontainer:focus-within {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+            background: rgba(11, 20, 38, 0.9);
+        }
+
+        .inputcontainer input {
+            background: none; border: none; outline: none;
+            color: var(--text-main); font-size: 1.1rem; width: 100%;
+        }
+        
+        .inputcontainer input::placeholder { color: var(--text-sub); }
+
+        details {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(6, 11, 21, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        summary {
+            color: var(--text-main);
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            outline: none;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        summary::-webkit-details-marker { display: none; }
+        summary::before {
+            content: '\f0da';
+            font-family: 'FontAwesome';
+            color: var(--accent-cyan);
+            transition: transform 0.2s;
+        }
+        details[open] summary::before { transform: rotate(90deg); }
+
+        .zone-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        .zone-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .zone-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5), 0 0 15px rgba(0, 229, 255, 0.2);
+        }
+
+        .zone-item img {
+            width: 100%; aspect-ratio: 1; object-fit: cover;
+            border-bottom: 1px solid var(--border-color);
+            background: #000;
+        }
+
+        .zone-item button {
+            background: transparent; color: var(--text-main);
+            border: none; padding: 12px; width: 100%;
+            font-weight: 600; font-size: 0.9rem; cursor: pointer;
+            text-align: center;
+        }
+
+        #zoneViewer {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 2000; display: none; flex-direction: column;
+        }
+        
+        .zone-header {
+            background: var(--bg-panel); border-bottom: 1px solid var(--border-color);
+            padding: 15px 30px; display: flex; align-items: center; justify-content: space-between;
+        }
+        
+        .zone-title h2 { color: var(--text-main); font-weight: 800; font-size: 1.2rem; }
+        .zone-title span { color: var(--accent-cyan); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;}
+        
+        .zone-controls button {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: white;
+            padding: 8px 16px; font-weight: 600; cursor: pointer; margin-left: 10px; transition: 0.2s;
+        }
+        .zone-controls button:hover { background: var(--accent-cyan); border-color: var(--accent-cyan); color: #000; }
+        
+        #zoneFrame { flex-grow: 1; border: none; background: #000; }
+
+        .loading-text { color: var(--text-sub); font-style: italic; text-align: center; }
+    </style>
 </head>
 <body>
 
-<div id="startupOverlay">
-    <div class="startup-box" id="startupBox"></div>
-</div>
+    <div class="panel-container">
+        <main class="main-panel">
+            <div class="grid-bg"></div>
 
-<div class="top-bar-container">
-    <div id="sysStatus"></div>
-    <div class="search-bar">
-        <i class="fas fa-search" style="opacity: 0.5"></i>
-        <input id="searchBar" placeholder="Search the depths..." oninput="filterZones()">
-        <span id="liveCount">0</span>
+            <div class="content-scroll">
+                
+                <div class="header-titles">
+                    <h1 class="glow-title">SEA BEAN Games</h1>
+                    <p class="subtitle">added ad blocker because gn math hungry for money</p>
+                </div>
+
+                <div class="search-wrapper">
+                    <div class="inputcontainer">
+                        <i class="fa-solid fa-magnifying-glass" style="color: var(--accent-cyan);"></i>
+                        <input type="text" id="homesearchlol" placeholder="Search the vault..." oninput="filterZones()">
+                    </div>
+                </div>
+
+                <details open>
+                    <summary id="featuredSummary">Featured Depths</summary>
+                    <div id="featuredZones" class="zone-container"></div>
+                </details>
+
+                <details open>
+                    <summary id="allSummary">All Zones</summary>
+                    <div id="container" class="zone-container">
+                        <p class="loading-text">Loading database...</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="waves">
+                <div class="wave-layer wave-layer-1">
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+                        <path fill="var(--wave-1)" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+                    </svg>
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+                        <path fill="var(--wave-1)" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+                    </svg>
+                </div>
+                <div class="wave-layer wave-layer-2">
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+                        <path fill="var(--wave-2)" fill-opacity="1" d="M0,96L80,85.3C160,75,320,53,480,53C640,53,800,75,960,85.3C1120,96,1280,96,1360,96L1440,96L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+                    </svg>
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+                        <path fill="var(--wave-2)" fill-opacity="1" d="M0,96L80,85.3C160,75,320,53,480,53C640,53,800,75,960,85.3C1120,96,1280,96,1360,96L1440,96L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+                    </svg>
+                </div>
+                <div class="wave-layer wave-layer-3">
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+                        <path fill="var(--wave-3)" fill-opacity="1" d="M0,110L1440,85L1440,120L0,120Z"></path>
+                    </svg>
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+                        <path fill="var(--wave-3)" fill-opacity="1" d="M0,110L1440,85L1440,120L0,120Z"></path>
+                    </svg>
+                </div>
+            </div>
+        </main>
     </div>
-</div>
 
-<div id="settingsBtn" onclick="toggleSettings()"><i class="fas fa-gear"></i></div>
-
-<div id="settingsOverlay" onclick="toggleSettings(event)">
-    <div class="settings-panel" onclick="event.stopPropagation()">
-        <h3 style="margin-top:0; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Archive Source</h3>
-        <div class="setting-row">
-            <select id="sourceSelect" onchange="toggleSource(this.value)"></select>
+    <div id="zoneViewer">
+        <div class="zone-header">
+            <div class="zone-title">
+                <h2 id="zoneName">Zone Name</h2>
+                <span id="zoneAuthor">by Author</span>
+            </div>
+            <div class="zone-controls">
+                <button onclick="fullscreenZone()" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
+                <button onclick="closeZone()">LEAVE</button>
+            </div>
         </div>
+        <iframe id="zoneFrame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"></iframe>
     </div>
-</div>
 
-<div id="container"></div>
+    <script>
+        const container = document.getElementById('container');
+        const featuredContainer = document.getElementById('featuredZones');
+        const zoneViewer = document.getElementById('zoneViewer');
+        const zoneFrame = document.getElementById('zoneFrame');
+        const searchBar = document.getElementById('homesearchlol');
+        
+        const zonesURL = "https://cdn.jsdelivr.net/gh/gn-math/assets@main/zones.json";
+        const coverURL = "https://cdn.jsdelivr.net/gh/gn-math/covers@main";
+        const htmlURL = "https://cdn.jsdelivr.net/gh/gn-math/html@main";
+        let zones = [];
+        let currentBlobUrl = null;
 
-<div id="zoneViewer">
-    <div id="loaderBar"></div>
-    <div id="closeBtn" onclick="closeViewer()"><i class="fas fa-times"></i></div>
-    <iframe id="zoneFrame"></iframe>
-</div>
+        function applyAdBlocker() {
+            const adSelectors = ['.ad', '.ads', '.adsbygoogle', '.banner-ads', '[id^="ad-"]', 'iframe[src*="doubleclick"]', '#sidebarad1', '#sidebarad2'];
+            try {
+                const innerDoc = zoneFrame.contentDocument || zoneFrame.contentWindow.document;
+                if (innerDoc) adSelectors.forEach(s => innerDoc.querySelectorAll(s).forEach(el => el.remove()));
+            } catch (e) {}
+        }
+        zoneFrame.onload = applyAdBlocker;
 
-<div id="themeGridContainer" style="display: none;"></div>
-<div id="themeTransitionOverlay" style="display: none;"><div id="themeWaveContainer"><g id="themeWaveParallax"></g></div></div>
-<script>
-(function () {
-  // Block window.open popups
-  const originalOpen = window.open;
-  window.open = function () {
-    console.warn("Popup blocked:", arguments);
-    return null;
-  };
+        async function listZones() {
+            try {
+                const response = await fetch(zonesURL + "?t=" + Date.now());
+                if (!response.ok) throw new Error("Failed to load");
+                zones = await response.json();
+                displayZones(zones, container);
+                displayZones(zones.filter(z => z.featured), featuredContainer);
+            } catch (e) { 
+                container.innerHTML = `<p class="loading-text" style="color: #ff4d4d;">System Error: ${e.message}</p>`; 
+            }
+        }
 
-  // Block alert, confirm, prompt (optional but included)
-  window.alert = function () {
-    console.warn("Alert blocked:", arguments);
-  };
-  window.confirm = function () {
-    console.warn("Confirm blocked:", arguments);
-    return false;
-  };
-  window.prompt = function () {
-    console.warn("Prompt blocked:", arguments);
-    return null;
-  };
+        function displayZones(data, target) {
+            target.innerHTML = "";
+            if (data.length === 0) { target.innerHTML = `<p class="loading-text">No signals found.</p>`; return; }
+            data.forEach(file => {
+                const item = document.createElement("div");
+                item.className = "zone-item";
+                const imgPath = file.cover.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL);
+                item.innerHTML = `<img src="${imgPath}" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=No+Cover'"><button>${file.name}</button>`;
+                item.onclick = (e) => { e.preventDefault(); openZone(file); };
+                target.appendChild(item);
+            });
+        }
 
-  // Block new tabs via target="_blank"
-  document.addEventListener("click", function (e) {
-    let el = e.target.closest("a");
-    if (el && el.target === "_blank") {
-      e.preventDefault();
-      console.warn("Blocked new tab:", el.href);
-    }
-  }, true);
+        function filterZones() {
+            const query = searchBar.value.toLowerCase();
+            displayZones(zones.filter(z => z.name.toLowerCase().includes(query)), container);
+        }
 
-  // Remove annoying popup elements (basic filter)
-  const observer = new MutationObserver(() => {
-    document.querySelectorAll("[class*='popup'], [id*='popup'], [class*='modal'], [id*='modal']").forEach(el => {
-      el.remove();
-      console.warn("Removed popup element:", el);
-    });
-  });
+        function openZone(file) {
+            const url = file.url.replace("{HTML_URL}", htmlURL);
+            const cacheBusterUrl = url + (url.includes('?') ? '&' : '?') + "t=" + Date.now();
+            
+            zoneFrame.src = "about:blank";
+            document.getElementById('zoneName').textContent = "Connecting to " + file.name + "...";
+            document.getElementById('zoneAuthor').textContent = "AUTHOR: " + (file.author || "UNKNOWN");
+            zoneViewer.style.display = "flex";
 
-  observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true
-  });
+            if (url.startsWith("http") && !url.includes("cdn.jsdelivr.net")) {
+                zoneFrame.src = url; document.getElementById('zoneName').textContent = file.name; return;
+            }
 
-  console.log("🚫 Popup blocker active");
-})();
-</script>
+            fetch(cacheBusterUrl)
+                .then(res => { if (!res.ok) throw new Error('Network Issue'); return res.text(); })
+                .then(html => {
+                    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+                    
+                    const safetyScript = `<script>
+                        window.onbeforeunload = function() { return "Staying in Sea Bean!"; };
+                        
+                        window.open = function() { 
+                            console.warn("Sea Bean: Blocked unauthorized popup."); 
+                            return null; 
+                        };
+                        
+                        setInterval(function() {
+                            // Added specific query selectors for sidebarad1 and sidebarad2
+                            const ads = document.querySelectorAll('.ad, .ads, .adsbygoogle, .banner-ads, [id^="ad-"], iframe[src*="doubleclick"], iframe[src*="googleads"], #sidebarad1, #sidebarad2');
+                            ads.forEach(ad => ad.remove());
+                        }, 500); // Sped up the interval to instantly zap those ads
+                    <\/script>`;
+                    
+                    let finalHtml = html.toLowerCase().includes('<head>') 
+                        ? html.replace(/<head>/i, '<head>' + safetyScript) 
+                        : safetyScript + html;
+                        
+                    currentBlobUrl = URL.createObjectURL(new Blob([finalHtml], { type: 'text/html;charset=utf-8' }));
+                    zoneFrame.src = currentBlobUrl; 
+                    document.getElementById('zoneName').textContent = file.name;
+                })
+                .catch(err => { 
+                    zoneFrame.src = url; 
+                    document.getElementById('zoneName').textContent = file.name; 
+                });
+        }
 
-<script src="js/game.js"></script>
-<script src="/theme.js"></script>
-<script src="/security.js"></script>
+        function closeZone() {
+            zoneViewer.style.display = "none"; zoneFrame.src = "about:blank";
+            if (currentBlobUrl) { URL.revokeObjectURL(currentBlobUrl); currentBlobUrl = null; }
+        }
+
+        function fullscreenZone() {
+            if (zoneFrame.requestFullscreen) zoneFrame.requestFullscreen();
+            else if (zoneFrame.webkitRequestFullscreen) zoneFrame.webkitRequestFullscreen();
+            else if (zoneFrame.mozRequestFullScreen) zoneFrame.mozRequestFullScreen();
+            else if (zoneFrame.msRequestFullscreen) zoneFrame.msRequestFullscreen();
+        }
+
+        window.onload = listZones;
+    </script>
 </body>
 </html>
