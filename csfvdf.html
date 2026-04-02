@@ -324,13 +324,17 @@
         </template>
     </div>
 
-    <div class="main-content">
+<div class="main-content">
         <div class="new-tab-ui" x-show="showNewTabUI">
-            <div class="clock-container">
-                <span class="clock-time" x-text="clock.h"></span>
-                <span class="clock-colon">:</span>
-                <span class="clock-time" x-text="clock.m"></span>
-                <span class="clock-ampm" x-text="clock.ampm"></span>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="color: var(--accent-blue); font-size: 3rem; font-weight: 600; margin-bottom: 10px; letter-spacing: -1px;">sea bean</div>
+                
+                <div class="clock-container">
+                    <span class="clock-time" x-text="clock.h"></span>
+                    <span class="clock-colon">:</span>
+                    <span class="clock-time" x-text="clock.m"></span>
+                    <span class="clock-ampm" x-text="clock.ampm"></span>
+                </div>
             </div>
         </div>
 
@@ -343,7 +347,6 @@
             </iframe>
         </template>
     </div>
-
     <div class="modal-overlay" x-show="showSettings" style="display: none;" @click="showSettings = false">
         <div class="modal" @click.stop>
             <h2>Browser Settings</h2>
