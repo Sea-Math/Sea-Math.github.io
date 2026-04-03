@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>we love college</title>
+    <title>i heart college</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,600;0,800;0,900;1,400&display=swap" rel="stylesheet">
     <style>
@@ -30,11 +30,12 @@
             width: 100vw;
             display: flex;
             overflow: hidden;
+            position: relative;
         }
 
         .panel-container {
             width: 100%;
-            padding: 0; /* Removed padding to make it fill the tab */
+            padding: 0; 
             height: 100vh;
             display: flex;
         }
@@ -42,7 +43,7 @@
         .main-panel {
             flex-grow: 1;
             background-color: var(--bg-panel);
-            border: none; /* Removed border to sit flush */
+            border: none; 
             position: relative;
             overflow: hidden;
             box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
@@ -61,7 +62,6 @@
             z-index: 1;
         }
 
-        /* Animated Waves */
         .waves {
             position: absolute;
             bottom: 0; left: 0; width: 100%;
@@ -111,7 +111,38 @@
         .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
         .content-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
-        .header-titles { text-align: center; margin-bottom: 40px; }
+        .top-bar-actions {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            z-index: 50;
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: rgba(11, 20, 38, 0.8);
+            border: 1px solid var(--border-color);
+            color: var(--accent-cyan);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: scale(1.1);
+        }
+
+        .header-titles { text-align: center; margin-bottom: 40px; margin-top: 20px;}
         
         .glow-title {
             font-size: 5.5rem;
@@ -132,7 +163,12 @@
             margin-top: 5px;
         }
 
-        .search-wrapper { width: 100%; max-width: 700px; margin: 0 auto 50px auto; }
+        .search-wrapper { 
+            width: 100%; 
+            max-width: 700px; 
+            margin: 0 auto 50px auto; 
+            position: relative; 
+        }
         
         .inputcontainer {
             background: rgba(11, 20, 38, 0.6);
@@ -143,12 +179,17 @@
             align-items: center;
             gap: 15px;
             transition: all 0.3s ease;
+            border-radius: 12px;
+            position: relative;
+            z-index: 101;
         }
 
         .inputcontainer:focus-within {
             border-color: var(--accent-cyan);
             box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
             background: rgba(11, 20, 38, 0.9);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
         }
 
         .inputcontainer input {
@@ -158,6 +199,69 @@
         
         .inputcontainer input::placeholder { color: var(--text-sub); }
 
+        .dumb-badge {
+            font-size: 0.65rem;
+            background: var(--accent-cyan);
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 900;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: rgba(6, 11, 21, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--accent-cyan);
+            border-top: none;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 229, 255, 0.1);
+        }
+
+        .search-dropdown::-webkit-scrollbar { width: 6px; }
+        .search-dropdown::-webkit-scrollbar-track { background: transparent; }
+        .search-dropdown::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 10px; }
+
+        .search-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            gap: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .search-item:last-child { border-bottom: none; }
+        .search-item:hover { background: rgba(0, 229, 255, 0.15); }
+        
+        .search-item img {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .search-item-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-item-title { font-weight: 800; color: var(--text-main); font-size: 1rem; }
+        .search-item-author { font-size: 0.8rem; color: var(--text-sub); }
+
         details {
             width: 100%;
             max-width: 1200px;
@@ -166,6 +270,7 @@
             border: 1px solid rgba(255,255,255,0.05);
             padding: 25px;
             margin-bottom: 30px;
+            border-radius: 16px;
         }
 
         summary {
@@ -207,6 +312,7 @@
             cursor: pointer;
             display: flex;
             flex-direction: column;
+            border-radius: 12px;
         }
 
         .zone-item:hover {
@@ -243,11 +349,56 @@
         
         .zone-controls button {
             background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: white;
-            padding: 8px 16px; font-weight: 600; cursor: pointer; margin-left: 10px; transition: 0.2s;
+            padding: 8px 16px; font-weight: 600; cursor: pointer; margin-left: 10px; transition: 0.2s; border-radius: 8px;
         }
         .zone-controls button:hover { background: var(--accent-cyan); border-color: var(--accent-cyan); color: #000; }
         
         #zoneFrame { flex-grow: 1; border: none; background: #000; }
+
+        #infoModal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            z-index: 3000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--bg-panel);
+            border: 1px solid var(--accent-cyan);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0, 229, 255, 0.1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: none; border: none;
+            color: var(--text-sub);
+            font-size: 1.5rem; cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-close:hover { color: var(--accent-cyan); }
+
+        .modal-title { font-size: 2rem; font-weight: 900; color: #fff; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;}
+        
+        .info-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-card h4 { color: var(--accent-cyan); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 5px; }
+        .info-card p { color: var(--text-main); font-weight: 600; font-size: 1.1rem; }
 
         .loading-text { color: var(--text-sub); font-style: italic; text-align: center; }
     </style>
@@ -258,57 +409,43 @@
         <main class="main-panel">
             <div class="grid-bg"></div>
 
+            <div class="top-bar-actions">
+                <button class="action-btn" onclick="document.getElementById('infoModal').style.display='flex'" title="System Info">
+                    <i class="fa-solid fa-circle-info"></i>
+                </button>
+            </div>
+
             <div class="content-scroll">
                 
                 <div class="header-titles">
-                    <h1 class="glow-title">SEA BEAN Games</h1>
-                    <p class="subtitle">added ad blocker because gn math hungry for money</p>
+                    <h1 class="glow-title">SEA BEAN games</h1>
+                    <p class="subtitle">play your way</p>
                 </div>
 
                 <div class="search-wrapper">
                     <div class="inputcontainer">
                         <i class="fa-solid fa-magnifying-glass" style="color: var(--accent-cyan);"></i>
-                        <input type="text" id="homesearchlol" placeholder="Search the vault..." oninput="filterZones()">
+                        <input type="text" id="dumbSearchInput" placeholder="Search by name, ID, author, letters..." autocomplete="off">
+                        <span class="dumb-badge">Dumb Dumb Search™</span>
                     </div>
+                    <div id="searchResultsDropdown" class="search-dropdown"></div>
                 </div>
 
-                <details open>
-                    <summary id="featuredSummary">Featured Depths</summary>
-                    <div id="featuredZones" class="zone-container"></div>
-                </details>
-
-                <details open>
-                    <summary id="allSummary">All Zones</summary>
-                    <div id="container" class="zone-container">
-                        <p class="loading-text">Loading database...</p>
-                    </div>
-                </details>
+                <div id="zonesWrapper"></div>
             </div>
 
             <div class="waves">
                 <div class="wave-layer wave-layer-1">
-                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-                        <path fill="var(--wave-1)" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
-                    </svg>
-                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-                        <path fill="var(--wave-1)" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
-                    </svg>
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="var(--wave-1)" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path></svg>
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="var(--wave-1)" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path></svg>
                 </div>
                 <div class="wave-layer wave-layer-2">
-                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-                        <path fill="var(--wave-2)" fill-opacity="1" d="M0,96L80,85.3C160,75,320,53,480,53C640,53,800,75,960,85.3C1120,96,1280,96,1360,96L1440,96L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
-                    </svg>
-                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-                        <path fill="var(--wave-2)" fill-opacity="1" d="M0,96L80,85.3C160,75,320,53,480,53C640,53,800,75,960,85.3C1120,96,1280,96,1360,96L1440,96L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
-                    </svg>
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="var(--wave-2)" fill-opacity="1" d="M0,96L80,85.3C160,75,320,53,480,53C640,53,800,75,960,85.3C1120,96,1280,96,1360,96L1440,96L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path></svg>
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="var(--wave-2)" fill-opacity="1" d="M0,96L80,85.3C160,75,320,53,480,53C640,53,800,75,960,85.3C1120,96,1280,96,1360,96L1440,96L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path></svg>
                 </div>
                 <div class="wave-layer wave-layer-3">
-                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-                        <path fill="var(--wave-3)" fill-opacity="1" d="M0,110L1440,85L1440,120L0,120Z"></path>
-                    </svg>
-                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-                        <path fill="var(--wave-3)" fill-opacity="1" d="M0,110L1440,85L1440,120L0,120Z"></path>
-                    </svg>
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="var(--wave-3)" fill-opacity="1" d="M0,110L1440,85L1440,120L0,120Z"></path></svg>
+                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="var(--wave-3)" fill-opacity="1" d="M0,110L1440,85L1440,120L0,120Z"></path></svg>
                 </div>
             </div>
         </main>
@@ -328,18 +465,60 @@
         <iframe id="zoneFrame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"></iframe>
     </div>
 
+    <div id="infoModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="document.getElementById('infoModal').style.display='none'"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="modal-title">System Info</h3>
+            
+            <div class="info-card">
+                <h4>Site Maker</h4>
+                <p>Mr Coffee duh</p>
+            </div>
+            
+            <div class="info-card">
+                <h4>Games & Engine Source</h4>
+                <p>gn-math & Contributors</p>
+            </div>
+
+            <div class="info-card">
+                <h4>Search Technology</h4>
+                <p>dUMB dUMB Search™ V3</p>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const container = document.getElementById('container');
-        const featuredContainer = document.getElementById('featuredZones');
         const zoneViewer = document.getElementById('zoneViewer');
         const zoneFrame = document.getElementById('zoneFrame');
-        const searchBar = document.getElementById('homesearchlol');
+        const searchInput = document.getElementById('dumbSearchInput');
+        const searchDropdown = document.getElementById('searchResultsDropdown');
+        const zonesWrapper = document.getElementById('zonesWrapper');
         
-        const zonesURL = "https://cdn.jsdelivr.net/gh/gn-math/assets@main/zones.json";
-        const coverURL = "https://cdn.jsdelivr.net/gh/gn-math/covers@main";
-        const htmlURL = "https://cdn.jsdelivr.net/gh/gn-math/html@main";
-        let zones = [];
+        let allZones = [];
         let currentBlobUrl = null;
+
+        const sources = [
+            {
+                name: "GN Math Zone",
+                type: "json",
+                json: "https://cdn.jsdelivr.net/gh/gn-math/assets@main/zones.json",
+                cover: "https://cdn.jsdelivr.net/gh/gn-math/covers@main",
+                html: "https://cdn.jsdelivr.net/gh/gn-math/html@main"
+            },
+            {
+                name: "Sea Bean",
+                type: "json",
+                json: "https://cdn.jsdelivr.net/gh/sea-bean-unblocked/sde@main/zzz.json",
+                cover: "https://cdn.jsdelivr.net/gh/sea-bean-unblocked/Singlemile@main/Icon/",
+                html: "https://cdn.jsdelivr.net/gh/sea-bean-unblocked/Singlemile@main/games/"
+            },
+            {
+                name: "Master Archive",
+                type: "combined",
+                repos: ["sea-bean-unblocked/Folder-1", "sea-bean-unblocked/Folder-2", "sea-bean-unblocked/Folder-3"],
+                icon: "https://sea-math-official.neocities.org/Perfet.png"
+            }
+        ];
 
         function applyAdBlocker() {
             const adSelectors = ['.ad', '.ads', '.adsbygoogle', '.banner-ads', '[id^="ad-"]', 'iframe[src*="doubleclick"]', '#sidebarad1', '#sidebarad2'];
@@ -350,38 +529,222 @@
         }
         zoneFrame.onload = applyAdBlocker;
 
-        async function listZones() {
-            try {
-                const response = await fetch(zonesURL + "?t=" + Date.now());
-                if (!response.ok) throw new Error("Failed to load");
-                zones = await response.json();
-                displayZones(zones, container);
-                displayZones(zones.filter(z => z.featured), featuredContainer);
-            } catch (e) { 
-                container.innerHTML = `<p class="loading-text" style="color: #ff4d4d;">System Error: ${e.message}</p>`; 
+        async function loadAllSources() {
+            zonesWrapper.innerHTML = '';
+            allZones = [];
+
+            for (let i = 0; i < sources.length; i++) {
+                const source = sources[i];
+                
+                const details = document.createElement('details');
+                details.innerHTML = `
+                    <summary>${source.name}</summary>
+                    <div id="source-container-${i}" class="zone-container">
+                        <p class="loading-text">Loading...</p>
+                    </div>
+                `;
+                zonesWrapper.appendChild(details);
+                
+                const container = document.getElementById(`source-container-${i}`);
+                let sourceData = [];
+
+                try {
+                    if (source.type === 'json') {
+                        const res = await fetch(source.json + "?t=" + Date.now());
+                        const data = await res.json();
+                        
+                        sourceData = data.map(item => ({
+                            ...item,
+                            resolvedCover: item.cover ? item.cover.replace("{COVER_URL}", source.cover).replace("{HTML_URL}", source.html) : (source.icon || ''),
+                            resolvedUrl: item.url ? item.url.replace("{HTML_URL}", source.html) : ''
+                        }));
+                    } else if (source.type === 'combined') {
+                        for (const repo of source.repos) {
+                            try {
+                                const res = await fetch(`https://api.github.com/repos/${repo}/contents/`);
+                                if (res.ok) {
+                                    const files = await res.json();
+                                    files.forEach(file => {
+                                        if (file.type === 'dir' || file.name.endsWith('.html')) {
+                                            sourceData.push({
+                                                name: file.name.replace('.html', ''),
+                                                id: file.sha,
+                                                author: repo,
+                                                resolvedCover: source.icon,
+                                                resolvedUrl: `https://cdn.jsdelivr.net/gh/${repo}@main/${file.name}${file.type === 'dir' ? '/index.html' : ''}`
+                                            });
+                                        }
+                                    });
+                                }
+                            } catch (e) {}
+                        }
+                    }
+
+                    allZones = allZones.concat(sourceData);
+                    
+                    container.innerHTML = '';
+                    if (sourceData.length === 0) {
+                        container.innerHTML = '<p class="loading-text">No signals found here.</p>';
+                    } else {
+                        sourceData.forEach(file => {
+                            const item = document.createElement("div");
+                            item.className = "zone-item";
+                            item.innerHTML = `<img src="${file.resolvedCover}" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=No+Cover'"><button>${file.name}</button>`;
+                            item.onclick = (e) => { e.preventDefault(); openZone(file); };
+                            container.appendChild(item);
+                        });
+                    }
+                    
+                } catch (error) {
+                    container.innerHTML = `<p class="loading-text" style="color: #ff4d4d;">Failed to load ${source.name}</p>`;
+                }
             }
         }
 
-        function displayZones(data, target) {
-            target.innerHTML = "";
-            if (data.length === 0) { target.innerHTML = `<p class="loading-text">No signals found.</p>`; return; }
-            data.forEach(file => {
-                const item = document.createElement("div");
-                item.className = "zone-item";
-                const imgPath = file.cover.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL);
-                item.innerHTML = `<img src="${imgPath}" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=No+Cover'"><button>${file.name}</button>`;
-                item.onclick = (e) => { e.preventDefault(); openZone(file); };
-                target.appendChild(item);
+        function getEditDistance(a, b) {
+            if (a.length === 0) return b.length;
+            if (b.length === 0) return a.length;
+
+            const matrix = [];
+            for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+            for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
+                        );
+                    }
+                }
+            }
+            return matrix[b.length][a.length];
+        }
+
+        function checkDumbMatch(query, searchString) {
+            const t = searchString.toLowerCase();
+            const q = query.toLowerCase();
+            
+            if (t.includes(q)) return true;
+            
+            const qWords = q.split(/\s+/).filter(w => w.length > 0);
+            const tWords = t.split(/[\s\-_]+/).filter(w => w.length > 0);
+            
+            return qWords.every(qw => {
+                if (t.includes(qw)) return true;
+                
+                const wordMatch = tWords.some(tw => {
+                    const allowedTypos = Math.floor(tw.length / 3) + (tw.length > 2 ? 1 : 0);
+                    if (getEditDistance(qw, tw) <= allowedTypos) return true;
+                    
+                    let twChars = tw.split('');
+                    let matchCount = 0;
+                    for (let char of qw) {
+                        let idx = twChars.indexOf(char);
+                        if (idx !== -1) {
+                            matchCount++;
+                            twChars[idx] = null;
+                        }
+                    }
+                    if (matchCount === qw.length) return true;
+                    return false;
+                });
+
+                if (wordMatch) return true;
+
+                let tChars = t.replace(/\s+/g, '').split('');
+                let globalMatchCount = 0;
+                for (let char of qw) {
+                    let idx = tChars.indexOf(char);
+                    if (idx !== -1) {
+                        globalMatchCount++;
+                        tChars[idx] = null;
+                    }
+                }
+                return globalMatchCount === qw.length;
             });
         }
 
-        function filterZones() {
-            const query = searchBar.value.toLowerCase();
-            displayZones(zones.filter(z => z.name.toLowerCase().includes(query)), container);
+        function handlePeakSearch() {
+            const rawQuery = searchInput.value;
+            const query = rawQuery.trim();
+            
+            searchDropdown.innerHTML = '';
+            
+            if (query === '') {
+                searchDropdown.style.display = 'none';
+                document.querySelector('.inputcontainer').style.borderBottomLeftRadius = '12px';
+                document.querySelector('.inputcontainer').style.borderBottomRightRadius = '12px';
+                return;
+            }
+
+            document.querySelector('.inputcontainer').style.borderBottomLeftRadius = '0px';
+            document.querySelector('.inputcontainer').style.borderBottomRightRadius = '0px';
+
+            let scoredResults = allZones.map(z => {
+                const searchDataString = `${z.name} ${z.author || ''} ${z.id || ''} ${z.resolvedUrl || ''}`;
+                
+                let score = 0;
+                const exactMatch = searchDataString.toLowerCase().includes(query.toLowerCase());
+                const fuzzyMatch = checkDumbMatch(query, searchDataString);
+                
+                if (exactMatch) score += 100;
+                if (fuzzyMatch && !exactMatch) score += 50;
+                if (z.name.toLowerCase().startsWith(query.toLowerCase())) score += 50;
+                
+                return { item: z, score: score, matched: exactMatch || fuzzyMatch };
+            }).filter(res => res.matched).sort((a, b) => b.score - a.score);
+
+            const results = scoredResults.map(res => res.item);
+
+            if (results.length > 0) {
+                searchDropdown.style.display = 'block';
+                results.forEach(file => {
+                    const item = document.createElement('div');
+                    item.className = 'search-item';
+                    
+                    item.innerHTML = `
+                        <img src="${file.resolvedCover}" onerror="this.src='https://via.placeholder.com/45?text=NA'">
+                        <div class="search-item-info">
+                            <span class="search-item-title">${file.name}</span>
+                            <span class="search-item-author">ID: ${file.id || 'N/A'} | By: ${file.author || 'Unknown'}</span>
+                        </div>
+                    `;
+                    
+                    item.onclick = () => {
+                        searchInput.value = '';
+                        searchDropdown.style.display = 'none';
+                        document.querySelector('.inputcontainer').style.borderBottomLeftRadius = '12px';
+                        document.querySelector('.inputcontainer').style.borderBottomRightRadius = '12px';
+                        openZone(file);
+                    };
+                    searchDropdown.appendChild(item);
+                });
+            } else {
+                searchDropdown.style.display = 'block';
+                searchDropdown.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-sub); font-style: italic;">No results found in the depths.</div>`;
+            }
         }
 
+        searchInput.addEventListener('input', handlePeakSearch);
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                searchDropdown.style.display = 'none';
+                document.querySelector('.inputcontainer').style.borderBottomLeftRadius = '12px';
+                document.querySelector('.inputcontainer').style.borderBottomRightRadius = '12px';
+            }
+        });
+
+        searchInput.addEventListener('focus', () => {
+            if (searchInput.value.trim() !== '') handlePeakSearch();
+        });
+
         function openZone(file) {
-            const url = file.url.replace("{HTML_URL}", htmlURL);
+            const url = file.resolvedUrl;
             const cacheBusterUrl = url + (url.includes('?') ? '&' : '?') + "t=" + Date.now();
             
             zoneFrame.src = "about:blank";
@@ -389,7 +752,7 @@
             document.getElementById('zoneAuthor').textContent = "AUTHOR: " + (file.author || "UNKNOWN");
             zoneViewer.style.display = "flex";
 
-            if (url.startsWith("http") && !url.includes("cdn.jsdelivr.net")) {
+            if (url.startsWith("http") && !url.includes("cdn.jsdelivr.net") && !url.includes("api.github.com")) {
                 zoneFrame.src = url; document.getElementById('zoneName').textContent = file.name; return;
             }
 
@@ -402,15 +765,13 @@
                         window.onbeforeunload = function() { return "Staying in Sea Bean!"; };
                         
                         window.open = function() { 
-                            console.warn("Sea Bean: Blocked unauthorized popup."); 
                             return null; 
                         };
                         
                         setInterval(function() {
-                            // Added specific query selectors for sidebarad1 and sidebarad2
                             const ads = document.querySelectorAll('.ad, .ads, .adsbygoogle, .banner-ads, [id^="ad-"], iframe[src*="doubleclick"], iframe[src*="googleads"], #sidebarad1, #sidebarad2');
                             ads.forEach(ad => ad.remove());
-                        }, 500); // Sped up the interval to instantly zap those ads
+                        }, 500); 
                     <\/script>`;
                     
                     let finalHtml = html.toLowerCase().includes('<head>') 
@@ -439,7 +800,7 @@
             else if (zoneFrame.msRequestFullscreen) zoneFrame.msRequestFullscreen();
         }
 
-        window.onload = listZones;
+        window.onload = loadAllSources;
     </script>
 </body>
 </html>
