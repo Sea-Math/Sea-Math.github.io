@@ -7,26 +7,26 @@
     <link rel="icon" type="image/jpeg" href="mathpunch.jpeg" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     
+    <script src="theme.js"></script>
     <script src="/sail/baremux/index.js"></script>
     <script src="/sail/scram/scramjet.all.js"></script>
     <script>
-        navigator.serviceWorker.register("/sail/sw.js").catch(err => console.warn("SW config:", err));
+        navigator.serviceWorker.register("/sail/sw.js").catch(err => console.warn(err));
     </script>
 
     <script src="https://unpkg.com/alpinejs" defer></script>
     
     <style>
-        /* Matte Black Theme Variables */
         :root {
-            --bg-base: #0f111a;
-            --bg-panel: #1a1d27;
-            --bg-element: #232838;
-            --bg-element-hover: #2d3447;
-            --accent-blue: #3b82f6;
-            --accent-blue-dim: rgba(59, 130, 246, 0.15);
-            --text-primary: #e2e8f0;
-            --text-muted: #64748b;
-            --border-color: #2a3149;
+            --bg-base: var(--bg-deep, #0f111a);
+            --bg-panel: var(--bg-light, #1a1d27);
+            --bg-element: var(--sidebar-bg, #232838);
+            --bg-element-hover: rgba(255, 255, 255, 0.08);
+            --accent-blue: var(--accent, #3b82f6);
+            --accent-blue-dim: var(--accent-dark, rgba(59, 130, 246, 0.15));
+            --text-primary: var(--text-heading, #e2e8f0);
+            --text-muted: var(--text-muted, #64748b);
+            --border-color: var(--glass-border, #2a3149);
             --radius-lg: 16px;
             --radius-md: 8px;
             --radius-sm: 6px;
@@ -34,7 +34,8 @@
 
         * {
             margin: 0;
-            padding: 0; box-sizing: border-box;
+            padding: 0; 
+            box-sizing: border-box;
             font-family: 'Inter', sans-serif;
         }
 
@@ -47,9 +48,9 @@
             overflow: hidden;
             padding: 12px;
             gap: 12px;
+            transition: background-color 0.4s ease;
         }
 
-        /* --- Header / Tabs --- */
         .header {
             display: flex;
             align-items: center;
@@ -63,7 +64,10 @@
             gap: 8px;
             overflow-x: auto;
         }
-        .tabs-container::-webkit-scrollbar { display: none; }
+        
+        .tabs-container::-webkit-scrollbar { 
+            display: none; 
+        }
 
         .tab {
             background: var(--bg-element);
@@ -81,20 +85,24 @@
             transition: all 0.2s;
             user-select: none;
         }
+        
         .tab:hover {
             background: var(--bg-element-hover);
         }
+        
         .tab.active {
             background: var(--accent-blue-dim);
             border-color: var(--accent-blue);
             color: var(--text-primary);
         }
+        
         .tab-title {
             flex: 1;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        
         .tab-close {
             color: var(--text-muted);
             font-size: 16px;
@@ -103,6 +111,7 @@
             border-radius: 4px;
             padding: 2px 4px;
         }
+        
         .tab-close:hover {
             color: var(--text-primary);
             background: rgba(255,255,255,0.1);
@@ -122,13 +131,18 @@
             transition: all 0.2s;
             flex-shrink: 0;
         }
+        
         .icon-btn:hover {
             background: var(--bg-element-hover);
             color: var(--text-primary);
         }
-        .icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
+        
+        .icon-btn svg { 
+            width: 16px; 
+            height: 16px; 
+            fill: currentColor; 
+        }
 
-        /* --- Toolbar --- */
         .toolbar {
             display: flex;
             align-items: center;
@@ -147,13 +161,18 @@
             height: 38px;
             transition: border-color 0.2s;
         }
+        
         .url-bar:focus-within {
             border-color: var(--accent-blue);
         }
+        
         .url-bar svg {
             width: 16px;
-            height: 16px; fill: var(--text-muted); margin-right: 12px;
+            height: 16px; 
+            fill: var(--text-muted); 
+            margin-right: 12px;
         }
+        
         .url-bar input {
             flex: 1;
             background: transparent;
@@ -163,7 +182,6 @@
             outline: none;
         }
 
-        /* --- Bookmarks Bar --- */
         .bookmark-bar {
             display: flex;
             align-items: center;
@@ -171,7 +189,11 @@
             padding: 4px 8px;
             overflow-x: auto;
         }
-        .bookmark-bar::-webkit-scrollbar { display: none; }
+        
+        .bookmark-bar::-webkit-scrollbar { 
+            display: none; 
+        }
+        
         .bookmark-item {
             display: flex;
             align-items: center;
@@ -182,15 +204,17 @@
             transition: color 0.2s;
             user-select: none;
         }
+        
         .bookmark-item:hover {
             color: var(--text-primary);
         }
+        
         .bookmark-item img {
             width: 14px;
-            height: 14px; border-radius: 2px;
+            height: 14px; 
+            border-radius: 2px;
         }
 
-        /* --- Main Content Area --- */
         .main-content {
             flex: 1;
             background: var(--bg-panel);
@@ -200,6 +224,7 @@
             overflow: hidden;
             display: flex;
             box-shadow: inset 0 0 100px rgba(0,0,0,0.2);
+            transition: background-color 0.4s ease;
         }
 
         .browser-frame {
@@ -209,58 +234,115 @@
             background: #fff;
         }
 
-        /* --- New Tab Clock UI --- */
         .new-tab-ui {
             position: absolute;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: radial-gradient(circle at center, #1e2436 0%, var(--bg-panel) 70%);
+            background: radial-gradient(circle at center, var(--bg-element) 0%, var(--bg-panel) 70%);
             z-index: 10;
         }
+        
         .clock-container {
             display: flex;
             align-items: baseline;
             user-select: none;
         }
+        
         .clock-time {
             font-size: 8rem;
             font-weight: 500;
-            color: #94a3b8;
+            color: var(--text-muted);
             letter-spacing: -2px;
         }
 
-        /* --- Settings Modal --- */
         .modal-overlay {
             position: fixed;
-            inset: 0; background: rgba(0,0,0,0.6);
+            inset: 0; 
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(4px);
-            display: flex; align-items: center; justify-content: center; z-index: 2000;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 2000;
         }
+        
         .modal {
             background: var(--bg-panel);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-md); width: 400px; padding: 24px;
+            border-radius: var(--radius-md); 
+            width: 400px; 
+            padding: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .modal h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        
+        .modal h2 { 
+            font-size: 18px; 
+            font-weight: 600; 
+            margin-bottom: 16px; 
+        }
+        
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+        
+        .form-group label { 
+            display: block; 
+            font-size: 13px; 
+            color: var(--text-muted); 
+            margin-bottom: 8px; 
+        }
+        
         .form-group select, .form-group input[type="text"] {
             width: 100%;
-            padding: 10px; background: var(--bg-element); border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm); color: var(--text-primary); outline: none; font-size: 14px;
+            padding: 10px; 
+            background: var(--bg-element); 
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); 
+            color: var(--text-primary); 
+            outline: none; 
+            font-size: 14px;
         }
-        .form-group select:focus, .form-group input[type="text"]:focus { border-color: var(--accent-blue); }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
-        .btn { padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500;
-        cursor: pointer; border: none; }
-        .btn-cancel { background: transparent; color: var(--text-muted);
-        border: 1px solid var(--border-color); }
-        .btn-cancel:hover { background: var(--bg-element); color: var(--text-primary); }
-        .btn-primary { background: var(--accent-blue); color: #fff; }
-        .btn-primary:hover { filter: brightness(1.1); }
+        
+        .form-group select:focus, .form-group input[type="text"]:focus { 
+            border-color: var(--accent-blue); 
+        }
+        
+        .modal-actions { 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 12px; 
+        }
+        
+        .btn { 
+            padding: 8px 16px; 
+            border-radius: var(--radius-sm); 
+            font-size: 13px; 
+            font-weight: 500;
+            cursor: pointer; 
+            border: none; 
+        }
+        
+        .btn-cancel { 
+            background: transparent; 
+            color: var(--text-muted);
+            border: 1px solid var(--border-color); 
+        }
+        
+        .btn-cancel:hover { 
+            background: var(--bg-element); 
+            color: var(--text-primary); 
+        }
+        
+        .btn-primary { 
+            background: var(--accent-blue); 
+            color: var(--bg-base); 
+        }
+        
+        .btn-primary:hover { 
+            filter: brightness(1.1); 
+        }
         
         .checkbox-label {
             display: flex;
@@ -270,7 +352,12 @@
             color: var(--text-primary) !important;
             cursor: pointer;
         }
-        .checkbox-label input { width: 16px; height: 16px; cursor: pointer; }
+        
+        .checkbox-label input { 
+            width: 16px; 
+            height: 16px; 
+            cursor: pointer; 
+        }
     </style>
 </head>
 
@@ -385,11 +472,9 @@
                 urlInput: '',
                 showSettings: false,
                 
-                // Load saved preferences
                 scramjetServer: localStorage.getItem('sb_scramjet_server') || 'wss://wisp.rhw.one/',
-                adBlockEnabled: localStorage.getItem('sb_adblock') === 'true',
+                adBlockEnabled: localStorage.getItem('sb_adblock') !== 'false',
                 
-                // Persistent Bookmarks
                 bookmarks: [
                     { id: 1, name: 'GitHub', url: 'https://github.com' },
                     { id: 2, name: 'Discord', url: 'https://discord.com/app' },
@@ -402,6 +487,9 @@
                 init() {
                     this.addTab(); 
                     this.initProxy();
+                    if (window.themeManager && typeof window.themeManager.init === 'function') {
+                        window.themeManager.init();
+                    }
                 },
 
                 initProxy() {
@@ -423,24 +511,18 @@
                                 window.scramjetObj.init();
                             }
                         }
-                    } catch(e) {
-                        console.warn("Proxy Core initialized error:", e);
-                    }
+                    } catch(e) {}
                 },
 
                 applySettings() {
-                    // Save to local storage
                     localStorage.setItem('sb_scramjet_server', this.scramjetServer);
                     localStorage.setItem('sb_adblock', this.adBlockEnabled);
                     
-                    // Set transport immediately just in case
                     if (window.bareMuxConnection) {
                         window.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
                     }
                     
                     this.showSettings = false;
-                    
-                    // Force a reload so the Service Worker fully resets with the new Wisp WebSocket
                     window.location.reload();
                 },
 
@@ -494,7 +576,6 @@
                         tab.url = targetUrl;
                         this.urlInput = targetUrl;
                         
-                        // Scramjet encoding
                         if (window.scramjetObj) {
                             tab.proxyUrl = window.scramjetObj.encodeUrl(targetUrl);
                         } else {
@@ -506,46 +587,59 @@
                 handleIframeLoad(tabId, event) {
                     const iframe = event.target;
                     
-                    // 1. Sync the Title
                     try {
                         const doc = iframe.contentDocument || iframe.contentWindow.document;
                         const tab = this.tabs.find(t => t.id === tabId);
                         if (tab && doc.title) {
                             tab.title = doc.title;
                         }
-                    } catch(e) {} // Ignore cross-origin issues
+                    } catch(e) {} 
                     
-                    // 2. Inject Ad & Popup Blocker
                     if (this.adBlockEnabled) {
                         try {
                             const win = iframe.contentWindow;
                             const doc = win.document;
                             
-                            // Block window.open popups
-                            win.open = function() {
-                                console.log("Sea Bean Blocked a Popup");
-                                return null;
+                            win.open = function() { return null; };
+                            
+                            const adDomains = ['doubleclick.net', 'googleadservices.com', 'adsafeprotected.com', 'adnxs.com', 'criteo.com', 'taboola.com', 'outbrain.com', 'rubiconproject.com', 'pubmatic.com', 'amazon-adsystem.com', 'yahoo.com/ads', 'adtechus.com', 'openx.net', 'casalemedia.com', 'smartadserver.com', 'advertising.com', 'moatads.com'];
+                            
+                            const originalCreateElement = doc.createElement;
+                            doc.createElement = function(tagName) {
+                                const el = originalCreateElement.call(doc, tagName);
+                                if (tagName.toLowerCase() === 'script') {
+                                    const originalSetAttribute = el.setAttribute;
+                                    el.setAttribute = function(name, value) {
+                                        if (name.toLowerCase() === 'src' && typeof value === 'string' && adDomains.some(domain => value.includes(domain))) {
+                                            value = '';
+                                        }
+                                        originalSetAttribute.call(this, name, value);
+                                    };
+                                }
+                                return el;
                             };
 
-                            // Inject CSS to hide common ad frames/classes
                             const style = doc.createElement('style');
                             style.textContent = `
-                                iframe[src*="doubleclick"], 
-                                iframe[src*="ads"], 
-                                [id*="google_ads"], 
-                                [class*="ad-container"], 
-                                .ad, .ads, .ad-banner {
+                                iframe[src*="doubleclick"], iframe[src*="ads"], 
+                                [id*="google_ads"], [class*="ad-container"], 
+                                .ad, .ads, .ad-banner, .advertisement, 
+                                .ad-slot, .ad-wrapper, [data-ad-client], 
+                                [data-ad-slot], [id^="div-gpt-ad"], 
+                                ins.adsbygoogle {
                                     display: none !important;
                                     pointer-events: none !important;
                                     height: 0 !important;
                                     width: 0 !important;
+                                    opacity: 0 !important;
+                                    visibility: hidden !important;
+                                    position: absolute !important;
+                                    top: -9999px !important;
+                                    left: -9999px !important;
                                 }
                             `;
                             doc.head.appendChild(style);
-                        } catch (err) {
-                            // If cross-origin restrictions apply, we can't inject.
-                            // Scramjet normally proxies everything as same-origin, so this should usually work.
-                        }
+                        } catch (err) {}
                     }
                 },
 
