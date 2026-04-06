@@ -4,12 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sea Bean</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com">
+    
     <link rel="icon" type="image/jpeg" href="mathpunch.jpeg" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     
     <script src="theme.js"></script>
     <script src="/sail/baremux/index.js"></script>
     <script src="/sail/scram/scramjet.all.js"></script>
+    
+    <script type="module" src="shader-client.js"></script>
+    <script type="module" src="shader-canvas.js"></script>
+    
     <script>
         navigator.serviceWorker.register("/sail/sw.js").catch(err => console.warn(err));
     </script>
@@ -63,6 +72,7 @@
             align-items: center;
             gap: 8px;
             overflow-x: auto;
+            flex: 1;
         }
         
         .tabs-container::-webkit-scrollbar { 
@@ -233,6 +243,21 @@
             border: none;
             background: #fff;
         }
+        
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #canvas-container iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
 
         .new-tab-ui {
             position: absolute;
@@ -272,7 +297,7 @@
             background: var(--bg-panel);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md); 
-            width: 400px; 
+            width: 450px; 
             padding: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
@@ -358,6 +383,28 @@
             height: 16px; 
             cursor: pointer; 
         }
+
+        /* Status Dot Indicator */
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .status-dot.checking { 
+            background-color: #fbbf24; 
+            box-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+        }
+        .status-dot.online { 
+            background-color: #22c55e; 
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+        }
+        .status-dot.offline { 
+            background-color: #ef4444; 
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+        }
     </style>
 </head>
 
@@ -399,70 +446,86 @@
         <button class="icon-btn" @click="sharePage()" title="Share">
             <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
         </button>
+
         <button class="icon-btn" @click="showSettings = true" title="Settings">
-            <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
-        </button>
-        <button class="icon-btn" @click="bookmarkCurrent()" title="Bookmark">
-             <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
         </button>
     </div>
 
     <div class="bookmark-bar">
-        <template x-for="bm in bookmarks" :key="bm.id">
-            <div class="bookmark-item" @click="navigate(bm.url)" :title="bm.url">
-                <img :src="bm.icon || `https://www.google.com/s2/favicons?domain=${bm.url}&sz=32`" onerror="this.onerror=null;this.src='mathpunch.jpeg'">
-                <span x-text="bm.name"></span>
+        <template x-for="bookmark in bookmarks" :key="bookmark.id">
+            <div class="bookmark-item" @click="urlInput = bookmark.url; submitUrl()">
+                <img :src="'https://www.google.com/s2/favicons?domain=' + bookmark.url" @error="$event.target.src='mathpunch.jpeg'" alt="" />
+                <span x-text="bookmark.name"></span>
             </div>
         </template>
+        <div class="bookmark-item" @click="bookmarkCurrent()" style="color: var(--accent-blue);">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            <span>Add Current</span>
+        </div>
     </div>
 
     <div class="main-content">
-        <div class="new-tab-ui" x-show="showNewTabUI">
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <div class="clock-container">
-                    <span class="clock-time">sea bean</span>
-                </div>
+        <div class="new-tab-ui" x-show="isNewTab">
+            <div class="clock-container">
+                <div class="clock-time" x-text="currentTime"></div>
             </div>
         </div>
 
-        <template x-for="tab in tabs" :key="tab.id">
-            <iframe 
-                class="browser-frame" 
-                x-show="tab.id === activeTabId && tab.url !== ''" 
-                :src="tab.proxyUrl" 
-                @load="handleIframeLoad(tab.id, $event)">
-            </iframe>
+        <template x-if="engine === 'scramjet'">
+            <template x-for="tab in tabs" :key="tab.id">
+                <iframe 
+                    class="browser-frame"
+                    x-show="activeTabId === tab.id && !isNewTab"
+                    :src="tab.url ? '/sail/scram/service/' + encodeURIComponent(tab.url) : 'about:blank'"
+                    :id="'frame-' + tab.id"
+                ></iframe>
+            </template>
+        </template>
+        
+        <template x-if="engine === 'shaders'">
+            <div id="canvas-container" x-show="!isNewTab"></div>
         </template>
     </div>
-    
+
     <div class="modal-overlay" x-show="showSettings" style="display: none;" @click="showSettings = false">
         <div class="modal" @click.stop>
-            <h2>Browser Settings</h2>
+            <h2>Settings</h2>
             
             <div class="form-group">
-                <label>Scramjet Wisp Server</label>
-                <select x-model="scramjetServer">
-                    <option value="wss://wisp.rhw.one/">Splash (Default)</option>
-                    <option value="wss://portable.splash.best/wisp/">Portable Splash Wisp</option>
-                    <option value="wss://technonyte-loves-x8r.installgentoo.com/wisp/">FortiGuard / Lightspeed Bypass</option>
-                    <option value="wss://v5-soon-plz-2764827364186354128.govt.hu/wisp/">Palo Alto / Blocksi Bypass</option>
-                    <option value="wss://medicine.monedita.cl/wisp/">Linewize  / Cisco Umbrella  Bypass</option>
-                    <option value="wss://clever.com.axsetubal.pt/wisp/">  Securly  / GoGuardian  Bypass</option>
-                    <option value="wss://medicine.monedita.cl/wisp/">LanSchool  / ContentKeeper   Bypass</option>
-                    <option value="wss://medicine.monedita.cl/wisp/">iBoss   / Sophos / Qustodio  / DNSFilter    Bypass</option>
+                <label>Browser Engine</label>
+                <select x-model="engine" @change="switchEngine()">
+                    <option value="scramjet">Scramjet (Default Proxy)</option>
+                    <option value="shaders">Shaders (Canvas Rendering)</option>
                 </select>
             </div>
 
             <div class="form-group">
+                <label>Scramjet Wisp Server Status</label>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <select x-model="scramjetServer" @change="checkServerStatus(scramjetServer)" style="flex: 1;">
+                        <option value="wss://wisp.rhw.one/">Splash (Default)</option>
+                        <option value="wss://portable.splash.best/wisp/">Portable Splash Wisp</option>
+                        <option value="wss://technonyte-loves-x8r.installgentoo.com/wisp/">FortiGuard / Lightspeed Bypass</option>
+                        <option value="wss://v5-soon-plz-2764827364186354128.govt.hu/wisp/">Palo Alto / Blocksi Bypass</option>
+                        <option value="wss://medicine.monedita.cl/wisp/">Linewize / Cisco Umbrella Bypass</option>
+                        <option value="wss://clever.com.axsetubal.pt/wisp/">Securly / GoGuardian Bypass</option>
+                        <option value="wss://medicine.monedita.cl/wisp/">LanSchool / ContentKeeper Bypass</option>
+                        <option value="wss://medicine.monedita.cl/wisp/">iBoss / Sophos / Qustodio Bypass</option>
+                    </select>
+                    <span class="status-dot" :class="serverStatus" :title="'Server is ' + serverStatus"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label class="checkbox-label">
-                    <input type="checkbox" x-model="adBlockEnabled">
-                    Enable Ad & Popup Blocker
+                    <input type="checkbox" x-model="adBlockEnabled" />
+                    Enable AdBlocker
                 </label>
             </div>
-            
+
             <div class="modal-actions">
-                <button class="btn btn-cancel" @click="showSettings = false">Cancel</button>
-                <button class="btn btn-primary" @click="applySettings()">Apply & Reload</button>
+                <button class="btn btn-primary" @click="saveSettings()">Done</button>
             </div>
         </div>
     </div>
@@ -474,184 +537,178 @@
                 activeTabId: null,
                 urlInput: '',
                 showSettings: false,
-                
+                currentTime: '',
+                engine: localStorage.getItem('sb_engine') || 'scramjet',
                 scramjetServer: localStorage.getItem('sb_scramjet_server') || 'wss://wisp.rhw.one/',
                 adBlockEnabled: localStorage.getItem('sb_adblock') !== 'false',
-                
-                bookmarks: [
-                    { id: 1, name: 'GitHub', url: 'https://github.com' },
-                    { id: 2, name: 'Discord', url: 'https://discord.com/app' },
-                    { id: 3, name: 'YouTube', url: 'https://youtube.com' }
+                serverStatus: 'checking',
+                canvas: null,
+                bookmarks: JSON.parse(localStorage.getItem('sb_bookmarks')) || [
+                    { id: 1, name: 'Google', url: 'https://google.com' },
+                    { id: 2, name: 'Discord', url: 'https://discord.com/app' }
                 ],
 
-                get activeTab() { return this.tabs.find(t => t.id === this.activeTabId); },
-                get showNewTabUI() { return !this.activeTab || this.activeTab.url === ''; },
+                get activeTab() {
+                    return this.tabs.find(t => t.id === this.activeTabId);
+                },
 
-                init() {
+                get isNewTab() {
+                    return !this.activeTab || !this.activeTab.url;
+                },
+
+                async init() {
+                    this.updateTime();
+                    setInterval(() => this.updateTime(), 1000);
+                    
                     this.addTab(); 
-                    this.initProxy();
+                    
+                    this.checkServerStatus(this.scramjetServer);
+                    this.$watch('scramjetServer', value => this.checkServerStatus(value));
+                    
+                    if(this.engine === 'shaders') {
+                        this.initShaders();
+                    } else {
+                        this.initProxy();
+                    }
+
                     if (window.themeManager && typeof window.themeManager.init === 'function') {
                         window.themeManager.init();
                     }
                 },
 
-                initProxy() {
-                    try {
-                        if (window.BareMux) {
-                            window.bareMuxConnection = new BareMux.BareMuxConnection("/sail/baremux/worker.js");
-                            window.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
-                            
-                            if (typeof $scramjetLoadController !== 'undefined') {
-                                const { ScramjetController } = $scramjetLoadController();
-                                window.scramjetObj = new ScramjetController({
-                                    files: {
-                                        all: "/sail/scram/scramjet.all.js",
-                                        wasm: "/sail/scram/scramjet.wasm.wasm",
-                                        sync: "/sail/scram/scramjet.sync.js"
-                                    },
-                                    prefix: "/sail/go/" 
-                                });
-                                window.scramjetObj.init();
-                            }
-                        }
-                    } catch(e) {}
+                updateTime() {
+                    const now = new Date();
+                    let hours = now.getHours();
+                    let minutes = now.getMinutes();
+                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes < 10 ? '0' + minutes : minutes;
+                    this.currentTime = hours + ':' + minutes;
                 },
 
-                applySettings() {
-                    localStorage.setItem('sb_scramjet_server', this.scramjetServer);
-                    localStorage.setItem('sb_adblock', this.adBlockEnabled);
-                    
-                    if (window.bareMuxConnection) {
-                        window.bareMuxConnection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
+                initProxy() {
+                    try {
+                        const connection = new BareMux.BareMuxConnection("/sail/baremux/worker.js");
+                        connection.setTransport("/sail/scram/scramjet.transport.js", [{ wisp: this.scramjetServer }]);
+                        
+                        if (window.__scramjet$) {
+                            window.__scramjet$.config.adblock = this.adBlockEnabled;
+                        }
+                    } catch (e) {
+                        console.error("Proxy init error", e);
                     }
-                    
-                    this.showSettings = false;
-                    window.location.reload();
+                },
+
+                async initShaders() {
+                    try {
+                        const [canvasModule, clientModule] = await Promise.all([
+                            import('./shader-canvas.js'),
+                            import('./shader-client.js'),
+                        ]);
+                        this.canvas = new canvasModule.ShaderCanvas('canvas-container');
+                        this.canvas.on(canvasModule.ShaderCanvas.EVENTS.SURFACE_CHANGE, (s) => {
+                            this.activeTabId = s ? s.id : null;
+                            if (s && s.client) {
+                                const url = s.client.decode(s.client._lastUrl || '');
+                                this.urlInput = url === 'about:blank' ? '' : url;
+                                if(this.activeTab) this.activeTab.url = url;
+                            }
+                        });
+                        this.canvas.on(canvasModule.ShaderCanvas.EVENTS.URL_CHANGE, () => {});
+                    } catch (e) {
+                        console.error("Shaders init error", e);
+                    }
+                },
+
+                switchEngine() {
+                    localStorage.setItem('sb_engine', this.engine);
+                    location.reload();
+                },
+
+                checkServerStatus(url) {
+                    this.serverStatus = 'checking';
+                    try {
+                        const ws = new WebSocket(url);
+                        
+                        const timeout = setTimeout(() => {
+                            if (ws.readyState !== WebSocket.OPEN) {
+                                ws.close();
+                                this.serverStatus = 'offline';
+                            }
+                        }, 2500);
+
+                        ws.onopen = () => {
+                            clearTimeout(timeout);
+                            this.serverStatus = 'online';
+                            ws.close();
+                        };
+                        
+                        ws.onerror = () => {
+                            clearTimeout(timeout);
+                            this.serverStatus = 'offline';
+                        };
+                    } catch (e) {
+                        this.serverStatus = 'offline';
+                    }
                 },
 
                 addTab() {
                     const id = Date.now();
-                    this.tabs.push({
-                        id: id,
-                        title: 'New Tab',
-                        url: '',
-                        proxyUrl: ''
-                    });
-                    this.activateTab(id);
+                    this.tabs.push({ id, title: 'New Tab', url: '' });
+                    this.activeTabId = id;
+                    this.urlInput = '';
                 },
 
                 closeTab(id) {
-                    const index = this.tabs.findIndex(t => t.id === id);
                     this.tabs = this.tabs.filter(t => t.id !== id);
-                    
                     if (this.tabs.length === 0) {
                         this.addTab();
                     } else if (this.activeTabId === id) {
-                        const nextTab = this.tabs[index] || this.tabs[index - 1];
-                        if (nextTab) this.activateTab(nextTab.id);
+                        this.activeTabId = this.tabs[this.tabs.length - 1].id;
+                        this.urlInput = this.activeTab.url;
                     }
                 },
 
                 activateTab(id) {
                     this.activeTabId = id;
-                    const tab = this.activeTab;
-                    if (tab) {
-                        this.urlInput = tab.url;
-                    }
+                    this.urlInput = this.activeTab.url;
                 },
 
                 submitUrl() {
-                    if (this.urlInput) {
-                        this.navigate(this.urlInput);
-                    }
-                },
-
-                navigate(url) {
-                    let targetUrl = url.trim();
-                    if (!targetUrl.includes(".") && !targetUrl.startsWith("http")) {
-                        targetUrl = "https://search.brave.com/search?q=" + encodeURIComponent(targetUrl);
-                    } else if (!targetUrl.startsWith("http")) {
-                        targetUrl = "https://" + targetUrl;
-                    }
-
-                    const tab = this.activeTab;
-                    if (tab) {
-                        tab.url = targetUrl;
-                        this.urlInput = targetUrl;
-                        
-                        if (window.scramjetObj) {
-                            tab.proxyUrl = window.scramjetObj.encodeUrl(targetUrl);
+                    let url = this.urlInput.trim();
+                    if (!url) return;
+                    
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                        if (url.includes('.') && !url.includes(' ')) {
+                            url = 'https://' + url;
                         } else {
-                            tab.proxyUrl = "/sail/go/" + btoa(targetUrl);
+                            url = 'https://www.google.com/search?q=' + encodeURIComponent(url);
+                        }
+                    }
+                    
+                    this.urlInput = url;
+                    
+                    if (this.activeTab) {
+                        this.activeTab.url = url;
+                        this.activeTab.title = new URL(url).hostname;
+                        
+                        if (this.engine === 'shaders' && this.canvas) {
+                            this.canvas.createSurface(url);
                         }
                     }
                 },
 
-                handleIframeLoad(tabId, event) {
-                    const iframe = event.target;
-                    
-                    try {
-                        const doc = iframe.contentDocument || iframe.contentWindow.document;
-                        const tab = this.tabs.find(t => t.id === tabId);
-                        if (tab && doc.title) {
-                            tab.title = doc.title;
-                        }
-                    } catch(e) {} 
-                    
-                    if (this.adBlockEnabled) {
-                        try {
-                            const win = iframe.contentWindow;
-                            const doc = win.document;
-                            
-                            win.open = function() { return null; };
-                            
-                            const adDomains = ['doubleclick.net', 'googleadservices.com', 'adsafeprotected.com', 'adnxs.com', 'criteo.com', 'taboola.com', 'outbrain.com', 'rubiconproject.com', 'pubmatic.com', 'amazon-adsystem.com', 'yahoo.com/ads', 'adtechus.com', 'openx.net', 'casalemedia.com', 'smartadserver.com', 'advertising.com', 'moatads.com'];
-                            
-                            const originalCreateElement = doc.createElement;
-                            doc.createElement = function(tagName) {
-                                const el = originalCreateElement.call(doc, tagName);
-                                if (tagName.toLowerCase() === 'script') {
-                                    const originalSetAttribute = el.setAttribute;
-                                    el.setAttribute = function(name, value) {
-                                        if (name.toLowerCase() === 'src' && typeof value === 'string' && adDomains.some(domain => value.includes(domain))) {
-                                            value = '';
-                                        }
-                                        originalSetAttribute.call(this, name, value);
-                                    };
-                                }
-                                return el;
-                            };
-
-                            const style = doc.createElement('style');
-                            style.textContent = `
-                                iframe[src*="doubleclick"], iframe[src*="ads"], 
-                                [id*="google_ads"], [class*="ad-container"], 
-                                .ad, .ads, .ad-banner, .advertisement, 
-                                .ad-slot, .ad-wrapper, [data-ad-client], 
-                                [data-ad-slot], [id^="div-gpt-ad"], 
-                                ins.adsbygoogle {
-                                    display: none !important;
-                                    pointer-events: none !important;
-                                    height: 0 !important;
-                                    width: 0 !important;
-                                    opacity: 0 !important;
-                                    visibility: hidden !important;
-                                    position: absolute !important;
-                                    top: -9999px !important;
-                                    left: -9999px !important;
-                                }
-                            `;
-                            doc.head.appendChild(style);
-                        } catch (err) {}
-                    }
+                saveSettings() {
+                    localStorage.setItem('sb_scramjet_server', this.scramjetServer);
+                    localStorage.setItem('sb_adblock', this.adBlockEnabled);
+                    this.initProxy();
+                    this.showSettings = false;
                 },
 
                 getActiveIframe() {
-                    const iframes = document.querySelectorAll('.browser-frame');
-                    for (let f of iframes) {
-                        if (f.style.display !== 'none') return f;
-                    }
-                    return null;
+                    if (this.engine !== 'scramjet') return null;
+                    return document.getElementById('frame-' + this.activeTabId);
                 },
 
                 goBack() {
@@ -687,8 +744,10 @@
                                 name: this.activeTab.title || 'Saved Page',
                                 url: this.urlInput
                             });
+                            localStorage.setItem('sb_bookmarks', JSON.stringify(this.bookmarks));
                         } else {
                             this.bookmarks = this.bookmarks.filter(b => b.url !== this.urlInput);
+                            localStorage.setItem('sb_bookmarks', JSON.stringify(this.bookmarks));
                         }
                     }
                 }
