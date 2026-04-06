@@ -130,6 +130,23 @@
             background: rgba(255,255,255,0.1);
         }
 
+        .loader {
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-right: 2px solid currentColor;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .icon-btn {
             background: var(--bg-element);
             border: 1px solid var(--border-color);
@@ -245,6 +262,7 @@
             height: 100%;
             border: none;
             background: #fff;
+            display: block;
         }
         
         #canvas-container {
@@ -416,7 +434,12 @@
         <div class="tabs-container">
             <template x-for="tab in tabs" :key="tab.id">
                 <div class="tab" :class="{ 'active': activeTabId === tab.id }" @click="activateTab(tab.id)">
-                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    <template x-if="tab.isLoading">
+                        <div class="loader"></div>
+                    </template>
+                    <template x-if="!tab.isLoading">
+                        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    </template>
                     <span class="tab-title" x-text="tab.title || 'New Tab'"></span>
                     <span class="tab-close" @click.stop="closeTab(tab.id)">×</span>
                 </div>
@@ -481,6 +504,7 @@
                     x-show="activeTabId === tab.id"
                     :src="tab.url ? getEncodedProxyUrl(tab.url) : 'about:blank'"
                     :id="'frame-' + tab.id"
+                    @load="handleIframeLoad(tab.id)"
                 ></iframe>
             </template>
         </div>
@@ -590,7 +614,7 @@
                 },
 
                 syncUrl() {
-                    if (this.engine === 'scramjet' && this.activeTab && this.activeTab.url) {
+                    if (this.engine === 'scramjet' && this.activeTab && this.activeTab.url && !this.activeTab.isLoading) {
                         const frame = this.getActiveIframe();
                         if (frame && frame.contentWindow) {
                             try {
@@ -613,7 +637,9 @@
                                     if (decoded && !decoded.startsWith('about:')) {
                                         try {
                                             const newTitle = frame.contentDocument.title;
-                                            if (newTitle) this.activeTab.title = newTitle;
+                                            if (newTitle && newTitle !== this.activeTab.url) {
+                                                this.activeTab.title = newTitle;
+                                            }
                                         } catch(e) {}
 
                                         if (decoded !== this.activeTab.url) {
@@ -659,6 +685,7 @@
                                     const finalUrl = url === 'about:blank' ? '' : url;
                                     if(this.activeTab && finalUrl) {
                                         this.activeTab.url = finalUrl;
+                                        this.activeTab.isLoading = false;
                                         const inputEl = document.getElementById('main-url-input');
                                         if (document.activeElement !== inputEl) this.urlInput = finalUrl;
                                     }
@@ -670,6 +697,7 @@
                                     const decoded = this.canvas.client.decode(url);
                                     if(decoded && !decoded.startsWith('about:')) {
                                         this.activeTab.url = decoded;
+                                        this.activeTab.isLoading = false;
                                         const inputEl = document.getElementById('main-url-input');
                                         if (document.activeElement !== inputEl) this.urlInput = decoded;
                                     }
@@ -729,7 +757,7 @@
 
                 addTab() {
                     const id = Date.now();
-                    this.tabs.push({ id, title: 'New Tab', url: '' });
+                    this.tabs.push({ id, title: 'New Tab', url: '', isLoading: false });
                     this.activeTabId = id;
                     this.urlInput = '';
                 },
@@ -746,7 +774,15 @@
 
                 activateTab(id) {
                     this.activeTabId = id;
-                    this.urlInput = this.activeTab.url;
+                    this.urlInput = this.activeTab ? this.activeTab.url : '';
+                },
+
+                handleIframeLoad(id) {
+                    const tab = this.tabs.find(t => t.id === id);
+                    if (tab) {
+                        tab.isLoading = false;
+                    }
+                    this.syncUrl();
                 },
 
                 submitUrl() {
@@ -765,14 +801,21 @@
                     
                     if (this.activeTab) {
                         this.activeTab.url = url;
+                        this.activeTab.isLoading = true;
+                        
                         try {
                             this.activeTab.title = new URL(url).hostname;
                         } catch(e) {
-                            this.activeTab.title = 'Web Page';
+                            this.activeTab.title = 'Loading...';
                         }
                         
                         if (this.engine === 'shaders' && this.canvas) {
                             this.canvas.createSurface(url);
+                            setTimeout(() => {
+                                if (this.activeTab && this.activeTab.url === url) {
+                                    this.activeTab.isLoading = false;
+                                }
+                            }, 1500); 
                         }
                     }
                 },
@@ -790,19 +833,24 @@
                 },
 
                 goBack() {
+                    if (this.activeTab) this.activeTab.isLoading = true;
                     const frame = this.getActiveIframe();
                     if (frame && frame.contentWindow) { try { frame.contentWindow.history.back(); } catch(e){} }
                 },
 
                 goForward() {
+                    if (this.activeTab) this.activeTab.isLoading = true;
                     const frame = this.getActiveIframe();
                     if (frame && frame.contentWindow) { try { frame.contentWindow.history.forward(); } catch(e){} }
                 },
 
                 reloadTab() {
+                    if (this.activeTab) this.activeTab.isLoading = true;
                     const frame = this.getActiveIframe();
                     if (frame) {
                         try { frame.contentWindow.location.reload(); } catch(e) { frame.src = frame.src; }
+                    } else if (this.engine === 'shaders' && this.activeTab && this.activeTab.url && this.canvas) {
+                        this.canvas.createSurface(this.activeTab.url);
                     }
                 },
 
@@ -819,7 +867,7 @@
                         if (!exists) {
                             let newTitle = this.activeTab.title || 'Saved Page';
                             try {
-                                if(newTitle === 'Saved Page') newTitle = new URL(this.urlInput).hostname;
+                                if(newTitle === 'Saved Page' || newTitle === 'Loading...') newTitle = new URL(this.urlInput).hostname;
                             } catch(e){}
                             
                             this.bookmarks = [...this.bookmarks, {
