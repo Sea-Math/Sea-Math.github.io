@@ -6,7 +6,25 @@ document.addEventListener('DOMContentLoaded', () => {
         green: { name: 'Forest Green', accent: '#00ff88', dark: '#00aa55', bgDeep: '#001408', bgLight: '#003617', sidebarBg: 'rgba(0, 20, 8, 0.85)', textMuted: '#67a886' },
         orange: { name: 'Sunset Orange', accent: '#ff9900', dark: '#cc5500', bgDeep: '#1a0800', bgLight: '#3d1400', sidebarBg: 'rgba(26, 8, 0, 0.85)', textMuted: '#ba8c6c' },
         pink: { name: 'Sakura Pink', accent: '#ff99cc', dark: '#cc0066', bgDeep: '#1a000d', bgLight: '#4d0026', sidebarBg: 'rgba(26, 0, 13, 0.85)', textMuted: '#c989a9' },
-        dark: { name: 'Midnight Dark', accent: '#aaaaaa', dark: '#555555', bgDeep: '#050505', bgLight: '#1a1a1a', sidebarBg: 'rgba(5, 5, 5, 0.85)', textMuted: '#888888' }
+        dark: { name: 'Midnight Dark', accent: '#aaaaaa', dark: '#555555', bgDeep: '#050505', bgLight: '#1a1a1a', sidebarBg: 'rgba(5, 5, 5, 0.85)', textMuted: '#888888' },
+        { 
+  name: 'Midnight Lemon', 
+  accent: '#FDE047',      // Vibrant lemon yellow
+  dark: '#CA8A04',        // Deeper golden-yellow for contrast elements
+  bgDeep: '#050505',      // Keeps the original deep black
+  bgLight: '#1a1a17',     // Slightly warm dark gray
+  sidebarBg: 'rgba(5, 5, 5, 0.85)', 
+  textMuted: '#8a8a82'    // Muted gray with a subtle warm undertone
+},
+    { 
+  name: 'AMOLED Dark', 
+  accent: '#aaaaaa',      // Keeps your original gray accent
+  dark: '#555555',        // Keeps original dark accent
+  bgDeep: '#000000',      // Pure pitch black
+  bgLight: '#111111',     // Darkened light background for better blending
+  sidebarBg: 'rgba(0, 0, 0, 0.85)', // Pure black with transparency
+  textMuted: '#777777'    // Slightly darker muted text to match the deeper blacks
+}
     };
 
     const themeGridContainer = document.getElementById('themeGridContainer');
