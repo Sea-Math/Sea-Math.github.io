@@ -752,7 +752,7 @@
                     let encoded = encodeURIComponent(
                         url.split('').map((char, ind) => ind % 2 ? String.fromCharCode(char.charCodeAt(0) ^ 2) : char).join('')
                     );
-                    return '/sail/scram/service/' + encoded;
+                    return '/sail/go/' + encoded;
                 },
 
                 addTab() {
