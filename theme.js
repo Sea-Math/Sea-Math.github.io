@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pink: { name: 'Sakura Pink', accent: '#ff99cc', dark: '#cc0066', bgDeep: '#1a000d', bgLight: '#4d0026', sidebarBg: 'rgba(26, 0, 13, 0.85)', textMuted: '#c989a9' },
         dark: { name: 'Midnight Dark', accent: '#aaaaaa', dark: '#555555', bgDeep: '#050505', bgLight: '#1a1a1a', sidebarBg: 'rgba(5, 5, 5, 0.85)', textMuted: '#888888' },
         yellow: { name: 'Midnight Lemon', accent: '#FDE047', dark: '#CA8A04', bgDeep: '#050505', bgLight: '#1a1a17', sidebarBg: 'rgba(5, 5, 5, 0.85)', textMuted: '#8a8a82' },
-        maybe white: { name: 'AMOLED Dark', accent: '#aaaaaa', dark: '#555555', bgDeep: '#000000', bgLight: '#111111', sidebarBg: 'rgba(0, 0, 0, 0.85)', textMuted: '#777777' }
+        maybe: { name: 'AMOLED Dark', accent: '#aaaaaa', dark: '#555555', bgDeep: '#000000', bgLight: '#111111', sidebarBg: 'rgba(0, 0, 0, 0.85)', textMuted: '#777777' }
 
     };
 
