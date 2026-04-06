@@ -567,6 +567,7 @@
                 adBlockEnabled: localStorage.getItem('sb_adblock') !== 'false',
                 serverStatus: 'checking',
                 canvas: null,
+                scramjetInstance: null,
                 bookmarks: JSON.parse(localStorage.getItem('sb_bookmarks')) || [
                     { id: 1, name: 'Google', url: 'https://google.com' },
                     { id: 2, name: 'Discord', url: 'https://discord.com/app' }
@@ -621,35 +622,26 @@
                                 const winLoc = frame.contentWindow.location;
                                 if (winLoc.pathname === 'blank' || winLoc.href === 'about:blank') return;
                                 
-                                const prefix = (window.__scramjet$ && window.__scramjet$.config && window.__scramjet$.config.prefix) || '/sail/scram/service/';
-                                const path = winLoc.pathname + winLoc.search + winLoc.hash;
+                                let decoded = '';
+                                if (this.scramjetInstance && typeof this.scramjetInstance.decodeUrl === 'function') {
+                                    decoded = this.scramjetInstance.decodeUrl(winLoc.href);
+                                }
                                 
-                                if (path.startsWith(prefix)) {
-                                    let encoded = path.substring(prefix.length);
-                                    let decoded = '';
-                                    
-                                    if (window.__scramjet$ && typeof window.__scramjet$.codec.decode === 'function') {
-                                        decoded = window.__scramjet$.codec.decode(encoded);
-                                    } else {
-                                        decoded = decodeURIComponent(encoded).split('').map((char, ind) => ind % 2 ? String.fromCharCode(char.charCodeAt(0) ^ 2) : char).join('');
+                                if (decoded && decoded !== winLoc.href && !decoded.startsWith('about:')) {
+                                    try {
+                                        const newTitle = frame.contentDocument.title;
+                                        if (newTitle && newTitle !== this.activeTab.url) {
+                                            this.activeTab.title = newTitle;
+                                        }
+                                    } catch(e) {}
+
+                                    if (decoded !== this.activeTab.url) {
+                                        this.activeTab.url = decoded;
                                     }
-                                    
-                                    if (decoded && !decoded.startsWith('about:')) {
-                                        try {
-                                            const newTitle = frame.contentDocument.title;
-                                            if (newTitle && newTitle !== this.activeTab.url) {
-                                                this.activeTab.title = newTitle;
-                                            }
-                                        } catch(e) {}
 
-                                        if (decoded !== this.activeTab.url) {
-                                            this.activeTab.url = decoded;
-                                        }
-
-                                        const inputEl = document.getElementById('main-url-input');
-                                        if (this.activeTabId === this.activeTab.id && document.activeElement !== inputEl) {
-                                            this.urlInput = decoded;
-                                        }
+                                    const inputEl = document.getElementById('main-url-input');
+                                    if (this.activeTabId === this.activeTab.id && document.activeElement !== inputEl) {
+                                        this.urlInput = decoded;
                                     }
                                 }
                             } catch(e) {}
@@ -660,11 +652,19 @@
                 initProxy() {
                     try {
                         const connection = new BareMux.BareMuxConnection("/sail/baremux/worker.js");
-                        connection.setTransport("/sail/scram/scramjet.transport.js", [{ wisp: this.scramjetServer }]);
+                        connection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
                         
-                        if (window.__scramjet$) {
-                            window.__scramjet$.config.adblock = this.adBlockEnabled;
-                        }
+                        const { ScramjetController } = $scramjetLoadController();
+                        this.scramjetInstance = new ScramjetController({
+                            files: {
+                                all: "/sail/scram/scramjet.all.js",
+                                wasm: "/sail/scram/scramjet.wasm.wasm",
+                                sync: "/sail/scram/scramjet.sync.js"
+                            },
+                            prefix: "/sail/go/"
+                        });
+                        this.scramjetInstance.init();
+
                     } catch (e) {
                         console.error("Proxy init error", e);
                     }
@@ -744,15 +744,12 @@
                     if (!url) return 'about:blank';
                     
                     try {
-                        if (window.__scramjet$ && typeof window.__scramjet$.codec.encode === 'function') {
-                            return window.__scramjet$.config.prefix + window.__scramjet$.codec.encode(url);
+                        if (this.scramjetInstance) {
+                            return this.scramjetInstance.encodeUrl(url);
                         }
                     } catch(e) { }
 
-                    let encoded = encodeURIComponent(
-                        url.split('').map((char, ind) => ind % 2 ? String.fromCharCode(char.charCodeAt(0) ^ 2) : char).join('')
-                    );
-                    return '/sail/go/' + encoded;
+                    return 'about:blank';
                 },
 
                 addTab() {
@@ -789,12 +786,10 @@
                     let url = this.urlInput.trim();
                     if (!url) return;
                     
-                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                        if (url.includes('.') && !url.includes(' ')) {
-                            url = 'https://' + url;
-                        } else {
-                            url = 'https://search.brave.com/search?q=' + encodeURIComponent(url);
-                        }
+                    if (!url.includes('.')) {
+                        url = "https://search.brave.com/search?q=" + encodeURIComponent(url);
+                    } else if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        url = "https://" + url;
                     }
                     
                     this.urlInput = url;
