@@ -2,728 +2,728 @@
   "games": [
     {
       "name": "1",
-      "url": "https://1kh0.github.io/projects/1/index.html",
-      "thumbnail": "projects/1/meta/apple-touch-icon.png"
+      "url": "{HTML_URL}/projects/1/index.html",
+      "cover":"{COVER_URL}/project/1/meta/apple-touch-icon.png"
     },
     {
       "name": "1v1.space",
-      "url": "https://1kh0.github.io/projects/1v1space/index.html",
-      "thumbnail": "projects/1v1space/splash.png"
+      "url": "{HTML_URL}/projects/1v1space/index.html",
+      "cover":"{COVER_URL}/project/1v1space/splash.png"
     },
     {
       "name": "2048",
-      "url": "https://1kh0.github.io/projects/2048/index.html",
-      "thumbnail": "projects/2048/thumb.png"
+      "url": "{HTML_URL}/projects/2048/index.html",
+      "cover":"{COVER_URL}/project/2048/thumb.png"
     },
     {
       "name": "9007199254740992",
-      "url": "https://1kh0.github.io/projects/9007199254740992/index.html",
-      "thumbnail": "projects/9007199254740992/logo-4.png"
+      "url": "{HTML_URL}/projects/9007199254740992/index.html",
+      "cover":"{COVER_URL}/project/9007199254740992/logo-4.png"
     },
     {
       "name": "Achievement Unlocked",
-      "url": "https://1kh0.github.io/projects/achievementunlocked/index.html",
-      "thumbnail": "projects/achievementunlocked/achievementunlocked.png"
+      "url": "{HTML_URL}/projects/achievementunlocked/index.html",
+      "cover":"{COVER_URL}/project/achievementunlocked/achievementunlocked.png"
     },
     {
       "name": "Adrenaline Challenge",
-      "url": "https://1kh0.github.io/projects/adrenalinechallenge/index.html",
-      "thumbnail": "projects/adrenalinechallenge/adrenalinechallenge.jpg"
+      "url": "{HTML_URL}/projects/adrenalinechallenge/index.html",
+      "cover":"{COVER_URL}/project/adrenalinechallenge/adrenalinechallenge.jpg"
     },
     {
       "name": "Among Us",
-      "url": "https://1kh0.github.io/projects/among-us/index.html",
-      "thumbnail": "projects/among-us/red.png"
+      "url": "{HTML_URL}/projects/among-us/index.html",
+      "cover":"{COVER_URL}/project/among-us/red.png"
     },
     {
       "name": "Avalanche",
-      "url": "https://1kh0.github.io/projects/avalanche/index.html",
-      "thumbnail": "projects/avalanche/avalanche.png"
+      "url": "{HTML_URL}/projects/avalanche/index.html",
+      "cover":"{COVER_URL}/project/avalanche/avalanche.png"
     },
     {
       "name": "Backrooms",
-      "url": "https://1kh0.github.io/projects/backrooms/index.html",
-      "thumbnail": "projects/backrooms/img/splash.jpg"
+      "url": "{HTML_URL}/projects/backrooms/index.html",
+      "cover":"{COVER_URL}/project/backrooms/img/splash.jpg"
     },
     {
       "name": "Basketball Stars",
-      "url": "https://1kh0.github.io/projects/basketball-stars/index.html",
-      "thumbnail": "projects/basketball-stars/assets/images/basketball-stars.png"
+      "url": "{HTML_URL}/projects/basketball-stars/index.html",
+      "cover":"{COVER_URL}/project/basketball-stars/assets/images/basketball-stars.png"
     },
     {
       "name": "Battle for Gondor",
-      "url": "https://1kh0.github.io/projects/battleforgondor/index.html",
-      "thumbnail": "projects/battleforgondor/3557.jpg"
+      "url": "{HTML_URL}/projects/battleforgondor/index.html",
+      "cover":"{COVER_URL}/project/battleforgondor/3557.jpg"
     },
     {
       "name": "Big Red Button",
-      "url": "https://1kh0.github.io/projects/bigredbutton/index.html",
-      "thumbnail": "projects/bigredbutton/bigredbutton.png"
+      "url": "{HTML_URL}/projects/bigredbutton/index.html",
+      "cover":"{COVER_URL}/project/bigredbutton/bigredbutton.png"
     },
     {
       "name": "Big Tower Tiny Square",
-      "url": "https://1kh0.github.io/projects/btts/index.html",
-      "thumbnail": "projects/btts/images.png"
+      "url": "{HTML_URL}/projects/btts/index.html",
+      "cover":"{COVER_URL}/project/btts/images.png"
     },
     {
       "name": "Black Knight",
-      "url": "https://1kh0.github.io/projects/blackknight/index.html",
-      "thumbnail": "projects/blackknight/blackknight.png"
+      "url": "{HTML_URL}/projects/blackknight/index.html",
+      "cover":"{COVER_URL}/project/blackknight/blackknight.png"
     },
     {
       "name": "Bloons TD",
-      "url": "https://1kh0.github.io/projects/bloonstd/index.html",
-      "thumbnail": "projects/bloonstd/bloonstd.jpg"
+      "url": "{HTML_URL}/projects/bloonstd/index.html",
+      "cover":"{COVER_URL}/project/bloonstd/bloonstd.jpg"
     },
     {
       "name": "Bloons TD 2",
-      "url": "https://1kh0.github.io/projects/bloonstd2/index.html",
-      "thumbnail": "projects/bloonstd2/bloonstd2.png"
+      "url": "{HTML_URL}/projects/bloonstd2/index.html",
+      "cover":"{COVER_URL}/project/bloonstd2/bloonstd2.png"
     },
     {
       "name": "Bloxors",
-      "url": "https://1kh0.github.io/projects/bloxors/index.html",
-      "thumbnail": "projects/bloxors/block.png"
+      "url": "{HTML_URL}/projects/bloxors/index.html",
+      "cover":"{COVER_URL}/project/bloxors/block.png"
     },
     {
       "name": "Box Head",
-      "url": "https://1kh0.github.io/projects/boxhead2play/index.html",
-      "thumbnail": "projects/boxhead2play/boxhead2play.jpg"
+      "url": "{HTML_URL}/projects/boxhead2play/index.html",
+      "cover":"{COVER_URL}/project/boxhead2play/boxhead2play.jpg"
     },
     {
       "name": "Breaking the Bank",
-      "url": "https://1kh0.github.io/projects/breakingthebank/index.html",
-      "thumbnail": "projects/breakingthebank/breakingthebank.png"
+      "url": "{HTML_URL}/projects/breakingthebank/index.html",
+      "cover":"{COVER_URL}/project/breakingthebank/breakingthebank.png"
     },
     {
       "name": "Cannon Basketball 4",
-      "url": "https://1kh0.github.io/projects/cannon-basketball-4/index.html",
-      "thumbnail": "projects/cannon-basketball-4/img/splash.png"
+      "url": "{HTML_URL}/projects/cannon-basketball-4/index.html",
+      "cover":"{COVER_URL}/project/cannon-basketball-4/img/splash.png"
     },
     {
       "name": "Canyon Defense",
-      "url": "https://1kh0.github.io/projects/canyondefense/index.html",
-      "thumbnail": "projects/canyondefense/canyondefense.png"
+      "url": "{HTML_URL}/projects/canyondefense/index.html",
+      "cover":"{COVER_URL}/project/canyondefense/canyondefense.png"
     },
     {
       "name": "Cell Machine",
-      "url": "https://1kh0.github.io/projects/cell-machine/index.html",
-      "thumbnail": "projects/cell-machine/img/te9nDu.png"
+      "url": "{HTML_URL}/projects/cell-machine/index.html",
+      "cover":"{COVER_URL}/project/cell-machine/img/te9nDu.png"
     },
     {
       "name": "Champion Archer",
-      "url": "https://1kh0.github.io/projects/championarcher/index.html",
-      "thumbnail": "projects/championarcher/championarcher.png"
+      "url": "{HTML_URL}/projects/championarcher/index.html",
+      "cover":"{COVER_URL}/project/championarcher/championarcher.png"
     },
     {
       "name": "Chrome Dino",
-      "url": "https://1kh0.github.io/projects/chrome-dino/index.html",
-      "thumbnail": "projects/chrome-dino/icons/icon-256.png"
+      "url": "{HTML_URL}/projects/chrome-dino/index.html",
+      "cover":"{COVER_URL}/project/chrome-dino/icons/icon-256.png"
     },
     {
       "name": "circlO",
-      "url": "https://1kh0.github.io/projects/circlo/index.html",
-      "thumbnail": "projects/circlo/img/download.png"
+      "url": "{HTML_URL}/projects/circlo/index.html",
+      "cover":"{COVER_URL}/project/circlo/img/download.png"
     },
     {
       "name": "Connect 3",
-      "url": "https://1kh0.github.io/projects/connect3/index.html",
-      "thumbnail": "projects/connect3/connect3.png"
+      "url": "{HTML_URL}/projects/connect3/index.html",
+      "cover":"{COVER_URL}/project/connect3/connect3.png"
     },
     {
       "name": "Cookie Clicker",
-      "url": "https://1kh0.github.io/projects/cookie-clicker/index.html",
-      "thumbnail": "projects/cookie-clicker/cookie1.jpeg"
+      "url": "{HTML_URL}/projects/cookie-clicker/index.html",
+      "cover":"{COVER_URL}/project/cookie-clicker/cookie1.jpeg"
     },
     {
       "name": "CraftMine",
-      "url": "https://1kh0.github.io/projects/craftmine/index.html",
-      "thumbnail": "projects/craftmine/images/craftmine.png"
+      "url": "{HTML_URL}/projects/craftmine/index.html",
+      "cover":"{COVER_URL}/project/craftmine/images/craftmine.png"
     },
     {
       "name": "Creative Kill Chamber",
-      "url": "https://1kh0.github.io/projects/creativekillchamber/index.html",
-      "thumbnail": "projects/creativekillchamber/creativekillchamber.jpg"
+      "url": "{HTML_URL}/projects/creativekillchamber/index.html",
+      "cover":"{COVER_URL}/project/creativekillchamber/creativekillchamber.jpg"
     },
     {
       "name": "CS:GO Clicker",
-      "url": "https://1kh0.github.io/projects/csgo-clicker/index.html",
-      "thumbnail": "projects/csgo-clicker/images/vanguard.png"
+      "url": "{HTML_URL}/projects/csgo-clicker/index.html",
+      "cover":"{COVER_URL}/project/csgo-clicker/images/vanguard.png"
     },
     {
       "name": "Cubefield",
-      "url": "https://1kh0.github.io/projects/cubefield/index.html",
-      "thumbnail": "projects/cubefield/cubefield.jpg"
+      "url": "{HTML_URL}/projects/cubefield/index.html",
+      "cover":"{COVER_URL}/project/cubefield/cubefield.jpg"
     },
     {
       "name": "Cupcake 2048",
-      "url": "https://1kh0.github.io/projects/cupcake2048/index.html",
-      "thumbnail": "projects/cupcake2048/favicon.png"
+      "url": "{HTML_URL}/projects/cupcake2048/index.html",
+      "cover":"{COVER_URL}/project/cupcake2048/favicon.png"
     },
     {
       "name": "Cut the Rope",
-      "url": "https://1kh0.github.io/projects/ctr/index.html",
-      "thumbnail": "projects/ctr/logo.png"
+      "url": "{HTML_URL}/projects/ctr/index.html",
+      "cover":"{COVER_URL}/project/ctr/logo.png"
     },
     {
       "name": "Cut the Rope Holiday",
-      "url": "https://1kh0.github.io/projects/ctr-holiday/index.html",
-      "thumbnail": "projects/ctr-holiday/Holiday_Gift.webp"
+      "url": "{HTML_URL}/projects/ctr-holiday/index.html",
+      "cover":"{COVER_URL}/project/ctr-holiday/Holiday_Gift.webp"
     },
     {
       "name": "Cut the Rope Time Travel",
-      "url": "https://1kh0.github.io/projects/ctr-tr/index.html",
-      "thumbnail": "projects/ctr-tr/logo.png"
+      "url": "{HTML_URL}/projects/ctr-tr/index.html",
+      "cover":"{COVER_URL}/project/ctr-tr/logo.png"
     },
     {
       "name": "Deal or No Deal",
-      "url": "https://1kh0.github.io/projects/deal-or-no-deal/index.html",
-      "thumbnail": "projects/deal-or-no-deal/index.jpg"
+      "url": "{HTML_URL}/projects/deal-or-no-deal/index.html",
+      "cover":"{COVER_URL}/project/deal-or-no-deal/index.jpg"
     },
     {
       "name": "Death Run 3D",
-      "url": "https://1kh0.github.io/projects/death-run-3d/index.html",
-      "thumbnail": "projects/death-run-3d/img/death.png"
+      "url": "{HTML_URL}/projects/death-run-3d/index.html",
+      "cover":"{COVER_URL}/project/death-run-3d/img/death.png"
     },
     {
       "name": "Defend the Tank",
-      "url": "https://1kh0.github.io/projects/defend-the-tank/index.html",
-      "thumbnail": "projects/defend-the-tank/images/splash.jpg"
+      "url": "{HTML_URL}/projects/defend-the-tank/index.html",
+      "cover":"{COVER_URL}/project/defend-the-tank/images/splash.jpg"
     },
     {
       "name": "Doge 2048",
-      "url": "https://1kh0.github.io/projects/doge2048/index.html",
-      "thumbnail": "projects/doge2048/meta/apple-touch-icon.png"
+      "url": "{HTML_URL}/projects/doge2048/index.html",
+      "cover":"{COVER_URL}/project/doge2048/meta/apple-touch-icon.png"
     },
     {
       "name": "Doge Miner",
-      "url": "https://1kh0.github.io/projects/DogeMiner/index.html",
-      "thumbnail": "projects/DogeMiner/img/dogeminer_300x300.png"
+      "url": "{HTML_URL}/projects/DogeMiner/index.html",
+      "cover":"{COVER_URL}/project/DogeMiner/img/dogeminer_300x300.png"
     },
     {
       "name": "Doodle Jump",
-      "url": "https://1kh0.github.io/projects/doodle-jump/index.html",
-      "thumbnail": "projects/doodle-jump/doodle.png"
+      "url": "{HTML_URL}/projects/doodle-jump/index.html",
+      "cover":"{COVER_URL}/project/doodle-jump/doodle.png"
     },
     {
       "name": "Double Wires",
-      "url": "https://1kh0.github.io/projects/doublewires/index.html",
-      "thumbnail": "projects/doublewires/doublewires.png"
+      "url": "{HTML_URL}/projects/doublewires/index.html",
+      "cover":"{COVER_URL}/project/doublewires/doublewires.png"
     },
     {
       "name": "Draw the Hill",
-      "url": "https://1kh0.github.io/projects/draw-the-hill/index.html",
-      "thumbnail": "projects/draw-the-hill/icons/icon-512.png"
+      "url": "{HTML_URL}/projects/draw-the-hill/index.html",
+      "cover":"{COVER_URL}/project/draw-the-hill/icons/icon-512.png"
     },
     {
       "name": "Duck Life",
-      "url": "https://1kh0.github.io/projects/ducklife1/index.html",
-      "thumbnail": "projects/ducklife1/ducklife.png"
+      "url": "{HTML_URL}/projects/ducklife1/index.html",
+      "cover":"{COVER_URL}/project/ducklife1/ducklife.png"
     },
     {
       "name": "Duck Life 2",
-      "url": "https://1kh0.github.io/projects/ducklife2/index.html",
-      "thumbnail": "projects/ducklife2/ducklife2.png"
+      "url": "{HTML_URL}/projects/ducklife2/index.html",
+      "cover":"{COVER_URL}/project/ducklife2/ducklife2.png"
     },
     {
       "name": "Duck Life 3",
-      "url": "https://1kh0.github.io/projects/ducklife3/index.html",
-      "thumbnail": "projects/ducklife3/duck.png"
+      "url": "{HTML_URL}/projects/ducklife3/index.html",
+      "cover":"{COVER_URL}/project/ducklife3/duck.png"
     },
     {
       "name": "Eaglercraft",
-      "url": "https://1kh0.github.io/projects/minecraft/index.html",
-      "thumbnail": "projects/minecraft/splash.jpeg"
+      "url": "{HTML_URL}/projects/minecraft/index.html",
+      "cover":"{COVER_URL}/project/minecraft/splash.jpeg"
     },
     {
       "name": "Edge Not Found",
-      "url": "https://1kh0.github.io/projects/edgenotfound/index.html",
-      "thumbnail": "projects/edgenotfound/edge.png"
+      "url": "{HTML_URL}/projects/edgenotfound/index.html",
+      "cover":"{COVER_URL}/project/edgenotfound/edge.png"
     },
     {
       "name": "Elastic Man",
-      "url": "https://1kh0.github.io/projects/elasticman/index.html",
-      "thumbnail": "projects/elasticman/elasticman.jpg"
+      "url": "{HTML_URL}/projects/elasticman/index.html",
+      "cover":"{COVER_URL}/project/elasticman/elasticman.jpg"
     },
     {
       "name": "Endless War 3",
-      "url": "https://1kh0.github.io/projects/endlesswar3/index.html",
-      "thumbnail": "projects/endlesswar3/endlesswar3.png"
+      "url": "{HTML_URL}/projects/endlesswar3/index.html",
+      "cover":"{COVER_URL}/project/endlesswar3/endlesswar3.png"
     },
     {
       "name": "Evil Glitch",
-      "url": "https://1kh0.github.io/projects/evil-glitch/index.html",
-      "thumbnail": "projects/evil-glitch/evil.png"
+      "url": "{HTML_URL}/projects/evil-glitch/index.html",
+      "cover":"{COVER_URL}/project/evil-glitch/evil.png"
     },
     {
       "name": "Exo",
-      "url": "https://1kh0.github.io/projects/exo/index.html",
-      "thumbnail": "projects/exo/img/small.jpg"
+      "url": "{HTML_URL}/projects/exo/index.html",
+      "cover":"{COVER_URL}/project/exo/img/small.jpg"
     },
     {
       "name": "Factory Balls Forever",
-      "url": "https://1kh0.github.io/projects/factoryballs/index.html",
-      "thumbnail": "projects/factoryballs/images/splash.png"
+      "url": "{HTML_URL}/projects/factoryballs/index.html",
+      "cover":"{COVER_URL}/project/factoryballs/images/splash.png"
     },
     {
       "name": "Fake Virus",
-      "url": "https://1kh0.github.io/projects/fake-virus/icon.png",
-      "thumbnail": "projects/fake-virus/icon.png"
+      "url": "{HTML_URL}/projects/fake-virus/icon.png",
+      "cover":"{COVER_URL}/project/fake-virus/icon.png"
     },
     {
       "name": "Flappy 2048",
-      "url": "https://1kh0.github.io/projects/flappy-2048/index.html",
-      "thumbnail": "projects/flappy-2048/meta/apple-touch-icon.png"
+      "url": "{HTML_URL}/projects/flappy-2048/index.html",
+      "cover":"{COVER_URL}/project/flappy-2048/meta/apple-touch-icon.png"
     },
     {
       "name": "Flappy Bird",
-      "url": "https://1kh0.github.io/projects/flappy-bird/index.html",
-      "thumbnail": "projects/flappy-bird/assets/thumb.png"
+      "url": "{HTML_URL}/projects/flappy-bird/index.html",
+      "cover":"{COVER_URL}/project/flappy-bird/assets/thumb.png"
     },
     {
       "name": "Flash Tetris",
-      "url": "https://1kh0.github.io/projects/flashtetris/index.html",
-      "thumbnail": "projects/flashtetris/flashtetris.png"
+      "url": "{HTML_URL}/projects/flashtetris/index.html",
+      "cover":"{COVER_URL}/project/flashtetris/flashtetris.png"
     },
     {
       "name": "Game Inside a Game Inside a Game...",
-      "url": "https://1kh0.github.io/projects/game-inside/index.html",
-      "thumbnail": "projects/game-inside/img/display.png"
+      "url": "{HTML_URL}/projects/game-inside/index.html",
+      "cover":"{COVER_URL}/project/game-inside/img/display.png"
     },
     {
       "name": "Geometry Dash (Scratch)",
-      "url": "https://1kh0.github.io/projects/geodash/index.html",
-      "thumbnail": "projects/geodash/geoscratchicon.png"
+      "url": "{HTML_URL}/projects/geodash/index.html",
+      "cover":"{COVER_URL}/project/geodash/geoscratchicon.png"
     },
     {
       "name": "Getaway Shootout",
-      "url": "https://1kh0.github.io/projects/getaway-shootout/index.html",
-      "thumbnail": "projects/getaway-shootout/img/images.jpg"
+      "url": "{HTML_URL}/projects/getaway-shootout/index.html",
+      "cover":"{COVER_URL}/project/getaway-shootout/img/images.jpg"
     },
     {
       "name": "Gimme the Airpod",
-      "url": "https://1kh0.github.io/projects/gimme-the-airpod/index.html",
-      "thumbnail": "projects/gimme-the-airpod/img/logo.png"
+      "url": "{HTML_URL}/projects/gimme-the-airpod/index.html",
+      "cover":"{COVER_URL}/project/gimme-the-airpod/img/logo.png"
     },
     {
       "name": "Glass City",
-      "url": "https://1kh0.github.io/projects/glass-city/index.html",
-      "thumbnail": "projects/glass-city/image.png"
+      "url": "{HTML_URL}/projects/glass-city/index.html",
+      "cover":"{COVER_URL}/project/glass-city/image.png"
     },
     {
       "name": "Google Snake",
-      "url": "https://1kh0.github.io/projects/google-snake/index.html",
-      "thumbnail": "projects/google-snake/img/snake.png"
+      "url": "{HTML_URL}/projects/google-snake/index.html",
+      "cover":"{COVER_URL}/project/google-snake/img/snake.png"
     },
     {
       "name": "Grind Craft",
-      "url": "https://1kh0.github.io/projects/grindcraft/index.html",
-      "thumbnail": "projects/grindcraft/img/splash.png"
+      "url": "{HTML_URL}/projects/grindcraft/index.html",
+      "cover":"{COVER_URL}/project/grindcraft/img/splash.png"
     },
     {
       "name": "Hacker Typer",
-      "url": "https://1kh0.github.io/projects/hackertype/index.html",
-      "thumbnail": "projects/hackertype/logo192.png"
+      "url": "{HTML_URL}/projects/hackertype/index.html",
+      "cover":"{COVER_URL}/project/hackertype/logo192.png"
     },
     {
       "name": "Helicopter",
-      "url": "https://1kh0.github.io/projects/helicopter/index.html",
-      "thumbnail": "projects/helicopter/helicopter.png"
+      "url": "{HTML_URL}/projects/helicopter/index.html",
+      "cover":"{COVER_URL}/project/helicopter/helicopter.png"
     },
     {
       "name": "Hex Empire",
-      "url": "https://1kh0.github.io/projects/hexempire/index.html",
-      "thumbnail": "projects/hexempire/hexempire.jpg"
+      "url": "{HTML_URL}/projects/hexempire/index.html",
+      "cover":"{COVER_URL}/project/hexempire/hexempire.jpg"
     },
     {
       "name": "HexGL",
-      "url": "https://1kh0.github.io/projects/HexGL/index.html",
-      "thumbnail": "projects/HexGL/icon_256.png"
+      "url": "{HTML_URL}/projects/HexGL/index.html",
+      "cover":"{COVER_URL}/project/HexGL/icon_256.png"
     },
     {
       "name": "Hextris",
-      "url": "https://1kh0.github.io/projects/hextris/index.html",
-      "thumbnail": "projects/hextris/images/hextris-logo.png"
+      "url": "{HTML_URL}/projects/hextris/index.html",
+      "cover":"{COVER_URL}/project/hextris/images/hextris-logo.png"
     },
     {
       "name": "Hover Bot Arena",
-      "url": "https://1kh0.github.io/projects/hba/index.html",
-      "thumbnail": "projects/hba/hoverbotarena.jpg"
+      "url": "{HTML_URL}/projects/hba/index.html",
+      "cover":"{COVER_URL}/project/hba/hoverbotarena.jpg"
     },
     {
       "name": "Idle Breakout",
-      "url": "https://1kh0.github.io/projects/idle-breakout/index.html",
-      "thumbnail": "projects/idle-breakout/img/thumbnail.png"
+      "url": "{HTML_URL}/projects/idle-breakout/index.html",
+      "cover":"{COVER_URL}/project/idle-breakout/img/thumbnail.png"
     },
     {
       "name": "Idle Shark",
-      "url": "https://1kh0.github.io/projects/idle-shark/index.html",
-      "thumbnail": "projects/idle-shark/img/sharkgame.png"
+      "url": "{HTML_URL}/projects/idle-shark/index.html",
+      "cover":"{COVER_URL}/project/idle-shark/img/sharkgame.png"
     },
     {
       "name": "Impossible Quiz",
-      "url": "https://1kh0.github.io/projects/impossiblequiz/index.html",
-      "thumbnail": "projects/impossiblequiz/impossiblequiz.png"
+      "url": "{HTML_URL}/projects/impossiblequiz/index.html",
+      "cover":"{COVER_URL}/project/impossiblequiz/impossiblequiz.png"
     },
     {
       "name": "Interactive Buddy",
-      "url": "https://1kh0.github.io/projects/interactivebuddy/index.html",
-      "thumbnail": "projects/interactivebuddy/interactivebuddy.jpg"
+      "url": "{HTML_URL}/projects/interactivebuddy/index.html",
+      "cover":"{COVER_URL}/project/interactivebuddy/interactivebuddy.jpg"
     },
     {
       "name": "Just One Boss",
-      "url": "https://1kh0.github.io/projects/just-one-boss/index.html",
-      "thumbnail": "projects/just-one-boss/pv1Gr5.png"
+      "url": "{HTML_URL}/projects/just-one-boss/index.html",
+      "cover":"{COVER_URL}/project/just-one-boss/pv1Gr5.png"
     },
     {
       "name": "Kitten Cannon",
-      "url": "https://1kh0.github.io/projects/kittencannon/index.html",
-      "thumbnail": "projects/kittencannon/kittencannon.png"
+      "url": "{HTML_URL}/projects/kittencannon/index.html",
+      "cover":"{COVER_URL}/project/kittencannon/kittencannon.png"
     },
     {
       "name": "Krunker",
-      "url": "https://1kh0.github.io/projects/krunker/index.html",
-      "thumbnail": "projects/krunker/img/krunker-io.jpg"
+      "url": "{HTML_URL}/projects/krunker/index.html",
+      "cover":"{COVER_URL}/project/krunker/img/krunker-io.jpg"
     },
     {
       "name": "Learn To Fly",
-      "url": "https://1kh0.github.io/projects/learntofly/index.html",
-      "thumbnail": "projects/learntofly/learntofly.png"
+      "url": "{HTML_URL}/projects/learntofly/index.html",
+      "cover":"{COVER_URL}/project/learntofly/learntofly.png"
     },
     {
       "name": "Mario",
-      "url": "https://1kh0.github.io/projects/mario/index.html",
-      "thumbnail": "projects/mario/Theme/Mario.gif"
+      "url": "{HTML_URL}/projects/mario/index.html",
+      "cover":"{COVER_URL}/project/mario/Theme/Mario.gif"
     },
     {
       "name": "Matrix Rampage",
-      "url": "https://1kh0.github.io/projects/matrixrampage/index.html",
-      "thumbnail": "projects/matrixrampage/matrixrampage.jpg"
+      "url": "{HTML_URL}/projects/matrixrampage/index.html",
+      "cover":"{COVER_URL}/project/matrixrampage/matrixrampage.jpg"
     },
     {
       "name": "Meme 2048",
-      "url": "https://1kh0.github.io/projects/meme2048/index.html",
-      "thumbnail": "projects/meme2048/img/rickroll.gif"
+      "url": "{HTML_URL}/projects/meme2048/index.html",
+      "cover":"{COVER_URL}/project/meme2048/img/rickroll.gif"
     },
     {
       "name": "Minecraft Classic",
-      "url": "https://1kh0.github.io/projects/minecraft-classic/index.html",
-      "thumbnail": "projects/minecraft-classic/pack.png"
+      "url": "{HTML_URL}/projects/minecraft-classic/index.html",
+      "cover":"{COVER_URL}/project/minecraft-classic/pack.png"
     },
     {
       "name": "Minesweeper",
-      "url": "https://1kh0.github.io/projects/minesweeper/index.html",
-      "thumbnail": "projects/minesweeper/img/minesweeper.png"
+      "url": "{HTML_URL}/projects/minesweeper/index.html",
+      "cover":"{COVER_URL}/project/minesweeper/img/minesweeper.png"
     },
     {
       "name": "Mini-putt",
-      "url": "https://1kh0.github.io/projects/miniputt/index.html",
-      "thumbnail": "projects/miniputt/miniputt.png"
+      "url": "{HTML_URL}/projects/miniputt/index.html",
+      "cover":"{COVER_URL}/project/miniputt/miniputt.png"
     },
     {
       "name": "Missiles",
-      "url": "https://1kh0.github.io/projects/missiles/index.html",
-      "thumbnail": "projects/missiles/miss.png"
+      "url": "{HTML_URL}/projects/missiles/index.html",
+      "cover":"{COVER_URL}/project/missiles/miss.png"
     },
     {
       "name": "MotoX3M",
-      "url": "https://1kh0.github.io/projects/motox3m/index.html",
-      "thumbnail": "projects/motox3m/splash.jpg"
+      "url": "{HTML_URL}/projects/motox3m/index.html",
+      "cover":"{COVER_URL}/project/motox3m/splash.jpg"
     },
     {
       "name": "MotoX3M Pool",
-      "url": "https://1kh0.github.io/projects/motox3m-pool/index.html",
-      "thumbnail": "projects/motox3m-pool/splash.jpg"
+      "url": "{HTML_URL}/projects/motox3m-pool/index.html",
+      "cover":"{COVER_URL}/project/motox3m-pool/splash.jpg"
     },
     {
       "name": "MotoX3M Spooky",
-      "url": "https://1kh0.github.io/projects/motox3m-spooky/index.html",
-      "thumbnail": "projects/motox3m-spooky/splash.jpeg"
+      "url": "{HTML_URL}/projects/motox3m-spooky/index.html",
+      "cover":"{COVER_URL}/project/motox3m-spooky/splash.jpeg"
     },
     {
       "name": "MotoX3M Winter",
-      "url": "https://1kh0.github.io/projects/motox3m-winter/index.html",
-      "thumbnail": "projects/motox3m-winter/download.jpeg"
+      "url": "{HTML_URL}/projects/motox3m-winter/index.html",
+      "cover":"{COVER_URL}/project/motox3m-winter/download.jpeg"
     },
     {
       "name": "n-gon",
-      "url": "https://1kh0.github.io/projects/n-gon/index.html",
-      "thumbnail": "projects/n-gon/bot.png"
+      "url": "{HTML_URL}/projects/n-gon/index.html",
+      "cover":"{COVER_URL}/project/n-gon/bot.png"
     },
     {
       "name": "NS-Shaft",
-      "url": "https://1kh0.github.io/projects/ns-shaft/index.html",
-      "thumbnail": "projects/ns-shaft/favicon.png"
+      "url": "{HTML_URL}/projects/ns-shaft/index.html",
+      "cover":"{COVER_URL}/project/ns-shaft/favicon.png"
     },
     {
       "name": "Om Nom Bounce",
-      "url": "https://1kh0.github.io/projects/om-bounce/index.html",
-      "thumbnail": "projects/om-bounce/assets/icon.jpeg"
+      "url": "{HTML_URL}/projects/om-bounce/index.html",
+      "cover":"{COVER_URL}/project/om-bounce/assets/icon.jpeg"
     },
     {
       "name": "Pandemic 2",
-      "url": "https://1kh0.github.io/projects/pandemic2/index.html",
-      "thumbnail": "projects/pandemic2/pandemic2.png"
+      "url": "{HTML_URL}/projects/pandemic2/index.html",
+      "cover":"{COVER_URL}/project/pandemic2/pandemic2.png"
     },
     {
       "name": "Papa's Pizzaria",
-      "url": "https://1kh0.github.io/projects/papaspizzaria/index.html",
-      "thumbnail": "projects/papaspizzaria/papaspizzaria.jpg"
+      "url": "{HTML_URL}/projects/papaspizzaria/index.html",
+      "cover":"{COVER_URL}/project/papaspizzaria/papaspizzaria.jpg"
     },
     {
       "name": "Paper.io 2",
-      "url": "https://1kh0.github.io/projects/paperio2/index.html",
-      "thumbnail": "projects/paperio2/images/icon512.png"
+      "url": "{HTML_URL}/projects/paperio2/index.html",
+      "cover":"{COVER_URL}/project/paperio2/images/icon512.png"
     },
     {
       "name": "Papery Planes",
-      "url": "https://1kh0.github.io/projects/papery-planes/index.html",
-      "thumbnail": "projects/papery-planes/splash.jpg"
+      "url": "{HTML_URL}/projects/papery-planes/index.html",
+      "cover":"{COVER_URL}/project/papery-planes/splash.jpg"
     },
     {
       "name": "Particle Clicker",
-      "url": "https://1kh0.github.io/projects/particle-clicker/index.html",
-      "thumbnail": "projects/particle-clicker/assets/mobile/original.png"
+      "url": "{HTML_URL}/projects/particle-clicker/index.html",
+      "cover":"{COVER_URL}/project/particle-clicker/assets/mobile/original.png"
     },
     {
       "name": "PolyBranch",
-      "url": "https://1kh0.github.io/projects/polybranch/index.html",
-      "thumbnail": "projects/polybranch/img/pic1.png"
+      "url": "{HTML_URL}/projects/polybranch/index.html",
+      "cover":"{COVER_URL}/project/polybranch/img/pic1.png"
     },
     {
       "name": "Portal (Flash)",
-      "url": "https://1kh0.github.io/projects/portalflash/index.html",
-      "thumbnail": "projects/portalflash/portaltheflashversion.jpg"
+      "url": "{HTML_URL}/projects/portalflash/index.html",
+      "cover":"{COVER_URL}/project/portalflash/portaltheflashversion.jpg"
     },
     {
       "name": "Precision Client (Eaglercraft)",
-      "url": "https://1kh0.github.io/projects/precision-client/index.html",
-      "thumbnail": "projects/precision-client/logo.png"
+      "url": "{HTML_URL}/projects/precision-client/index.html",
+      "cover":"{COVER_URL}/project/precision-client/logo.png"
     },
     {
       "name": "Push The Square",
-      "url": "https://1kh0.github.io/projects/push-the-square/index.html",
-      "thumbnail": "projects/push-the-square/img/splash.png"
+      "url": "{HTML_URL}/projects/push-the-square/index.html",
+      "cover":"{COVER_URL}/project/push-the-square/img/splash.png"
     },
     {
       "name": "Push Your Luck",
-      "url": "https://1kh0.github.io/projects/push-your-luck/index.html",
-      "thumbnail": "projects/push-your-luck/assets/img/push.png"
+      "url": "{HTML_URL}/projects/push-your-luck/index.html",
+      "cover":"{COVER_URL}/project/push-your-luck/assets/img/push.png"
     },
     {
       "name": "Retro Bowl",
-      "url": "https://1kh0.github.io/projects/retro-bowl/index.html",
-      "thumbnail": "projects/retro-bowl/img/icon.jpg"
+      "url": "{HTML_URL}/projects/retro-bowl/index.html",
+      "cover":"{COVER_URL}/project/retro-bowl/img/icon.jpg"
     },
     {
       "name": "Rolly Vortex",
-      "url": "https://1kh0.github.io/projects/rolly-vortex/index.html",
-      "thumbnail": "projects/rolly-vortex/icon-256.png"
+      "url": "{HTML_URL}/projects/rolly-vortex/index.html",
+      "cover":"{COVER_URL}/project/rolly-vortex/icon-256.png"
     },
     {
       "name": "Rooftop Snipers",
-      "url": "https://1kh0.github.io/projects/rooftop-snipers/index.html",
-      "thumbnail": "projects/rooftop-snipers/img/preview.png"
+      "url": "{HTML_URL}/projects/rooftop-snipers/index.html",
+      "cover":"{COVER_URL}/project/rooftop-snipers/img/preview.png"
     },
     {
       "name": "Sand Game",
-      "url": "https://1kh0.github.io/projects/sand-game/index.html",
-      "thumbnail": "projects/sand-game/sand.png"
+      "url": "{HTML_URL}/projects/sand-game/index.html",
+      "cover":"{COVER_URL}/project/sand-game/sand.png"
     },
     {
       "name": "Slope",
-      "url": "https://1kh0.github.io/projects/slope/index.html",
-      "thumbnail": "projects/slope/slope4.jpeg"
+      "url": "{HTML_URL}/projects/slope/index.html",
+      "cover":"{COVER_URL}/project/slope/slope4.jpeg"
     },
     {
       "name": "Smash Carts",
-      "url": "https://1kh0.github.io/projects/smashkarts/index.html",
-      "thumbnail": "projects/smashkarts/images/icon-512.png"
+      "url": "{HTML_URL}/projects/smashkarts/index.html",
+      "cover":"{COVER_URL}/project/smashkarts/images/icon-512.png"
     },
     {
       "name": "Smoking Barrels",
-      "url": "https://1kh0.github.io/projects/smokingbarrels/index.html",
-      "thumbnail": "projects/smokingbarrels/smokingbarrels.jpg"
+      "url": "{HTML_URL}/projects/smokingbarrels/index.html",
+      "cover":"{COVER_URL}/project/smokingbarrels/smokingbarrels.jpg"
     },
     {
       "name": "Snowbattle",
-      "url": "https://1kh0.github.io/projects/snowbattle/index.html",
-      "thumbnail": "projects/snowbattle/img/logo.png"
+      "url": "{HTML_URL}/projects/snowbattle/index.html",
+      "cover":"{COVER_URL}/project/snowbattle/img/logo.png"
     },
     {
       "name": "Soldier Legend",
-      "url": "https://1kh0.github.io/projects/soldier-legend/index.html",
-      "thumbnail": "projects/soldier-legend/images/splash.jpeg"
+      "url": "{HTML_URL}/projects/soldier-legend/index.html",
+      "cover":"{COVER_URL}/project/soldier-legend/images/splash.jpeg"
     },
     {
       "name": "Solitaire",
-      "url": "https://1kh0.github.io/projects/solitaire/index.html",
-      "thumbnail": "projects/solitaire/screen-shot.png"
+      "url": "{HTML_URL}/projects/solitaire/index.html",
+      "cover":"{COVER_URL}/project/solitaire/screen-shot.png"
     },
     {
       "name": "Sort The Court",
-      "url": "https://1kh0.github.io/projects/sort-the-court/index.html",
-      "thumbnail": "projects/sort-the-court/img/splash.png"
+      "url": "{HTML_URL}/projects/sort-the-court/index.html",
+      "cover":"{COVER_URL}/project/sort-the-court/img/splash.png"
     },
     {
       "name": "Soundboard",
-      "url": "https://1kh0.github.io/projects/soundboard/index.html",
-      "thumbnail": "projects/soundboard/img/mlg-favicon.png"
+      "url": "{HTML_URL}/projects/soundboard/index.html",
+      "cover":"{COVER_URL}/project/soundboard/img/mlg-favicon.png"
     },
     {
       "name": "Stack",
-      "url": "https://1kh0.github.io/projects/stack/index.html",
-      "thumbnail": "projects/stack/stack.png"
+      "url": "{HTML_URL}/projects/stack/index.html",
+      "cover":"{COVER_URL}/project/stack/stack.png"
     },
     {
       "name": "Stack Bump 3D",
-      "url": "https://1kh0.github.io/projects/stack-bump-3d/index.html",
-      "thumbnail": "projects/stack-bump-3d/thumbnail.jpg"
+      "url": "{HTML_URL}/projects/stack-bump-3d/index.html",
+      "cover":"{COVER_URL}/project/stack-bump-3d/thumbnail.jpg"
     },
     {
       "name": "Stealing The Diamond",
-      "url": "https://1kh0.github.io/projects/stealingthediamond/index.html",
-      "thumbnail": "projects/stealingthediamond/stealingthediamond.jpg"
+      "url": "{HTML_URL}/projects/stealingthediamond/index.html",
+      "cover":"{COVER_URL}/project/stealingthediamond/stealingthediamond.jpg"
     },
     {
       "name": "Stick War",
-      "url": "https://1kh0.github.io/projects/stickwar/index.html",
-      "thumbnail": "projects/stickwar/stickwar.jpg"
+      "url": "{HTML_URL}/projects/stickwar/index.html",
+      "cover":"{COVER_URL}/project/stickwar/stickwar.jpg"
     },
     {
       "name": "Storm The House 2",
-      "url": "https://1kh0.github.io/projects/stormthehouse2/index.html",
-      "thumbnail": "projects/stormthehouse2/stormthehouse2.jpg"
+      "url": "{HTML_URL}/projects/stormthehouse2/index.html",
+      "cover":"{COVER_URL}/project/stormthehouse2/stormthehouse2.jpg"
     },
     {
       "name": "Super Mario 64",
-      "url": "https://1kh0.github.io/projects/sm64/index.html",
-      "thumbnail": "projects/sm64/logo.png"
+      "url": "{HTML_URL}/projects/sm64/index.html",
+      "cover":"{COVER_URL}/project/sm64/logo.png"
     },
     {
       "name": "Superhot",
-      "url": "https://1kh0.github.io/projects/superhot/index.html",
-      "thumbnail": "projects/superhot/hot.jpg"
+      "url": "{HTML_URL}/projects/superhot/index.html",
+      "cover":"{COVER_URL}/project/superhot/hot.jpg"
     },
     {
       "name": "Swerve",
-      "url": "https://1kh0.github.io/projects/swerve/index.html",
-      "thumbnail": "projects/swerve/img/favicon.jpg"
+      "url": "{HTML_URL}/projects/swerve/index.html",
+      "cover":"{COVER_URL}/project/swerve/img/favicon.jpg"
     },
     {
       "name": "Tactical Assassin 2",
-      "url": "https://1kh0.github.io/projects/tacticalassasin2/index.html",
-      "thumbnail": "projects/tacticalassasin2/tacticalassassin2.png"
+      "url": "{HTML_URL}/projects/tacticalassasin2/index.html",
+      "cover":"{COVER_URL}/project/tacticalassasin2/tacticalassassin2.png"
     },
     {
       "name": "Tank Trouble 2",
-      "url": "https://1kh0.github.io/projects/tank-trouble-2/index.html",
-      "thumbnail": "projects/tank-trouble-2/tank.jpeg"
+      "url": "{HTML_URL}/projects/tank-trouble-2/index.html",
+      "cover":"{COVER_URL}/project/tank-trouble-2/tank.jpeg"
     },
     {
       "name": "Tanuki Sunset",
-      "url": "https://1kh0.github.io/projects/tanuki-sunset/index.html",
-      "thumbnail": "projects/tanuki-sunset/img/cover.png"
+      "url": "{HTML_URL}/projects/tanuki-sunset/index.html",
+      "cover":"{COVER_URL}/project/tanuki-sunset/img/cover.png"
     },
     {
       "name": "Temple Run 2",
-      "url": "https://1kh0.github.io/projects/temple-run-2/index.html",
-      "thumbnail": "projects/temple-run-2/img/og-icon.png"
+      "url": "{HTML_URL}/projects/temple-run-2/index.html",
+      "cover":"{COVER_URL}/project/temple-run-2/img/og-icon.png"
     },
     {
       "name": "The Battle",
-      "url": "https://1kh0.github.io/projects/thebattle/index.html",
-      "thumbnail": "projects/thebattle/thebattle.png"
+      "url": "{HTML_URL}/projects/thebattle/index.html",
+      "cover":"{COVER_URL}/project/thebattle/thebattle.png"
     },
     {
       "name": "The Final Earth",
-      "url": "https://1kh0.github.io/projects/the-final-earth/index.html",
-      "thumbnail": "projects/the-final-earth/images.png"
+      "url": "{HTML_URL}/projects/the-final-earth/index.html",
+      "cover":"{COVER_URL}/project/the-final-earth/images.png"
     },
     {
       "name": "The Heist",
-      "url": "https://1kh0.github.io/projects/theheist/index.html",
-      "thumbnail": "projects/theheist/theheist.jpg"
+      "url": "{HTML_URL}/projects/theheist/index.html",
+      "cover":"{COVER_URL}/project/theheist/theheist.jpg"
     },
     {
       "name": "There Is No Game",
-      "url": "https://1kh0.github.io/projects/there-is-no-game/index.html",
-      "thumbnail": "projects/there-is-no-game/logo.png"
+      "url": "{HTML_URL}/projects/there-is-no-game/index.html",
+      "cover":"{COVER_URL}/project/there-is-no-game/logo.png"
     },
     {
       "name": "This Is The Only Level",
-      "url": "https://1kh0.github.io/projects/thisistheonlylevel/index.html",
-      "thumbnail": "projects/thisistheonlylevel/thisistheonlylevel.png"
+      "url": "{HTML_URL}/projects/thisistheonlylevel/index.html",
+      "cover":"{COVER_URL}/project/thisistheonlylevel/thisistheonlylevel.png"
     },
     {
       "name": "Toss The Turtle",
-      "url": "https://1kh0.github.io/projects/tosstheturtle/index.html",
-      "thumbnail": "projects/tosstheturtle/tosstheturtle.png"
+      "url": "{HTML_URL}/projects/tosstheturtle/index.html",
+      "cover":"{COVER_URL}/project/tosstheturtle/tosstheturtle.png"
     },
     {
       "name": "Tube Jumpers",
-      "url": "https://1kh0.github.io/projects/tube-jumpers/index.html",
-      "thumbnail": "projects/tube-jumpers/img/shark.jpg"
+      "url": "{HTML_URL}/projects/tube-jumpers/index.html",
+      "cover":"{COVER_URL}/project/tube-jumpers/img/shark.jpg"
     },
     {
       "name": "Tunnel Rush",
-      "url": "https://1kh0.github.io/projects/tunnel-rush/index.html",
-      "thumbnail": "projects/tunnel-rush/img/tunnel.jpg"
+      "url": "{HTML_URL}/projects/tunnel-rush/index.html",
+      "cover":"{COVER_URL}/project/tunnel-rush/img/tunnel.jpg"
     },
     {
       "name": "TV Static",
-      "url": "https://1kh0.github.io/projects/tv-static/index.html",
-      "thumbnail": "projects/tv-static/static.png"
+      "url": "{HTML_URL}/projects/tv-static/index.html",
+      "cover":"{COVER_URL}/project/tv-static/static.png"
     },
     {
       "name": "Vex 3",
-      "url": "https://1kh0.github.io/projects/vex3/index.html",
-      "thumbnail": "projects/vex3/vex3.png"
+      "url": "{HTML_URL}/projects/vex3/index.html",
+      "cover":"{COVER_URL}/project/vex3/vex3.png"
     },
     {
       "name": "Vex 4",
-      "url": "https://1kh0.github.io/projects/vex4/index.html",
-      "thumbnail": "projects/vex4/vex4.png"
+      "url": "{HTML_URL}/projects/vex4/index.html",
+      "cover":"{COVER_URL}/project/vex4/vex4.png"
     },
     {
       "name": "Vex 5",
-      "url": "https://1kh0.github.io/projects/vex5/index.html",
-      "thumbnail": "projects/vex5/vex.jpeg"
+      "url": "{HTML_URL}/projects/vex5/index.html",
+      "cover":"{COVER_URL}/project/vex5/vex.jpeg"
     },
     {
       "name": "Vex 6",
-      "url": "https://1kh0.github.io/projects/vex6/index.html",
-      "thumbnail": "projects/vex6/assets/icon.jpeg"
+      "url": "{HTML_URL}/projects/vex6/index.html",
+      "cover":"{COVER_URL}/project/vex6/assets/icon.jpeg"
     },
     {
       "name": "Web Retro Local",
-      "url": "https://1kh0.github.io/projects/webretro-local/index.html",
-      "thumbnail": "projects/webretro-local/assets/icon204.png"
+      "url": "{HTML_URL}/projects/webretro-local/index.html",
+      "cover":"{COVER_URL}/project/webretro-local/assets/icon204.png"
     },
     {
       "name": "Wolfenstein 3D",
-      "url": "https://1kh0.github.io/projects/wolf3d/index.html",
-      "thumbnail": "projects/wolf3d/art/wolf3d.png"
+      "url": "{HTML_URL}/projects/wolf3d/index.html",
+      "cover":"{COVER_URL}/project/wolf3d/art/wolf3d.png"
     },
     {
       "name": "Wordle",
-      "url": "https://1kh0.github.io/projects/wordle/index.html",
-      "thumbnail": "projects/wordle/img/logo_512x512.png"
+      "url": "{HTML_URL}/projects/wordle/index.html",
+      "cover":"{COVER_URL}/project/wordle/img/logo_512x512.png"
     },
     {
       "name": "World's Hardest Game",
-      "url": "https://1kh0.github.io/projects/worlds-hardest-game/index.html",
-      "thumbnail": "projects/worlds-hardest-game/images/splash.jpg"
+      "url": "{HTML_URL}/projects/worlds-hardest-game/index.html",
+      "cover":"{COVER_URL}/project/worlds-hardest-game/images/splash.jpg"
     },
     {
       "name": "World's Hardest Game 2",
-      "url": "https://1kh0.github.io/projects/worlds-hardest-game-2/index.html",
-      "thumbnail": "projects/worlds-hardest-game-2/the-worlds-hardest-game-2.jpg"
+      "url": "{HTML_URL}/projects/worlds-hardest-game-2/index.html",
+      "cover":"{COVER_URL}/project/worlds-hardest-game-2/the-worlds-hardest-game-2.jpg"
     },
     {
       "name": "You Are Jeff Bezos",
-      "url": "https://1kh0.github.io/projects/you-are-bezos/index.html",
-      "thumbnail": "projects/you-are-bezos/img/banner.png"
+      "url": "{HTML_URL}/projects/you-are-bezos/index.html",
+      "cover":"{COVER_URL}/project/you-are-bezos/img/banner.png"
     }
   ]
 }
