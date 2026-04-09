@@ -1,80 +1,80 @@
-window.GameSaveManager = {
-    saveData: function(gameId, base64Data) {
-        localStorage.setItem('hub_save_' + gameId, base64Data);
-    },
-    
-    loadData: function(gameId) {
-        return localStorage.getItem('hub_save_' + gameId) || "";
-    },
-    
-    exportAll: function() {
+// FILE 1: loalstorage.js
+// Upload this exact code to your GitHub at: https://cdn.jsdelivr.net/gh/Sea-Math/Sea-Math.github.io@main/loalstorage.js
+
+window.GameSaver = {
+    save: function(gameName, key, value) {
         try {
-            const allData = {};
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('hub_save_')) {
-                    allData[key] = localStorage.getItem(key);
-                }
-            }
-            return btoa(JSON.stringify(allData));
-        } catch(e) {
-            return "";
+            let allSaves = JSON.parse(localStorage.getItem('GlobalHub_Saves') || '{}');
+            if (!allSaves[gameName]) allSaves[gameName] = {};
+            allSaves[gameName][key] = value;
+            localStorage.setItem('GlobalHub_Saves', JSON.stringify(allSaves));
+        } catch (e) {
+            console.error("Save failed", e);
         }
     },
-    
-    importAll: function(base64String) {
+
+    load: function(gameName) {
         try {
-            const parsed = JSON.parse(atob(base64String));
-            for (let key in parsed) {
-                localStorage.setItem(key, parsed[key]);
-            }
+            let allSaves = JSON.parse(localStorage.getItem('GlobalHub_Saves') || '{}');
+            return allSaves[gameName] || {};
+        } catch (e) {
+            return {};
+        }
+    },
+
+    exportData: function() {
+        return btoa(localStorage.getItem('GlobalHub_Saves') || '{}');
+    },
+
+    importData: function(base64String) {
+        try {
+            let decoded = atob(base64String);
+            JSON.parse(decoded); 
+            localStorage.setItem('GlobalHub_Saves', decoded);
             return true;
         } catch(e) {
             return false;
         }
     },
 
-    getInjectableScript: function(gameId) {
-        const savedData = this.loadData(gameId);
+    getInjectorScript: function(gameName) {
+        const savedData = this.load(gameName);
         return `<script>
-            window.onbeforeunload = function() { return "Staying in site!"; };
-            window.open = function() { return null; };
-            setInterval(function() {
-                const ads = document.querySelectorAll('.ad, .ads, .adsbygoogle, .banner-ads, [id^="ad-"], iframe[src*="doubleclick"], iframe[src*="googleads"], #sidebarad1, #sidebarad2');
-                ads.forEach(ad => ad.remove());
-            }, 500); 
-
             (function() {
-                const saveString = "${savedData}";
-                if (saveString && saveString !== "e30=") {
-                    try {
-                        const data = JSON.parse(atob(saveString));
-                        for (let key in data) { localStorage.setItem(key, data[key]); }
-                    } catch(e) {}
+                // 1. Inject saved data into the game's local storage BEFORE it loads
+                const savedData = ${JSON.stringify(savedData)};
+                for (let k in savedData) {
+                    localStorage.setItem(k, savedData[k]);
                 }
-                
-                window.lastSync = "";
-                setInterval(() => {
-                    try {
-                        const allData = {};
-                        for (let i = 0; i < localStorage.length; i++) {
-                            const key = localStorage.key(i);
-                            allData[key] = localStorage.getItem(key);
-                        }
-                        const encoded = btoa(JSON.stringify(allData));
-                        if (window.lastSync !== encoded && encoded !== "e30=") {
-                            window.lastSync = encoded;
-                            window.parent.postMessage({ type: 'gameSaveSync', data: encoded, id: "${gameId}" }, '*');
-                        }
-                    } catch(e) {}
-                }, 1000);
+
+                // 2. Override the game's localStorage.setItem to auto-sync back to the Hub
+                const originalSetItem = localStorage.setItem;
+                localStorage.setItem = function(key, value) {
+                    originalSetItem.call(localStorage, key, value);
+                    // Send to parent window (the Hub)
+                    window.parent.postMessage({
+                        type: 'hubSave',
+                        game: '${gameName}',
+                        key: key,
+                        val: value
+                    }, '*');
+                };
+
+                // 3. Block redirects and ads
+                window.onbeforeunload = function() { return "Staying in site!"; };
+                window.open = function() { return null; };
+                setInterval(function() {
+                    const ads = document.querySelectorAll('.ad, .ads, .adsbygoogle, .banner-ads, [id^="ad-"], iframe[src*="doubleclick"]');
+                    ads.forEach(ad => ad.remove());
+                }, 500);
             })();
         <\/script>`;
     }
 };
 
+// Listen for the overridden setItem messages from the game iframe
 window.addEventListener('message', function(e) {
-    if (e.data && e.data.type === 'gameSaveSync') {
-        window.GameSaveManager.saveData(e.data.id, e.data.data);
+    if (e.data && e.data.type === 'hubSave') {
+        window.GameSaver.save(e.data.game, e.data.key, e.data.val);
     }
 });
