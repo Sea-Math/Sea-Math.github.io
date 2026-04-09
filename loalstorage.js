@@ -1,66 +1,80 @@
-// FILE 2: loalstorage.js
-// INSTRUCTIONS: Upload this file to your GitHub so it updates your existing jsDelivr CDN link.
-
-(function() {
-    // This connects to the central hub you uploaded in File 1
-    const HUB_URL = 'https://sea-math.github.io/storage-hub.html';
+window.GameSaveManager = {
+    saveData: function(gameId, base64Data) {
+        localStorage.setItem('hub_save_' + gameId, base64Data);
+    },
     
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = HUB_URL;
+    loadData: function(gameId) {
+        return localStorage.getItem('hub_save_' + gameId) || "";
+    },
     
-    let hubReady = false;
-    let cachedData = {};
-    let messageQueue = [];
-    let readyCallbacks = [];
-
-    window.addEventListener('message', function(e) {
-        if (e.origin === new URL(HUB_URL).origin) {
-            if (e.data.action === 'SYNC_ALL') {
-                cachedData = e.data.data;
-                hubReady = true;
-                console.log("[Save Sync] Cross-browser cloud data loaded successfully.");
-                readyCallbacks.forEach(cb => cb());
-                readyCallbacks = [];
+    exportAll: function() {
+        try {
+            const allData = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('hub_save_')) {
+                    allData[key] = localStorage.getItem(key);
+                }
             }
+            return btoa(JSON.stringify(allData));
+        } catch(e) {
+            return "";
         }
-    });
-
-    iframe.onload = function() {
-        // As soon as iframe loads, request all cloud saves
-        iframe.contentWindow.postMessage({ action: 'GET_ALL' }, '*');
-        
-        // Process any saves that happened before load
-        messageQueue.forEach(msg => iframe.contentWindow.postMessage(msg, '*'));
-        messageQueue = [];
-    };
-
-    document.head.appendChild(iframe);
-
-    // Expose global API for the main HTML file to use
-    window.CrossDomainStorage = {
-        isReady: function() { 
-            return hubReady; 
-        },
-        onReady: function(cb) {
-            if (hubReady) cb(); else readyCallbacks.push(cb);
-        },
-        getGameSave: function(gameId) {
-            return cachedData['hub_save_' + gameId] || localStorage.getItem('hub_save_' + gameId) || "";
-        },
-        saveGame: function(gameId, saveData) {
-            // Save to memory
-            cachedData['hub_save_' + gameId] = saveData;
-            // Save to local fallback
-            localStorage.setItem('hub_save_' + gameId, saveData);
-            
-            // Save to Cross-Domain Cloud Hub
-            const msg = { action: 'SET', key: 'hub_save_' + gameId, value: saveData };
-            if (hubReady) {
-                iframe.contentWindow.postMessage(msg, '*');
-            } else {
-                messageQueue.push(msg);
+    },
+    
+    importAll: function(base64String) {
+        try {
+            const parsed = JSON.parse(atob(base64String));
+            for (let key in parsed) {
+                localStorage.setItem(key, parsed[key]);
             }
+            return true;
+        } catch(e) {
+            return false;
         }
-    };
-})();
+    },
+
+    getInjectableScript: function(gameId) {
+        const savedData = this.loadData(gameId);
+        return `<script>
+            window.onbeforeunload = function() { return "Staying in site!"; };
+            window.open = function() { return null; };
+            setInterval(function() {
+                const ads = document.querySelectorAll('.ad, .ads, .adsbygoogle, .banner-ads, [id^="ad-"], iframe[src*="doubleclick"], iframe[src*="googleads"], #sidebarad1, #sidebarad2');
+                ads.forEach(ad => ad.remove());
+            }, 500); 
+
+            (function() {
+                const saveString = "${savedData}";
+                if (saveString && saveString !== "e30=") {
+                    try {
+                        const data = JSON.parse(atob(saveString));
+                        for (let key in data) { localStorage.setItem(key, data[key]); }
+                    } catch(e) {}
+                }
+                
+                window.lastSync = "";
+                setInterval(() => {
+                    try {
+                        const allData = {};
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const key = localStorage.key(i);
+                            allData[key] = localStorage.getItem(key);
+                        }
+                        const encoded = btoa(JSON.stringify(allData));
+                        if (window.lastSync !== encoded && encoded !== "e30=") {
+                            window.lastSync = encoded;
+                            window.parent.postMessage({ type: 'gameSaveSync', data: encoded, id: "${gameId}" }, '*');
+                        }
+                    } catch(e) {}
+                }, 1000);
+            })();
+        <\/script>`;
+    }
+};
+
+window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'gameSaveSync') {
+        window.GameSaveManager.saveData(e.data.id, e.data.data);
+    }
+});
