@@ -11,14 +11,9 @@
 
     <style>
         :root {
-            --bg-outer: #0a0e14;
-            --bg-panel: #060b15;
-            --border-color: #1a2332;
-            --accent-cyan: #00e5ff;
-            --accent-glow: rgba(0, 229, 255, 0.6);
-            --text-main: #ffffff;
-            --text-sub: #8b9bb4;
-            --grid-color: rgba(255, 255, 255, 0.03);
+            --bg-outer: #0a0e14; --bg-panel: #060b15; --border-color: #1a2332;
+            --accent-cyan: #00e5ff; --accent-glow: rgba(0, 229, 255, 0.6);
+            --text-main: #ffffff; --text-sub: #8b9bb4; --grid-color: rgba(255, 255, 255, 0.03);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
@@ -43,8 +38,7 @@
 
         .content-scroll {
             position: relative; z-index: 10; width: 100%; height: 100%;
-            overflow-y: auto; padding: 80px 40px 100px 40px; display: flex;
-            flex-direction: column; align-items: center;
+            overflow-y: auto; padding: 80px 40px 100px 40px; display: flex; flex-direction: column; align-items: center;
         }
 
         .content-scroll::-webkit-scrollbar { width: 8px; }
@@ -74,34 +68,24 @@
         }
 
         .inputcontainer:focus-within { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.05); }
-
         .inputcontainer input {
             background: none; border: none; outline: none; color: var(--text-main); font-size: 1.1rem; width: 100%;
             text-align: center; font-style: italic;
         }
-
         .inputcontainer input:focus { text-align: left; font-style: normal; }
         .inputcontainer input::placeholder { color: rgba(255, 255, 255, 0.5); }
 
-        .combined-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;
-            width: 100%; max-width: 1400px; margin: 0 auto;
-        }
+        .combined-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; width: 100%; max-width: 1400px; margin: 0 auto; }
 
         .zone-item {
             background: #111827; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden;
             position: relative; aspect-ratio: 1; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .zone-item:hover {
-            transform: scale(1.05); border-color: var(--accent-cyan);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 229, 255, 0.15);
-        }
-
+        .zone-item:hover { transform: scale(1.05); border-color: var(--accent-cyan); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 229, 255, 0.15); }
         .zone-item img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s; }
         .zone-item:hover img { opacity: 0.7; }
 
-        /* The little tag in right top corner of game site it from */
         .source-tag {
             position: absolute; top: 10px; right: 10px; background: rgba(6, 11, 21, 0.85); color: var(--accent-cyan);
             border: 1px solid var(--accent-cyan); padding: 4px 8px; border-radius: 6px; font-size: 0.65rem;
@@ -153,12 +137,22 @@
         }
         .modal-close:hover { color: var(--accent-cyan); }
         .modal-title { font-size: 2rem; font-weight: 900; color: #fff; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;}
+        
+        .save-container { margin-top: 15px; }
+        .save-container h4 { color: var(--accent-cyan); margin-bottom: 10px; }
+        .save-textarea {
+            width: 100%; height: 100px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color);
+            color: var(--text-main); padding: 10px; border-radius: 8px; font-family: monospace; resize: none;
+            margin-bottom: 10px; word-break: break-all;
+        }
+        .save-btn {
+            background: var(--accent-cyan); color: #000; border: none; padding: 10px 20px; font-weight: 800;
+            border-radius: 8px; cursor: pointer; transition: 0.2s; width: 100%; font-size: 1.1rem;
+        }
+        .save-btn:hover { background: #fff; box-shadow: 0 0 15px var(--accent-glow); }
 
         .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; grid-column: 1 / -1; padding: 40px; }
-        .spinner {
-            width: 40px; height: 40px; border: 4px solid rgba(0, 229, 255, 0.1); border-left-color: var(--accent-cyan);
-            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
-        }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(0, 229, 255, 0.1); border-left-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-text { color: var(--text-sub); font-style: italic; font-size: 1.2rem; }
     </style>
@@ -170,13 +164,15 @@
             <div class="grid-bg"></div>
 
             <div class="top-bar-actions">
+                <button class="action-btn" onclick="openSaveManager()" title="Cross-Browser Save Manager">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </button>
                 <button class="action-btn" onclick="openSiteInAboutBlank()" title="Open Hub in about:blank">
                     <i class="fa-solid fa-up-right-from-square"></i>
                 </button>
             </div>
 
             <div class="content-scroll">
-                
                 <div class="header-titles">
                     <h1 class="main-title">Games</h1>
                     <p class="subtitle" id="gameCount">Loading libraries...</p>
@@ -205,7 +201,7 @@
                 <span id="zoneAuthor">by Author</span>
             </div>
             <div class="zone-controls">
-                <button id="syncStatusBtn" style="pointer-events:none; border-color:var(--text-sub); color:var(--text-sub);"><i class="fa-solid fa-cloud-arrow-up"></i> CLOUD SYNC ON</button>
+                <button onclick="openSaveManager()" title="Manage Save Data"><i class="fa-solid fa-cloud"></i> DATA MANAGER</button>
                 <button onclick="openGameInAboutBlank()" title="Open Game in about:blank"><i class="fa-solid fa-up-right-from-square"></i></button>
                 <button onclick="fullscreenZone()" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
                 <button onclick="closeZone()">LEAVE</button>
@@ -214,17 +210,35 @@
         <iframe id="zoneFrame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-modals"></iframe>
     </div>
 
+    <div id="saveModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="document.getElementById('saveModal').style.display='none'"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="modal-title">Device Sync Manager</h3>
+            <p style="color: var(--text-sub); margin-bottom: 20px;">Use these codes to transfer your local storage game progress between different browsers, networks, or devices.</p>
+            
+            <div class="save-container">
+                <h4>1. Copy Data From This Browser</h4>
+                <textarea id="exportData" class="save-textarea" readonly placeholder="Your save code will appear here..."></textarea>
+                <button class="save-btn" onclick="copySaveData()"><i class="fa-solid fa-copy"></i> COPY SYNC CODE</button>
+            </div>
+
+            <div class="save-container" style="margin-top: 30px;">
+                <h4>2. Load Data Into This Browser</h4>
+                <textarea id="importData" class="save-textarea" placeholder="Paste your save code here..."></textarea>
+                <button class="save-btn" onclick="applySaveData()"><i class="fa-solid fa-download"></i> LOAD SYNC CODE</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const zoneViewer = document.getElementById('zoneViewer');
         const zoneFrame = document.getElementById('zoneFrame');
         const searchInput = document.getElementById('dumbSearchInput');
         const zonesWrapper = document.getElementById('zonesWrapper');
         const gameCountText = document.getElementById('gameCount');
-        const syncStatusBtn = document.getElementById('syncStatusBtn');
         
         let allZones = [];
         let currentBlobUrl = null;
-        let activeGameId = null;
 
         const balatroGame = {
             name: "Balatro", sourceName: "Custom", author: "Local",
@@ -237,19 +251,33 @@
             { name: "Master Archive", type: "combined", repos: ["sea-bean-unblocked/Folder-1", "sea-bean-unblocked/Folder-2", "sea-bean-unblocked/Folder-3"], icon: "https://sea-math-official.neocities.org/Perfet.png" }
         ];
 
-        // Ensure cloud sync works seamlessly with the game iframe
-        window.addEventListener('message', function(e) {
-            if (e.data && e.data.type === 'gameSaveSync') {
-                const gId = e.data.id;
-                const gData = e.data.data;
-                // Save to Cloud via our CDN Script
-                if (window.CrossDomainStorage) {
-                    window.CrossDomainStorage.saveGame(gId, gData);
-                } else {
-                    localStorage.setItem('hub_save_' + gId, gData);
-                }
+        function openSaveManager() {
+            document.getElementById('saveModal').style.display = 'flex';
+            if(window.GameSaveManager) {
+                document.getElementById('exportData').value = window.GameSaveManager.exportAll();
+            } else {
+                document.getElementById('exportData').value = "Error: CDN Script not loaded.";
             }
-        });
+            document.getElementById('importData').value = "";
+        }
+
+        function copySaveData() {
+            const el = document.getElementById('exportData');
+            el.select();
+            document.execCommand('copy');
+            alert("Save code copied! Save this somewhere safe to transfer your progress.");
+        }
+
+        function applySaveData() {
+            const input = document.getElementById('importData').value.trim();
+            if (!input) return;
+            if(window.GameSaveManager && window.GameSaveManager.importAll(input)) {
+                alert("Data Successfully Loaded!");
+                document.getElementById('saveModal').style.display = 'none';
+            } else {
+                alert("Invalid save code!");
+            }
+        }
 
         function openSiteInAboutBlank() {
             let win = window.open('about:blank', '_blank');
@@ -357,86 +385,38 @@
         searchInput.addEventListener('input', () => { clearTimeout(window.searchTimeout); window.searchTimeout = setTimeout(handlePeakSearch, 150); });
 
         function openZone(file) {
-            activeGameId = file.name;
             zoneViewer.style.display = "flex";
             document.getElementById('zoneAuthor').textContent = "AUTHOR: " + (file.author || "UNKNOWN");
+            document.getElementById('zoneName').textContent = file.name;
             zoneFrame.src = "about:blank";
 
-            const executeLaunch = () => {
-                document.getElementById('zoneName').textContent = file.name;
-                const url = file.resolvedUrl;
-                const cacheBusterUrl = url + (url.includes('?') ? '&' : '?') + "t=" + Date.now();
-                
-                // Pull from cross-domain cloud if available
-                let savedData = window.CrossDomainStorage ? window.CrossDomainStorage.getGameSave(file.name) : (localStorage.getItem('hub_save_' + file.name) || "");
+            const url = file.resolvedUrl;
+            const cacheBusterUrl = url + (url.includes('?') ? '&' : '?') + "t=" + Date.now();
 
-                if (url.startsWith("/") || (url.startsWith("http") && !url.includes("cdn.jsdelivr.net") && !url.includes("api.github.com"))) {
-                    zoneFrame.src = url; return;
-                }
-
-                fetch(cacheBusterUrl)
-                    .then(res => { if (!res.ok) throw new Error('Network Issue'); return res.text(); })
-                    .then(html => {
-                        if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
-                        
-                        const safetyAndSyncScript = `<script>
-                            window.onbeforeunload = function() { return "Staying in site!"; };
-                            window.open = function() { return null; };
-                            setInterval(function() {
-                                const ads = document.querySelectorAll('.ad, .ads, .adsbygoogle, .banner-ads, [id^="ad-"], iframe[src*="doubleclick"], iframe[src*="googleads"], #sidebarad1, #sidebarad2');
-                                ads.forEach(ad => ad.remove());
-                            }, 500); 
-
-                            (function() {
-                                const saveString = "${savedData}";
-                                if (saveString && saveString !== "e30=") {
-                                    try {
-                                        const data = JSON.parse(atob(saveString));
-                                        for (let key in data) { localStorage.setItem(key, data[key]); }
-                                    } catch(e) {}
-                                }
-                                window.lastSync = "";
-                                setInterval(() => {
-                                    try {
-                                        const allData = {};
-                                        for (let i = 0; i < localStorage.length; i++) {
-                                            const key = localStorage.key(i);
-                                            allData[key] = localStorage.getItem(key);
-                                        }
-                                        const encoded = btoa(JSON.stringify(allData));
-                                        if (window.lastSync !== encoded && encoded !== "e30=") {
-                                            window.lastSync = encoded;
-                                            window.parent.postMessage({ type: 'gameSaveSync', data: encoded, id: "${file.name}" }, '*');
-                                        }
-                                    } catch(e) {}
-                                }, 1000);
-                            })();
-                        <\/script>`;
-                        
-                        let finalHtml = html.toLowerCase().includes('<head>') ? html.replace(/<head>/i, '<head>' + safetyAndSyncScript) : safetyAndSyncScript + html;
-                        currentBlobUrl = URL.createObjectURL(new Blob([finalHtml], { type: 'text/html;charset=utf-8' }));
-                        zoneFrame.src = currentBlobUrl;
-                    })
-                    .catch(err => { zoneFrame.src = url; });
-            };
-
-            // Ensure cloud saves are loaded before booting game
-            if (window.CrossDomainStorage && !window.CrossDomainStorage.isReady()) {
-                document.getElementById('zoneName').textContent = "Syncing Cloud Saves...";
-                syncStatusBtn.style.color = "var(--accent-cyan)";
-                syncStatusBtn.style.borderColor = "var(--accent-cyan)";
-                window.CrossDomainStorage.onReady(executeLaunch);
-            } else {
-                syncStatusBtn.style.color = "var(--accent-cyan)";
-                syncStatusBtn.style.borderColor = "var(--accent-cyan)";
-                executeLaunch();
+            if (url.startsWith("/") || (url.startsWith("http") && !url.includes("cdn.jsdelivr.net") && !url.includes("api.github.com"))) {
+                zoneFrame.src = url; return;
             }
+
+            fetch(cacheBusterUrl)
+                .then(res => { if (!res.ok) throw new Error('Network Issue'); return res.text(); })
+                .then(html => {
+                    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+                    
+                    let scriptToInject = "";
+                    if(window.GameSaveManager) {
+                        scriptToInject = window.GameSaveManager.getInjectableScript(file.name);
+                    }
+                    
+                    let finalHtml = html.toLowerCase().includes('<head>') ? html.replace(/<head>/i, '<head>' + scriptToInject) : scriptToInject + html;
+                    currentBlobUrl = URL.createObjectURL(new Blob([finalHtml], { type: 'text/html;charset=utf-8' }));
+                    zoneFrame.src = currentBlobUrl;
+                })
+                .catch(err => { zoneFrame.src = url; });
         }
 
         function closeZone() {
             zoneViewer.style.display = "none"; zoneFrame.src = "about:blank";
             if (currentBlobUrl) { URL.revokeObjectURL(currentBlobUrl); currentBlobUrl = null; }
-            activeGameId = null;
         }
 
         function fullscreenZone() {
