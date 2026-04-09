@@ -213,8 +213,8 @@
     <div id="saveModal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close" onclick="document.getElementById('saveModal').style.display='none'"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="modal-title">Device Sync Manager</h3>
-            <p style="color: var(--text-sub); margin-bottom: 20px;">Use these codes to transfer your local storage game progress between different browsers, networks, or devices.</p>
+            <h3 class="modal-title">Save Data Manager</h3>
+            <p style="color: var(--text-sub); margin-bottom: 20px;">Use these codes to transfer your local storage game progress between different browsers or devices.</p>
             
             <div class="save-container">
                 <h4>1. Copy Data From This Browser</h4>
@@ -253,10 +253,10 @@
 
         function openSaveManager() {
             document.getElementById('saveModal').style.display = 'flex';
-            if(window.GameSaveManager) {
-                document.getElementById('exportData').value = window.GameSaveManager.exportAll();
+            if(window.GameSaver) {
+                document.getElementById('exportData').value = window.GameSaver.exportData();
             } else {
-                document.getElementById('exportData').value = "Error: CDN Script not loaded.";
+                document.getElementById('exportData').value = "Error: CDN Script not loaded. Check network or URL.";
             }
             document.getElementById('importData').value = "";
         }
@@ -271,8 +271,8 @@
         function applySaveData() {
             const input = document.getElementById('importData').value.trim();
             if (!input) return;
-            if(window.GameSaveManager && window.GameSaveManager.importAll(input)) {
-                alert("Data Successfully Loaded!");
+            if(window.GameSaver && window.GameSaver.importData(input)) {
+                alert("Data Successfully Loaded! Launch a game to see your restored progress.");
                 document.getElementById('saveModal').style.display = 'none';
             } else {
                 alert("Invalid save code!");
@@ -403,11 +403,17 @@
                     if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
                     
                     let scriptToInject = "";
-                    if(window.GameSaveManager) {
-                        scriptToInject = window.GameSaveManager.getInjectableScript(file.name);
+                    if(window.GameSaver && typeof window.GameSaver.getInjectorScript === 'function') {
+                        scriptToInject = window.GameSaver.getInjectorScript(file.name);
                     }
                     
-                    let finalHtml = html.toLowerCase().includes('<head>') ? html.replace(/<head>/i, '<head>' + scriptToInject) : scriptToInject + html;
+                    let finalHtml = html;
+                    if (scriptToInject !== "") {
+                        finalHtml = html.toLowerCase().includes('<head>') 
+                            ? html.replace(/<head>/i, '<head>' + scriptToInject) 
+                            : scriptToInject + html;
+                    }
+
                     currentBlobUrl = URL.createObjectURL(new Blob([finalHtml], { type: 'text/html;charset=utf-8' }));
                     zoneFrame.src = currentBlobUrl;
                 })
