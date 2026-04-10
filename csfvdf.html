@@ -79,10 +79,7 @@
             scroll-behavior: smooth;
         }
         
-        .tabs-container::-webkit-scrollbar { 
-            height: 4px;
-        }
-        
+        .tabs-container::-webkit-scrollbar { height: 4px; }
         .tabs-container::-webkit-scrollbar-thumb {
             background: var(--border-color);
             border-radius: 4px;
@@ -106,10 +103,7 @@
             position: relative;
         }
         
-        .tab:hover {
-            background: var(--bg-element-hover);
-        }
-        
+        .tab:hover { background: var(--bg-element-hover); }
         .tab.active {
             background: var(--accent-blue-dim);
             border-color: var(--accent-blue);
@@ -178,11 +172,7 @@
             color: var(--text-primary);
         }
         
-        .icon-btn svg { 
-            width: 16px; 
-            height: 16px; 
-            fill: currentColor; 
-        }
+        .icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
         .toolbar {
             display: flex;
@@ -233,9 +223,7 @@
             overflow-x: auto;
         }
         
-        .bookmark-bar::-webkit-scrollbar { 
-            display: none; 
-        }
+        .bookmark-bar::-webkit-scrollbar { display: none; }
         
         .bookmark-item {
             display: flex;
@@ -339,15 +327,9 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         
-        .modal h2 { 
-            font-size: 18px; 
-            font-weight: 600; 
-            margin-bottom: 16px; 
-        }
+        .modal h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
         
-        .form-group { 
-            margin-bottom: 20px; 
-        }
+        .form-group { margin-bottom: 20px; }
         
         .form-group label { 
             display: block; 
@@ -371,11 +353,7 @@
             border-color: var(--accent-blue); 
         }
         
-        .modal-actions { 
-            display: flex; 
-            justify-content: flex-end; 
-            gap: 12px; 
-        }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
         
         .btn { 
             padding: 8px 16px; 
@@ -397,14 +375,8 @@
             color: var(--text-primary); 
         }
         
-        .btn-primary { 
-            background: var(--accent-blue); 
-            color: var(--bg-base); 
-        }
-        
-        .btn-primary:hover { 
-            filter: brightness(1.1); 
-        }
+        .btn-primary { background: var(--accent-blue); color: var(--bg-base); }
+        .btn-primary:hover { filter: brightness(1.1); }
         
         .checkbox-label {
             display: flex;
@@ -415,11 +387,7 @@
             cursor: pointer;
         }
         
-        .checkbox-label input { 
-            width: 16px; 
-            height: 16px; 
-            cursor: pointer; 
-        }
+        .checkbox-label input { width: 16px; height: 16px; cursor: pointer; }
 
         .status-dot {
             width: 12px;
@@ -518,7 +486,7 @@
                 <iframe 
                     class="browser-frame"
                     x-show="activeTabId === tab.id"
-                    :src="tab.url ? getEncodedProxyUrl(tab.url) : 'about:blank'"
+                    :src="tab.proxyUrl || 'about:blank'"
                     :id="'frame-' + tab.id"
                     @load="handleIframeLoad(tab.id)"
                     sandbox="allow-same-origin allow-scripts allow-forms allow-pointer-lock allow-top-navigation allow-downloads allow-popups"
@@ -586,6 +554,7 @@
                 canvas: null,
                 scramjetInstance: null,
                 syncInterval: null,
+                clockInterval: null,
                 bookmarks: JSON.parse(localStorage.getItem('sb_bookmarks')) || [
                     { id: 1, name: 'Google', url: 'https://google.com' },
                     { id: 2, name: 'Discord', url: 'https://discord.com/app' }
@@ -602,9 +571,12 @@
                 async init() {
                     this.updateTime();
                     
+                    // Decoupled intervals: Clock updates once a minute, Sync updates quickly (reduces overhead)
+                    if (this.clockInterval) clearInterval(this.clockInterval);
+                    this.clockInterval = setInterval(() => this.updateTime(), 60000);
+
                     if (this.syncInterval) clearInterval(this.syncInterval);
                     this.syncInterval = setInterval(() => {
-                        this.updateTime();
                         this.syncUrl();
                     }, 500);
                     
@@ -616,7 +588,7 @@
                     if(this.engine === 'shaders') {
                         this.initShaders();
                     } else {
-                        this.initProxy();
+                        await this.initProxy();
                     }
 
                     if (window.themeManager && typeof window.themeManager.init === 'function') {
@@ -657,6 +629,7 @@
 
                                     if (decoded !== this.activeTab.url) {
                                         this.activeTab.url = decoded;
+                                        // Do NOT update tab.proxyUrl here. It causes an infinite re-render loop!
                                     }
 
                                     const inputEl = document.getElementById('main-url-input');
@@ -671,22 +644,24 @@
                     }
                 },
 
-                initProxy() {
+                async initProxy() {
                     try {
                         const connection = new BareMux.BareMuxConnection("/sail/baremux/worker.js");
-                        connection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
+                        // Await transport setting so it connects before we load frames
+                        await connection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
                         
-                        const { ScramjetController } = $scramjetLoadController();
-                        this.scramjetInstance = new ScramjetController({
-                            files: {
-                                all: "/sail/scram/scramjet.all.js",
-                                wasm: "/sail/scram/scramjet.wasm.wasm",
-                                sync: "/sail/scram/scramjet.sync.js"
-                            },
-                            prefix: "/sail/go/"
-                        });
-                        this.scramjetInstance.init();
-
+                        if (!this.scramjetInstance) {
+                            const { ScramjetController } = $scramjetLoadController();
+                            this.scramjetInstance = new ScramjetController({
+                                files: {
+                                    all: "/sail/scram/scramjet.all.js",
+                                    wasm: "/sail/scram/scramjet.wasm.wasm",
+                                    sync: "/sail/scram/scramjet.sync.js"
+                                },
+                                prefix: "/swim/dive/"
+                            });
+                            this.scramjetInstance.init();
+                        }
                     } catch (e) {
                         console.error("Proxy init error", e);
                     }
@@ -776,7 +751,8 @@
 
                 addTab() {
                     const id = Date.now();
-                    this.tabs.push({ id, title: 'New Tab', url: '', isLoading: false });
+                    // Added proxyUrl statically so it doesn't cause infinite Reactivity re-renders
+                    this.tabs.push({ id, title: 'New Tab', url: '', proxyUrl: '', isLoading: false });
                     this.activateTab(id);
                     
                     this.$nextTick(() => {
@@ -839,7 +815,10 @@
                             this.activeTab.title = 'Loading...';
                         }
                         
-                        if (this.engine === 'shaders' && this.canvas) {
+                        // Calculate proxyUrl once per submission to prevent UI freezing
+                        if (this.engine === 'scramjet') {
+                            this.activeTab.proxyUrl = this.getEncodedProxyUrl(url);
+                        } else if (this.engine === 'shaders' && this.canvas) {
                             this.canvas.createSurface(url);
                             // Fallback timeout for shader loading state
                             setTimeout(() => {
@@ -851,10 +830,37 @@
                     }
                 },
 
-                saveSettings() {
+                async saveSettings() {
                     localStorage.setItem('sb_scramjet_server', this.scramjetServer);
                     localStorage.setItem('sb_adblock', this.adBlockEnabled);
-                    this.initProxy();
+                    
+                    // Smoothly hot-swap proxy and refresh tabs without breaking the page
+                    if (this.engine === 'scramjet') {
+                        try {
+                            const connection = new BareMux.BareMuxConnection("/sail/baremux/worker.js");
+                            await connection.setTransport("/sail/libcurl/index.mjs", [{ websocket: this.scramjetServer }]);
+                            
+                            // Refresh all currently open iframes to route through the new Wisp Server
+                            this.tabs.forEach(tab => {
+                                if (tab.proxyUrl) {
+                                    tab.isLoading = true;
+                                    const frame = document.getElementById('frame-' + tab.id);
+                                    if (frame && frame.contentWindow) {
+                                        try {
+                                            frame.contentWindow.location.reload();
+                                        } catch(e) {
+                                            frame.src = frame.src; // Fallback
+                                        }
+                                    }
+                                }
+                            });
+                        } catch (e) {
+                            console.error("Failed to swap proxy connections dynamically", e);
+                        }
+                    } else {
+                        await this.initProxy();
+                    }
+                    
                     this.showSettings = false;
                 },
 
@@ -903,9 +909,9 @@
                     
                     let targetUrl = '';
                     if (this.engine === 'scramjet') {
-                        targetUrl = this.getEncodedProxyUrl(this.activeTab.url);
+                        targetUrl = this.activeTab.proxyUrl || this.getEncodedProxyUrl(this.activeTab.url);
                     } else {
-                        // Fallback for canvas/shaders, just attempt to open the original URL
+                        // Fallback for canvas/shaders
                         targetUrl = this.activeTab.url;
                     }
 
