@@ -403,6 +403,7 @@
             transition: all 0.2s;
             font-size: 0.9rem;
             font-weight: 500;
+            margin-right: auto;
         }
         .model-selector-btn:hover { background-color: var(--bg-hover); color: var(--text-main); }
         .model-selector-btn svg { width: 16px; height: 16px; stroke-width: 1.5; }
@@ -546,11 +547,6 @@
                     </div>
                 </div>
 
-                <button class="model-selector-btn" onclick="setApiKey()" title="Configure API Key" style="margin-right:auto; margin-bottom: 2px;">
-                    <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-                    Key
-                </button>
-
                 <button class="icon-btn" onclick="document.getElementById('file-upload').click()" title="Attach File or Image">
                     <svg viewBox="0 0 24 24"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                 </button>
@@ -572,20 +568,14 @@
     <script>
         marked.use({ breaks: true });
 
-        let API_KEY = localStorage.getItem('openrouter_api_key') || '';
+        let API_KEY = "";
         
         try {
-            if (!API_KEY && typeof bbnoSecret !== 'undefined') {
-                const decodedString = atob(bbnoSecret);
-                const executeSecret = new Function(decodedString);
-                executeSecret();
-                API_KEY = window.CONFIG_API_KEY || "";
-                if (API_KEY && API_KEY !== "YOUR_OPENROUTER_API_KEY_HERE") {
-                    localStorage.setItem('openrouter_api_key', API_KEY);
-                }
+            if (typeof bbnoSecret !== 'undefined' && bbnoSecret.trim() !== "") {
+                API_KEY = atob(bbnoSecret);
             }
         } catch (e) {
-            console.error("Failed to decode base-64 secret.");
+            console.error("Failed to decode base-64 secret from bbno$.js");
         }
         
         const MODEL_MAP = {
@@ -608,16 +598,6 @@
         
         const fileStorage = {};
         let fileIdCounter = 0;
-
-        function setApiKey() {
-            const current = localStorage.getItem('openrouter_api_key') || API_KEY || '';
-            const input = prompt("Please enter your OpenRouter API Key:\n\nThis will be saved securely in your browser's local storage and WILL NOT be uploaded to GitHub.", current);
-            if (input !== null) {
-                const cleaned = input.trim();
-                localStorage.setItem('openrouter_api_key', cleaned);
-                API_KEY = cleaned;
-            }
-        }
 
         function autoResize(el) {
             el.style.height = 'auto';
@@ -858,9 +838,9 @@
         async function handleSend(isRedo = false) {
             if (isGenerating) return;
             
-            if (!API_KEY || API_KEY === "YOUR_OPENROUTER_API_KEY_HERE") {
-                setApiKey();
-                if (!API_KEY || API_KEY === "YOUR_OPENROUTER_API_KEY_HERE") return;
+            if (!API_KEY || API_KEY.trim() === "") {
+                alert("API Key is missing. Please ensure 'bbno$.js' is loaded and contains a valid base64 string.");
+                return;
             }
 
             const inputField = document.getElementById("user-input");
@@ -923,10 +903,8 @@
                 const data = await res.json();
                 
                 if (data.error && data.error.message && data.error.message.includes("User not found")) {
-                     aiMessageDiv.querySelector('.ai-text').innerText = "API Error: Your API key was rejected. If you uploaded it to GitHub, OpenRouter deleted it. Click the 'Key' button next to the model selector, and paste a brand new key from OpenRouter.";
+                     aiMessageDiv.querySelector('.ai-text').innerText = "API Error: Your API key was rejected. Update the base64 string in bbno$.js with a valid key.";
                      chatContext.pop();
-                     localStorage.removeItem('openrouter_api_key');
-                     API_KEY = "";
                 } else if (data.choices && data.choices.length > 0) {
                     const rawText = data.choices[0].message.content;
                     const parsedHTML = marked.parse(rawText);
