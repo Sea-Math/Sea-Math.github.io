@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>helper progam </title>
+    <title>Terminal AI</title>
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -13,7 +13,6 @@
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
-    <script src="themes.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
@@ -113,38 +112,39 @@
 
         .chat-image-preview {
             max-width: 100%;
-            max-height: 300px;
+            max-height: 250px;
             border-radius: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             border: 1px solid var(--border-color);
-            object-fit: contain;
+            object-fit: cover;
             display: block;
             cursor: pointer;
             transition: opacity 0.2s;
+            background: #000;
         }
         
-        .chat-image-preview:hover { opacity: 0.8; }
+        .chat-image-preview:hover { opacity: 0.85; }
 
         .file-attachment-pill {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 6px 10px;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 14px;
             border-radius: 8px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
             border: 1px solid var(--border-color);
             max-width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: background 0.2s;
         }
         
-        .file-attachment-pill:hover { opacity: 0.8; }
+        .file-attachment-pill:hover { background: rgba(255, 255, 255, 0.1); }
 
         .ai-message {
             align-self: flex-start;
@@ -233,7 +233,7 @@
             background-color: #ffffff;
             color: #000000;
             border-radius: 8px;
-            padding: 30px;
+            padding: 40px;
             margin: 20px 0;
             box-shadow: 0 8px 24px rgba(0,0,0,0.3);
             position: relative;
@@ -484,12 +484,13 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             overflow: auto;
-            padding: 24px;
+            padding: 30px;
             color: var(--text-main);
             white-space: pre-wrap;
             font-size: 0.95rem;
             line-height: 1.6;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            font-family: monospace;
         }
         
         .viewer-content img {
@@ -564,7 +565,7 @@
     <script>
         marked.use({ breaks: true });
 
-        const API_KEY = typeof CONFIG_API_KEY !== 'undefined' ? CONFIG_API_KEY : '';
+        const API_KEY = "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";
         
         const MODEL_MAP = {
             'Gemini 2.0 (Vision)': 'nvidia/nemotron-3-nano-30b-a3b:free',
@@ -633,7 +634,7 @@
             fileName = file.name || "Pasted_Image.png";
             
             if (file.type.startsWith('image/')) {
-                document.getElementById('user-input').placeholder = `Running deep local scan...`;
+                document.getElementById('user-input').placeholder = `Processing image...`;
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const img = new Image();
@@ -641,7 +642,7 @@
                         const canvas = document.createElement('canvas');
                         let width = img.width;
                         let height = img.height;
-                        const maxDim = 1200; 
+                        const maxDim = 1000; 
                         
                         if (width > height && width > maxDim) {
                             height *= maxDim / width;
@@ -656,29 +657,18 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        const b64 = canvas.toDataURL('image/jpeg', 0.85); 
-                        baseDataCache = b64;
-                        
-                        Tesseract.recognize(b64, 'eng')
-                            .then(({ data: { text } }) => {
-                                fileData = text.trim() ? text : "[No readable text found in image format]";
-                                fileType = 'image_scanned';
-                                document.getElementById('user-input').placeholder = `Image Processed & Attached`;
-                                checkInput();
-                            })
-                            .catch(err => {
-                                fileData = "[Image OCR failed]";
-                                fileType = 'image_scanned';
-                                document.getElementById('user-input').placeholder = `Image Attached (Raw)`;
-                                checkInput();
-                            });
+                        baseDataCache = canvas.toDataURL('image/jpeg', 0.85); 
+                        fileData = "Base64 image loaded. Refer to vision payload.";
+                        fileType = 'image';
+                        document.getElementById('user-input').placeholder = `Image Attached`;
+                        checkInput();
                     };
                     img.src = event.target.result;
                 };
                 reader.readAsDataURL(file);
             } 
             else if (file.type === 'application/pdf') {
-                document.getElementById('user-input').placeholder = `Extracting...`;
+                document.getElementById('user-input').placeholder = `Extracting PDF...`;
                 const reader = new FileReader();
                 reader.onload = async function() {
                     const typedarray = new Uint8Array(this.result);
@@ -743,10 +733,12 @@
                 contentDiv.style.border = 'none';
                 contentDiv.style.padding = '0';
             } else if (type === 'text') {
-                contentDiv.innerHTML = fileStorage[contentOrId] || 'Content not found.';
-                contentDiv.style.background = 'var(--bg-dark)';
-                contentDiv.style.border = '1px solid var(--border-color)';
-                contentDiv.style.padding = '24px';
+                contentDiv.innerHTML = (fileStorage[contentOrId] || 'Content not found.').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                contentDiv.style.background = '#f8f9fa';
+                contentDiv.style.color = '#000';
+                contentDiv.style.border = '1px solid #ccc';
+                contentDiv.style.padding = '40px';
+                contentDiv.style.borderRadius = '8px';
             }
             
             modal.classList.add('show');
@@ -835,8 +827,8 @@
         async function handleSend(isRedo = false) {
             if (isGenerating) return;
             
-            if (!API_KEY) {
-                alert("API Key missing. Ensure 'secret key.js' is present.");
+            if (API_KEY === "YOUR_OPENROUTER_API_KEY_HERE" || !API_KEY) {
+                alert("Please add your OpenRouter API Key to the API_KEY variable in the HTML code.");
                 return;
             }
 
@@ -862,10 +854,11 @@
                 let msgContent = messageText;
                 
                 if(fileData) {
-                    if (fileType === 'image_scanned') {
-                        const safeBase64 = baseDataCache ? baseDataCache.substring(0, 150) : "";
-                        msgContent = messageText + (messageText ? `\n\n` : ``) + 
-                            `--- Image File Attached (${fileName}) ---\nFormat: base64/jpeg\nHeader: ${safeBase64}...\n\n--- OCR Scanned Text Extracted From Image ---\n${fileData}\n--- End Image Data ---`;
+                    if (fileType === 'image' && baseDataCache) {
+                        msgContent = [
+                            { type: "text", text: messageText ? messageText : "Analyze this image." },
+                            { type: "image_url", image_url: { url: baseDataCache } }
+                        ];
                     } else {
                         msgContent = messageText + (messageText ? `\n\n` : ``) + `--- Attached File (${fileName}) ---\n${fileData}\n--- End File ---`;
                     }
@@ -888,7 +881,12 @@
             try {
                 const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                     method: "POST", 
-                    headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json" },
+                    headers: { 
+                        "Authorization": `Bearer ${API_KEY}`, 
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": window.location.href,
+                        "X-Title": "Terminal AI"
+                    },
                     body: JSON.stringify({ model: targetModelID, messages: chatContext })
                 });
                 const data = await res.json();
@@ -932,7 +930,7 @@
                     chatContext.pop(); 
                 }
             } catch (err) { 
-                aiMessageDiv.querySelector('.ai-text').innerText = "Network transmission failed."; 
+                aiMessageDiv.querySelector('.ai-text').innerText = "Network transmission failed. Check API key and internet connection."; 
                 chatContext.pop();
             }
             
@@ -947,20 +945,20 @@
             
             let attachmentHTML = '';
             if (attachedName) {
-                if (attachedType === 'image_scanned' && baseRender) {
+                if (attachedType === 'image' && baseRender) {
                     attachmentHTML = `<img src="${baseRender}" alt="${attachedName}" class="chat-image-preview" onclick="openViewer('image', this.src)" title="Click to view">`;
                 } else {
                     const fileId = 'file_' + (++fileIdCounter);
                     fileStorage[fileId] = attachedData;
                     attachmentHTML = `
                     <div class="file-attachment-pill" onclick="openViewer('text', '${fileId}')" title="Click to view file content">
-                        <svg viewBox="0 0 24 24" width="12" height="12"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                        <svg viewBox="0 0 24 24" width="14" height="14"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                         ${attachedName}
                     </div><br>`;
                 }
             }
             
-            const lineBreak = (attachmentHTML && text && attachedType === 'image_scanned') ? '<br>' : '';
+            const lineBreak = (attachmentHTML && text && attachedType === 'image') ? '<br>' : '';
             div.innerHTML = `<div class="user-message">${attachmentHTML}${lineBreak}${text.replace(/\n/g, '<br>')}</div>`;
             chatHistory.appendChild(div);
             window.scrollTo(0, document.body.scrollHeight);
