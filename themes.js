@@ -1,2 +1,2 @@
 // secret key.js
-const CONFIG_API_KEY = "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";
+const CONFIG_API_KEY = "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";
