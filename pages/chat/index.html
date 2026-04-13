@@ -218,6 +218,7 @@
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc, getDoc, getDocs, where, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+
 const firebaseConfig = {
   apiKey: "AIzaSyCXgdfhs1vynsb1IPzvacqMYqebegdlj_k",
   authDomain: "dark-chat-17495.firebaseapp.com",
@@ -344,8 +345,19 @@ const firebaseConfig = {
       if (e.target.classList.contains('btn-accept')) {
         const invId = e.target.getAttribute('data-id');
         const roomId = e.target.getAttribute('data-room');
+        
+        const roomSnap = await getDoc(doc(db, "rooms", roomId));
+        let roomName = "Group";
+        if (roomSnap.exists()) {
+            roomName = roomSnap.data().name;
+        }
+
         await updateDoc(doc(db, "invites", invId), { status: 'accepted' });
         await updateDoc(doc(db, "rooms", roomId), { members: arrayUnion(currentUser.uid) });
+        
+        document.getElementById('notif-modal').classList.add('hidden');
+        loadChatStream(roomId, roomName, 'group');
+
       } else if (e.target.classList.contains('btn-decline')) {
         const invId = e.target.getAttribute('data-id');
         await updateDoc(doc(db, "invites", invId), { status: 'declined' });
