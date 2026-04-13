@@ -570,7 +570,7 @@
 
         let API_KEY = "";
         
-        // securely get base64 key from bbno$.js
+        
         try {
             if (typeof bbnoSecret !== 'undefined' && bbnoSecret.trim() !== "") {
                 API_KEY = atob(bbnoSecret.trim());
@@ -585,10 +585,10 @@
         let currentUIModel = 'Gemini 2.0 (Vision)';
         let isGenerating = false;
         
-        // REINFORCED SYSTEM PROMPT: Forces role, completely bans raw JSON response format
+        
         let chatContext = [{ 
             role: "system", 
-            content: "You are Terminal AI, a highly capable, conversational AI assistant. You MUST ALWAYS respond in standard markdown text format. NEVER output your response wrapped in a JSON object (Do not output {\"request\": \"...\", \"answer\": \"...\"}). Just answer naturally. If the user explicitly asks to generate a PDF, create a document, or says 'pdf document', you MUST wrap the exact content of that document inside a standard HTML div with the class 'pdf-document-wrapper'. Example: <div class='pdf-document-wrapper'><h1>Title</h1><p>Content</p></div>. Use standard HTML tags inside the div so it renders as a clean document." 
+            content: "You are sea man AI , a highly capable, conversational AI assistant. You MUST ALWAYS respond in standard markdown text format. NEVER output your response wrapped in a JSON object (Do not output {\"request\": \"...\", \"answer\": \"...\"}). Just answer naturally. If the user explicitly asks to generate a PDF, create a document, or says 'pdf document', you MUST wrap the exact content of that document inside a standard HTML div with the class 'pdf-document-wrapper'. Example: <div class='pdf-document-wrapper'><h1>Title</h1><p>Content</p></div>. Use standard HTML tags inside the div so it renders as a clean document." 
         }];
         
         let fileData = null;
@@ -909,14 +909,14 @@
                 } else if (data.choices && data.choices.length > 0) {
                     let rawText = data.choices[0].message.content;
                     
-                    // JSON CATCHER FAILSAFE: If the bot still tries to respond in JSON, gracefully extract the answer
+                    
                     try {
                         const parsed = JSON.parse(rawText);
                         if (parsed && parsed.answer) {
                             rawText = parsed.answer;
                         }
                     } catch (e) {
-                        // The text was normal markdown, do nothing
+                        
                     }
 
                     const parsedHTML = marked.parse(rawText);
