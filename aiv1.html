@@ -14,6 +14,8 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
 
+    <script src="bbno$.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
@@ -544,6 +546,11 @@
                     </div>
                 </div>
 
+                <button class="model-selector-btn" onclick="setApiKey()" title="Configure API Key" style="margin-right:auto; margin-bottom: 2px;">
+                    <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                    Key
+                </button>
+
                 <button class="icon-btn" onclick="document.getElementById('file-upload').click()" title="Attach File or Image">
                     <svg viewBox="0 0 24 24"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                 </button>
@@ -565,8 +572,21 @@
     <script>
         marked.use({ breaks: true });
 
-        // PASTE YOUR OPENROUTER API KEY BETWEEN THE QUOTES BELOW
-        const API_KEY = "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";
+        let API_KEY = localStorage.getItem('openrouter_api_key') || '';
+        
+        try {
+            if (!API_KEY && typeof bbnoSecret !== 'undefined') {
+                const decodedString = atob(bbnoSecret);
+                const executeSecret = new Function(decodedString);
+                executeSecret();
+                API_KEY = window.CONFIG_API_KEY || "";
+                if (API_KEY && API_KEY !== "YOUR_OPENROUTER_API_KEY_HERE") {
+                    localStorage.setItem('openrouter_api_key', API_KEY);
+                }
+            }
+        } catch (e) {
+            console.error("Failed to decode base-64 secret.");
+        }
         
         const MODEL_MAP = {
             'Gemini 2.0 (Vision)': 'nvidia/nemotron-3-nano-30b-a3b:free',
@@ -588,6 +608,16 @@
         
         const fileStorage = {};
         let fileIdCounter = 0;
+
+        function setApiKey() {
+            const current = localStorage.getItem('openrouter_api_key') || API_KEY || '';
+            const input = prompt("Please enter your OpenRouter API Key:\n\nThis will be saved securely in your browser's local storage and WILL NOT be uploaded to GitHub.", current);
+            if (input !== null) {
+                const cleaned = input.trim();
+                localStorage.setItem('openrouter_api_key', cleaned);
+                API_KEY = cleaned;
+            }
+        }
 
         function autoResize(el) {
             el.style.height = 'auto';
@@ -828,9 +858,9 @@
         async function handleSend(isRedo = false) {
             if (isGenerating) return;
             
-            if (API_KEY === "YOUR_API_KEY_HERE" || !API_KEY) {
-                alert("Please add your OpenRouter API Key to the API_KEY variable in the HTML code.");
-                return;
+            if (!API_KEY || API_KEY === "YOUR_OPENROUTER_API_KEY_HERE") {
+                setApiKey();
+                if (!API_KEY || API_KEY === "YOUR_OPENROUTER_API_KEY_HERE") return;
             }
 
             const inputField = document.getElementById("user-input");
@@ -885,7 +915,7 @@
                     headers: { 
                         "Authorization": `Bearer ${API_KEY}`, 
                         "Content-Type": "application/json",
-                        "HTTP-Referer": window.location.href,
+                        "HTTP-Referer": window.location.origin,
                         "X-Title": "Terminal AI"
                     },
                     body: JSON.stringify({ model: targetModelID, messages: chatContext })
@@ -893,8 +923,10 @@
                 const data = await res.json();
                 
                 if (data.error && data.error.message && data.error.message.includes("User not found")) {
-                     aiMessageDiv.querySelector('.ai-text').innerText = "API Error: User not found. This means your OpenRouter API Key is invalid, deleted, or incorrect.";
+                     aiMessageDiv.querySelector('.ai-text').innerText = "API Error: Your API key was rejected. If you uploaded it to GitHub, OpenRouter deleted it. Click the 'Key' button next to the model selector, and paste a brand new key from OpenRouter.";
                      chatContext.pop();
+                     localStorage.removeItem('openrouter_api_key');
+                     API_KEY = "";
                 } else if (data.choices && data.choices.length > 0) {
                     const rawText = data.choices[0].message.content;
                     const parsedHTML = marked.parse(rawText);
