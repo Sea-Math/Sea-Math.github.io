@@ -403,7 +403,6 @@
             transition: all 0.2s;
             font-size: 0.9rem;
             font-weight: 500;
-            margin-right: auto;
         }
         .model-selector-btn:hover { background-color: var(--bg-hover); color: var(--text-main); }
         .model-selector-btn svg { width: 16px; height: 16px; stroke-width: 1.5; }
@@ -572,11 +571,9 @@
         
         try {
             if (typeof bbnoSecret !== 'undefined' && bbnoSecret.trim() !== "") {
-                API_KEY = atob(bbnoSecret);
+                API_KEY = atob(bbnoSecret.trim());
             }
-        } catch (e) {
-            console.error("Failed to decode base-64 secret from bbno$.js");
-        }
+        } catch (e) {}
         
         const MODEL_MAP = {
             'Gemini 2.0 (Vision)': 'nvidia/nemotron-3-nano-30b-a3b:free',
@@ -682,8 +679,8 @@
                 document.getElementById('user-input').placeholder = `Extracting PDF...`;
                 const reader = new FileReader();
                 reader.onload = async function() {
-                    const typedarray = new Uint8Array(this.result);
                     try {
+                        const typedarray = new Uint8Array(this.result);
                         const pdf = await pdfjsLib.getDocument({data: typedarray}).promise;
                         let fullText = '';
                         for (let i = 1; i <= pdf.numPages; i++) {
@@ -696,10 +693,11 @@
                         fileType = 'text'; 
                         baseDataCache = null;
                         document.getElementById('user-input').placeholder = `PDF Attached`;
-                        checkInput();
                     } catch (err) {
                         alert("Error reading PDF content.");
                         document.getElementById('user-input').placeholder = "Message AI... (Paste images directly)";
+                    } finally {
+                        checkInput();
                     }
                 };
                 reader.readAsArrayBuffer(file);
@@ -839,7 +837,7 @@
             if (isGenerating) return;
             
             if (!API_KEY || API_KEY.trim() === "") {
-                alert("API Key is missing. Please ensure 'bbno$.js' is loaded and contains a valid base64 string.");
+                alert("API Key is missing or invalid. Please check your base64 string in bbno$.js.");
                 return;
             }
 
@@ -902,8 +900,8 @@
                 });
                 const data = await res.json();
                 
-                if (data.error && data.error.message && data.error.message.includes("User not found")) {
-                     aiMessageDiv.querySelector('.ai-text').innerText = "API Error: Your API key was rejected. Update the base64 string in bbno$.js with a valid key.";
+                if (data.error && data.error.message) {
+                     aiMessageDiv.querySelector('.ai-text').innerText = `API Error: ${data.error.message}`;
                      chatContext.pop();
                 } else if (data.choices && data.choices.length > 0) {
                     const rawText = data.choices[0].message.content;
@@ -940,16 +938,17 @@
 
                     chatContext.push({ role: "assistant", content: rawText });
                 } else {
-                    aiMessageDiv.querySelector('.ai-text').innerText = `Error: ${data.error?.message || JSON.stringify(data)}`;
+                    aiMessageDiv.querySelector('.ai-text').innerText = `Error: ${JSON.stringify(data)}`;
                     chatContext.pop(); 
                 }
             } catch (err) { 
                 aiMessageDiv.querySelector('.ai-text').innerText = "Network transmission failed. Check API key and internet connection."; 
                 chatContext.pop();
+            } finally {
+                isGenerating = false; 
+                inputField.focus();
+                checkInput();
             }
-            
-            isGenerating = false; 
-            inputField.focus();
         }
 
         function appendUserMessage(text, attachedName, attachedData, attachedType, baseRender) {
