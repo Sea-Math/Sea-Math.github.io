@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal AI</title>
+    <title>helper progam </title>
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -521,7 +521,7 @@
             <div class="welcome-text" id="welcome-msg">Type a request to begin.</div>
         </div>
 
-       <input type="file" id="file-upload" accept="image/*,.pdf,.txt,.md,.json,.csv" style="display: none;">
+        <input type="file" id="file-upload" accept="image/*,.pdf,.txt,.md,.json,.csv" style="display: none;">
 
         <div class="input-area">
             <div class="input-container">
@@ -542,10 +542,10 @@
                         </button>
                     </div>
                 </div>
-<button class="icon-btn" onclick="document.getElementById('file-upload').click()" title="Attach File or Image">
+
+                <button class="icon-btn" onclick="document.getElementById('file-upload').click()" title="Attach File or Image">
                     <svg viewBox="0 0 24 24"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                 </button>
-              
 
                 <textarea class="text-input" id="user-input" placeholder="Message AI... (Paste images directly)" rows="1" oninput="autoResize(this)" onkeydown="handleKeyPress(event)"></textarea>
 
