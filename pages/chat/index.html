@@ -288,20 +288,21 @@ const firebaseConfig = {
       } catch (error) { alert("AUTH ERROR: " + error.message); }
     });
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('app-container').classList.remove('hidden');
-        
-        initializeProfileTracker();
-        initializeRooms();
-        initializeNotifications();
-        loadChatStream('global', 'global-relay', 'group');
-      } else {
-        document.location.reload();
-      }
-    });
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app-container').classList.remove('hidden');
+
+    initializeProfileTracker();
+    initializeRooms();
+    initializeNotifications();
+    loadChatStream('global', 'global-relay', 'group');
+  } else {
+    document.getElementById('login-screen').classList.remove('hidden');
+    document.getElementById('app-container').classList.add('hidden');
+  }
+});
 
     let pendingAvatarBase64 = null;
 
