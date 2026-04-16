@@ -10,12 +10,21 @@
         :root {
             --bg-outer: #0a0e14;
             --bg-panel: #060b15;
-            --border-color: #1a2332;
+            --bg-card: #151515;
+            --bg-card-hover: #1a1a1a;
+            --border-color: #2a2a2a;
             --accent-cyan: #00e5ff;
             --accent-glow: rgba(0, 229, 255, 0.6);
             --text-main: #ffffff;
             --text-sub: #8b9bb4;
+            --text-muted: #6b6b6b;
             --grid-color: rgba(255, 255, 255, 0.03);
+            
+            --btn-bg: #222222;
+            --btn-hover: #333333;
+            --tag-bg: #1c1c1c;
+            --badge-bg: #3d0c14;
+            --badge-text: #ff4d4d;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
@@ -30,330 +39,211 @@
             position: relative;
         }
 
-        .panel-container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-        }
-
-        .main-panel {
-            flex-grow: 1;
-            background-color: transparent;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
+        /* --- MAIN PAGE STYLES --- */
+        .panel-container { width: 100%; height: 100vh; display: flex; }
+        .main-panel { flex-grow: 1; background-color: transparent; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        
         .grid-bg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px), 
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
-            z-index: 1;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 60px 60px; pointer-events: none; z-index: 1;
         }
 
         .content-scroll {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            padding: 80px 40px 100px 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            position: relative; z-index: 10; width: 100%; height: 100%; overflow-y: auto;
+            padding: 80px 40px 100px 40px; display: flex; flex-direction: column; align-items: center;
         }
-
         .content-scroll::-webkit-scrollbar { width: 8px; }
         .content-scroll::-webkit-scrollbar-track { background: transparent; }
         .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-        .content-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
-        .top-bar-actions {
-            position: absolute;
-            top: 30px;
-            right: 40px;
-            z-index: 50;
-            display: flex;
-            gap: 15px;
-        }
-
+        .top-bar-actions { position: absolute; top: 30px; right: 40px; z-index: 50; display: flex; gap: 15px; }
         .action-btn {
-            background: rgba(11, 20, 38, 0.8);
-            border: 1px solid var(--border-color);
-            color: var(--text-sub);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            background: rgba(11, 20, 38, 0.8); border: 1px solid var(--border-color); color: var(--text-sub);
+            width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease;
         }
-
-        .action-btn:hover {
-            color: var(--accent-cyan);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
+        .action-btn:hover { color: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-glow); }
 
         .header-titles { text-align: center; margin-bottom: 20px; }
-        
-        .main-title {
-            font-size: 4.5rem;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
+        .main-title { font-size: 4.5rem; font-weight: 800; color: #ffffff; letter-spacing: 2px; margin-bottom: 5px; }
+        .subtitle { color: #ffffff; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px; }
 
-        .subtitle {
-            color: #ffffff;
-            font-size: 1.1rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-
-        .search-wrapper { 
-            width: 100%; 
-            max-width: 500px; 
-            margin: 0 auto 40px auto; 
-            position: relative; 
-        }
-        
+        .search-wrapper { width: 100%; max-width: 500px; margin: 0 auto 40px auto; position: relative; }
         .inputcontainer {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-            position: relative;
-            z-index: 101;
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 14px 20px; display: flex; align-items: center; transition: all 0.3s ease;
+            border-radius: 8px; position: relative; z-index: 101;
         }
-
-        .inputcontainer:focus-within {
-            border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
+        .inputcontainer:focus-within { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.05); }
         .inputcontainer input {
-            background: none; border: none; outline: none;
-            color: var(--text-main); font-size: 1.1rem; width: 100%;
-            text-align: center;
-            font-style: italic;
+            background: none; border: none; outline: none; color: var(--text-main); font-size: 1.1rem; width: 100%;
+            text-align: center; font-style: italic;
         }
-
-        .inputcontainer input:focus {
-            text-align: left;
-            font-style: normal;
-        }
-        
+        .inputcontainer input:focus { text-align: left; font-style: normal; }
         .inputcontainer input::placeholder { color: rgba(255, 255, 255, 0.5); }
 
         .combined-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 25px;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;
+            width: 100%; max-width: 1400px; margin: 0 auto;
         }
 
         .zone-item {
-            background: #111827;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            aspect-ratio: 1;
-            cursor: pointer;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            background: #111827; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden;
+            position: relative; aspect-ratio: 1; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;
         }
-
-        .zone-item:hover {
-            transform: scale(1.05);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 229, 255, 0.15);
-        }
-
-        .zone-item img {
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover;
-            transition: opacity 0.2s;
-        }
-
-        .zone-item:hover img {
-            opacity: 0.7;
-        }
-
+        .zone-item:hover { transform: scale(1.05); border-color: var(--accent-cyan); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .zone-item img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s; }
+        .zone-item:hover img { opacity: 0.7; }
         .source-tag {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(6, 11, 21, 0.85);
-            color: var(--accent-cyan);
-            border: 1px solid var(--accent-cyan);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            backdrop-filter: blur(4px);
-            z-index: 5;
-            pointer-events: none;
+            position: absolute; top: 10px; right: 10px; background: rgba(6, 11, 21, 0.85); color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan); padding: 4px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 800;
+            text-transform: uppercase; z-index: 5; pointer-events: none;
         }
-
         .zone-name {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(transparent, rgba(0,0,0,0.95));
-            color: white;
-            padding: 30px 15px 15px 15px;
-            font-size: 1rem;
-            font-weight: 800;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.2s;
-            z-index: 5;
-            pointer-events: none;
+            position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95));
+            color: white; padding: 30px 15px 15px 15px; font-size: 1rem; font-weight: 800; text-align: center;
+            opacity: 0; transition: opacity 0.2s; z-index: 5; pointer-events: none;
         }
+        .zone-item:hover .zone-name { opacity: 1; }
 
-        .zone-item:hover .zone-name {
-            opacity: 1;
-        }
-
-        /* FLOATING VIEWER WINDOW STYLES */
+        /* --- NEW FULL-PAGE GAME VIEWER UI --- */
         #zoneViewer {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.75); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            z-index: 2000; display: none; justify-content: center; align-items: center; padding: 30px;
+            background: #09090b; z-index: 2000; display: none; overflow-y: auto;
         }
+        #zoneViewer::-webkit-scrollbar { width: 8px; }
+        #zoneViewer::-webkit-scrollbar-track { background: transparent; }
+        #zoneViewer::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+        .game-page-container { max-width: 1500px; margin: 0 auto; padding: 20px 40px; }
         
-        .viewer-window {
-            width: 100%; height: 100%; max-width: 1400px; max-height: 90vh;
-            background: var(--bg-panel); border: 1px solid rgba(0, 229, 255, 0.3);
-            border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 30px rgba(0, 229, 255, 0.1);
-            display: flex; flex-direction: column; overflow: hidden;
-            transform: scale(0.95); opacity: 0; animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .back-nav { margin-bottom: 20px; }
+        .back-nav button {
+            background: var(--btn-bg); border: none; color: white; padding: 10px 20px;
+            border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem;
+            display: inline-flex; align-items: center; gap: 10px; transition: 0.2s;
+        }
+        .back-nav button:hover { background: var(--btn-hover); }
+
+        .game-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
+        
+        /* Left Column (Game & Info) */
+        .game-col-main { display: flex; flex-direction: column; gap: 15px; }
+        
+        .iframe-container {
+            width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px 12px 0 0; overflow: hidden;
+            border: 1px solid var(--border-color); border-bottom: none;
+        }
+        #zoneFrame { width: 100%; height: 100%; border: none; }
+
+        .game-toolbar {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 0 0 12px 12px;
+            padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
         }
 
-        @keyframes popIn {
-            to { transform: scale(1); opacity: 1; }
-        }
-        
-        .zone-header {
-            background: rgba(6, 11, 21, 0.95); border-bottom: 1px solid var(--border-color);
-            padding: 16px 25px; display: flex; align-items: center; justify-content: space-between;
-        }
-        
-        .zone-title h2 { color: var(--text-main); font-weight: 800; font-size: 1.3rem; margin-bottom: 2px; }
-        .zone-title span { color: var(--text-sub); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;}
-        
-        .zone-controls { display: flex; gap: 10px; }
-        
-        .zone-controls button {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: white;
-            padding: 8px 18px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border-radius: 8px;
-            display: flex; align-items: center; gap: 8px;
-        }
-        
-        .zone-controls button:hover { 
-            background: rgba(0, 229, 255, 0.1); border-color: var(--accent-cyan); color: var(--accent-cyan); 
+        .toolbar-left { display: flex; align-items: center; gap: 12px; }
+        .toolbar-icon { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+        .toolbar-title { display: flex; flex-direction: column; }
+        .toolbar-title span:first-child { font-weight: 800; font-size: 1.1rem; }
+        .toolbar-title span:last-child { font-size: 0.75rem; color: var(--text-muted); }
+
+        .toolbar-center { flex-grow: 1; max-width: 400px; margin: 0 20px; }
+        .fake-url-bar {
+            background: #0d0d0d; border-radius: 6px; padding: 8px 15px; color: var(--text-muted);
+            font-size: 0.8rem; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
 
-        .zone-controls button.leave-btn {
-            background: rgba(255, 50, 50, 0.1);
-            border-color: rgba(255, 50, 50, 0.3);
-            color: #ff6b6b;
+        .toolbar-right { display: flex; gap: 8px; }
+        .toolbar-btn {
+            background: var(--btn-bg); border: none; color: white; width: 40px; height: 40px;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s; font-size: 1rem;
         }
-        
-        .zone-controls button.leave-btn:hover {
-            background: rgba(255, 50, 50, 0.2);
-            border-color: #ff6b6b;
-            color: #ff8787;
-            box-shadow: 0 0 15px rgba(255, 50, 50, 0.2);
-        }
-        
-        #zoneFrame { flex-grow: 1; border: none; background: #000; width: 100%; }
+        .toolbar-btn.wide { width: auto; padding: 0 15px; gap: 8px; font-weight: 600; font-size: 0.9rem;}
+        .toolbar-btn:hover { background: var(--btn-hover); }
 
+        .feedback-bar {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .feedback-bar span { color: var(--text-sub); font-weight: 600; font-size: 0.95rem; }
+        .feedback-actions { display: flex; gap: 10px; }
+        .feedback-btn {
+            border: none; border-radius: 6px; padding: 8px 16px; font-weight: 800; font-size: 0.9rem;
+            cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;
+        }
+        .btn-yes { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+        .btn-yes:hover { background: rgba(34, 197, 94, 0.2); }
+        .btn-no { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .btn-no:hover { background: rgba(239, 68, 68, 0.2); }
+
+        .game-meta-header { margin-top: 10px; }
+        .game-meta-title { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
+        .game-meta-title h1 { font-size: 2.2rem; font-weight: 900; }
+        .badge {
+            background: var(--badge-bg); color: var(--badge-text); border: 1px solid rgba(255, 77, 77, 0.3);
+            padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .tags-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tag {
+            background: var(--tag-bg); color: var(--text-sub); border: 1px solid var(--border-color);
+            padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+        }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .info-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; }
+        .info-card.full-width { grid-column: 1 / -1; }
+        .info-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; color: white; }
+        .info-card p { color: var(--text-sub); font-size: 0.95rem; line-height: 1.6; }
+
+        /* Right Column (Sidebar) */
+        .game-col-side { display: flex; flex-direction: column; gap: 20px; }
+        
+        .ad-placeholder {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        .ad-header { display: flex; align-items: center; gap: 10px; width: 100%; color: white; font-weight: 800; }
+        .ad-header i { font-size: 1.5rem; color: #ff1b2d; }
+        .ad-content { background: #fff; color: #000; padding: 15px; border-radius: 8px; width: 100%; text-align: center; }
+        .ad-content h4 { font-weight: 800; margin-bottom: 5px; }
+        .ad-content p { font-size: 0.8rem; margin-bottom: 15px; }
+        .ad-content button { background: none; border: none; color: #00a859; font-weight: 800; cursor: pointer; }
+
+        .suggested-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .suggested-item {
+            aspect-ratio: 1; background: #111; border-radius: 12px; overflow: hidden;
+            cursor: pointer; border: 1px solid var(--border-color); transition: 0.2s;
+        }
+        .suggested-item:hover { border-color: var(--accent-cyan); transform: scale(1.02); }
+        .suggested-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Modal specific styles */
         #infoModal {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(5px);
-            z-index: 3000;
-            display: none;
-            justify-content: center;
-            align-items: center;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 3000;
+            display: none; justify-content: center; align-items: center;
         }
-
         .modal-content {
-            background: var(--bg-panel);
-            border: 1px solid var(--accent-cyan);
-            padding: 40px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-            box-shadow: 0 0 50px rgba(0, 229, 255, 0.1);
+            background: var(--bg-panel); border: 1px solid var(--accent-cyan); padding: 40px;
+            border-radius: 20px; width: 90%; max-width: 500px; position: relative;
         }
-
         .modal-close {
-            position: absolute;
-            top: 20px; right: 20px;
-            background: none; border: none;
-            color: var(--text-sub);
-            font-size: 1.5rem; cursor: pointer;
-            transition: color 0.2s;
+            position: absolute; top: 20px; right: 20px; background: none; border: none;
+            color: var(--text-sub); font-size: 1.5rem; cursor: pointer; transition: color 0.2s;
         }
         .modal-close:hover { color: var(--accent-cyan); }
+        .modal-title { font-size: 2rem; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; }
 
-        .modal-title { font-size: 2rem; font-weight: 900; color: #fff; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;}
-        
-        .info-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        .info-card h4 { color: var(--accent-cyan); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 5px; }
-        .info-card p { color: var(--text-main); font-weight: 600; font-size: 1.1rem; }
-
-        .loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            grid-column: 1 / -1;
-            padding: 40px;
-        }
-
+        .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; grid-column: 1 / -1; padding: 40px; }
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(0, 229, 255, 0.1);
-            border-left-color: var(--accent-cyan);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
+            width: 40px; height: 40px; border: 4px solid rgba(0, 229, 255, 0.1);
+            border-left-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
         }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         .loading-text { color: var(--text-sub); font-style: italic; font-size: 1.2rem; }
     </style>
 </head>
@@ -362,29 +252,20 @@
     <div class="panel-container">
         <main class="main-panel">
             <div class="grid-bg"></div>
-
             <div class="top-bar-actions">
-                <button class="action-btn" onclick="openSiteInAboutBlank()" title="Open Hub in about:blank">
-                    <i class="fa-solid fa-up-right-from-square"></i>
-                </button>
-                <button class="action-btn" onclick="document.getElementById('infoModal').style.display='flex'" title="System Info">
-                    <i class="fa-solid fa-circle-info"></i>
-                </button>
+                <button class="action-btn" onclick="openSiteInAboutBlank()" title="Open Hub in about:blank"><i class="fa-solid fa-up-right-from-square"></i></button>
+                <button class="action-btn" onclick="document.getElementById('infoModal').style.display='flex'" title="System Info"><i class="fa-solid fa-circle-info"></i></button>
             </div>
-
             <div class="content-scroll">
-                
                 <div class="header-titles">
                     <h1 class="main-title">Games</h1>
                     <p class="subtitle" id="gameCount">Loading libraries...</p>
                 </div>
-
                 <div class="search-wrapper">
                     <div class="inputcontainer">
                         <input type="text" id="dumbSearchInput" placeholder="Search games..." autocomplete="off">
                     </div>
                 </div>
-
                 <div id="zonesWrapper" class="combined-grid">
                     <div class="loading-container">
                         <div class="spinner"></div>
@@ -396,25 +277,93 @@
     </div>
 
     <div id="zoneViewer">
-        <div class="viewer-window">
-            <div class="zone-header">
-                <div class="zone-title">
-                    <h2 id="zoneName">Zone Name</h2>
-                    <span id="zoneAuthor">by Author</span>
-                </div>
-                <div class="zone-controls">
-                    <button onclick="openGameInAboutBlank()" title="Open Game in about:blank">
-                        <i class="fa-solid fa-up-right-from-square"></i> Open Blank
-                    </button>
-                    <button onclick="fullscreenZone()" title="Fullscreen">
-                        <i class="fa-solid fa-expand"></i> Fullscreen
-                    </button>
-                    <button class="leave-btn" onclick="closeZone()">
-                        <i class="fa-solid fa-xmark"></i> LEAVE
-                    </button>
-                </div>
+        <div class="game-page-container">
+            
+            <div class="back-nav">
+                <button onclick="closeZone()"><i class="fa-solid fa-chevron-left"></i> Back to Games</button>
             </div>
-            <iframe id="zoneFrame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"></iframe>
+
+            <div class="game-layout">
+                <div class="game-col-main">
+                    
+                    <div>
+                        <div class="iframe-container">
+                            <iframe id="zoneFrame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"></iframe>
+                        </div>
+                        <div class="game-toolbar">
+                            <div class="toolbar-left">
+                                <img src="" id="toolbarIcon" class="toolbar-icon" alt="icon">
+                                <div class="toolbar-title">
+                                    <span id="zoneName">Game Name</span>
+                                    <span id="zoneAuthor">Author Network</span>
+                                </div>
+                            </div>
+                            <div class="toolbar-center">
+                                <div class="fake-url-bar" id="fakeUrl">https://sigmaw.unblocked/game/...</div>
+                            </div>
+                            <div class="toolbar-right">
+                                <button class="toolbar-btn wide"><i class="fa-regular fa-thumbs-up"></i> 181</button>
+                                <button class="toolbar-btn wide"><i class="fa-regular fa-thumbs-down"></i> 18</button>
+                                <button class="toolbar-btn" onclick="reloadFrame()" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+                                <button class="toolbar-btn" onclick="fullscreenZone()" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feedback-bar">
+                        <span>Does this game work?</span>
+                        <div class="feedback-actions">
+                            <button class="feedback-btn btn-yes"><i class="fa-solid fa-check"></i> Yes</button>
+                            <button class="feedback-btn btn-no"><i class="fa-solid fa-xmark"></i> No</button>
+                        </div>
+                    </div>
+
+                    <div class="game-meta-header">
+                        <div class="game-meta-title">
+                            <h1 id="pageGameTitle">Drive Mad</h1>
+                            <span class="badge" id="pageGameBadge">ARCADE</span>
+                        </div>
+                        <div class="tags-container" id="pageTags">
+                            <span class="tag">action</span>
+                            <span class="tag">browser</span>
+                            <span class="tag">fun</span>
+                        </div>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-card full-width">
+                            <h3>About This Game</h3>
+                            <p id="aiDescription">Navigate treacherous tracks filled with deadly obstacles, jumps, and traps in this thrilling physics-based game. Master the art of control as you play through increasingly challenging levels that will test your reflexes and patience. One wrong move could send you tumbling!</p>
+                        </div>
+                        <div class="info-card">
+                            <h3>How to Play</h3>
+                            <p>Start slowly and focus on maintaining balance rather than speed, especially when approaching tricky sections. Use gentle inputs instead of holding buttons down constantly to maintain better control. Watch out for hazards that can instantly ruin your run.</p>
+                        </div>
+                        <div class="info-card">
+                            <h3>Controls</h3>
+                            <p>Use arrow keys or WASD to control your character/vehicle. Use Mouse for menu navigation and in-game interactions where applicable.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-col-side">
+                    <div class="ad-placeholder">
+                        <div class="ad-header">
+                            <i class="fa-brands fa-opera"></i> Opera
+                            <button style="margin-left:auto; background:none; border:none; color:#666; cursor:pointer;"><i class="fa-solid fa-circle-xmark"></i></button>
+                        </div>
+                        <div class="ad-content">
+                            <h4>Browser Recommended</h4>
+                            <p>Install Opera One with a FREE VPN to continue browsing safely.</p>
+                            <button>INSTALL</button>
+                        </div>
+                    </div>
+
+                    <div class="suggested-grid" id="sidebarGrid">
+                        </div>
+                </div>
+
+            </div>
         </div>
     </div>
 
@@ -422,21 +371,9 @@
         <div class="modal-content">
             <button class="modal-close" onclick="document.getElementById('infoModal').style.display='none'"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="modal-title">System Info</h3>
-            
-            <div class="info-card">
-                <h4>Site Maker</h4>
-                <p>Mr Coffee duh</p>
-            </div>
-            
-            <div class="info-card">
-                <h4>Games & Engine Source</h4>
-                <p>gn-math & Contributors</p>
-            </div>
-
-            <div class="info-card">
-                <h4>Search Technology</h4>
-                <p>Enhanced Fast Search™</p>
-            </div>
+            <div class="info-card"><h4>Site Maker</h4><p>Mr Coffee duh</p></div>
+            <div class="info-card"><h4>Games & Engine Source</h4><p>gn-math & Contributors</p></div>
+            <div class="info-card"><h4>Search Technology</h4><p>Enhanced Fast Search™</p></div>
         </div>
     </div>
 
@@ -460,22 +397,19 @@
 
         const sources = [
             {
-                name: "GN Math Zone",
-                type: "json",
+                name: "GN Math Zone", type: "json",
                 json: "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json",
                 cover: "https://cdn.jsdelivr.net/gh/freebuisness/covers@main",
                 html: "https://cdn.jsdelivr.net/gh/freebuisness/html@main"
             },
             {
-                name: "Sea Bean",
-                type: "json",
+                name: "Sea Bean", type: "json",
                 json: "https://cdn.jsdelivr.net/gh/sea-bean-unblocked/sde@main/zzz.json",
                 cover: "https://cdn.jsdelivr.net/gh/sea-bean-unblocked/Singlemile@main/Icon/",
                 html: "https://cdn.jsdelivr.net/gh/sea-bean-unblocked/Singlemile@main/games/"
             },
             {
-                name: "Master Archive",
-                type: "combined",
+                name: "Master Archive", type: "combined",
                 repos: ["sea-bean-unblocked/Folder-1", "sea-bean-unblocked/Folder-2", "sea-bean-unblocked/Folder-3"],
                 icon: "https://sea-math-official.neocities.org/Perfet.png"
             }
@@ -487,33 +421,19 @@
             win.document.body.style.height = '100vh';
             win.document.body.style.overflow = 'hidden';
             let iframe = win.document.createElement('iframe');
-            iframe.style.border = 'none';
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.margin = '0';
-            iframe.src = window.location.href;
+            iframe.style.border = 'none'; iframe.style.width = '100%'; iframe.style.height = '100%'; iframe.src = window.location.href;
             win.document.body.appendChild(iframe);
             window.location.replace('https://classroom.google.com'); 
         }
 
-        function openGameInAboutBlank() {
-            if (!zoneFrame.src || zoneFrame.src === 'about:blank') return;
-            let win = window.open('about:blank', '_blank');
-            win.document.body.style.margin = '0';
-            win.document.body.style.height = '100vh';
-            win.document.body.style.overflow = 'hidden';
-            let iframe = win.document.createElement('iframe');
-            iframe.style.border = 'none';
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.margin = '0';
-            iframe.src = zoneFrame.src;
-            win.document.body.appendChild(iframe);
-            closeZone();
+        function reloadFrame() {
+            const currentSrc = zoneFrame.src;
+            zoneFrame.src = "about:blank";
+            setTimeout(() => { zoneFrame.src = currentSrc; }, 50);
         }
 
         function applyAdBlocker() {
-            const adSelectors = ['.ad', '.ads', '.adsbygoogle', '.banner-ads', '[id^="ad-"]', 'iframe[src*="doubleclick"]', '#sidebarad1', '#sidebarad2'];
+            const adSelectors = ['.ad', '.ads', '.adsbygoogle', '.banner-ads', '[id^="ad-"]', 'iframe[src*="doubleclick"]'];
             try {
                 const innerDoc = zoneFrame.contentDocument || zoneFrame.contentWindow.document;
                 if (innerDoc) adSelectors.forEach(s => innerDoc.querySelectorAll(s).forEach(el => el.remove()));
@@ -525,23 +445,19 @@
             const cachedData = localStorage.getItem('gamesDataCache');
             if (cachedData) {
                 try {
-                    allZones = JSON.parse(cachedData);
-                    updateCountAndRender(allZones);
+                    allZones = JSON.parse(cachedData); updateCountAndRender(allZones);
                 } catch(e) { console.warn("Cache parsing error"); }
             }
 
             let newZones = [balatroGame]; 
-
             const fetchPromises = sources.map(async (source) => {
                 let sourceData = [];
                 try {
                     if (source.type === 'json') {
                         const res = await fetch(source.json + "?t=" + Date.now());
                         const data = await res.json();
-                        
                         sourceData = data.map(item => ({
-                            ...item,
-                            sourceName: source.name,
+                            ...item, sourceName: source.name,
                             resolvedCover: item.cover ? item.cover.replace("{COVER_URL}", source.cover).replace("{HTML_URL}", source.html) : (source.icon || ''),
                             resolvedUrl: item.url ? item.url.replace("{HTML_URL}", source.html) : ''
                         }));
@@ -554,12 +470,8 @@
                                     files.forEach(file => {
                                         if (file.type === 'dir' || file.name.endsWith('.html')) {
                                             sourceData.push({
-                                                name: file.name.replace('.html', ''),
-                                                id: file.sha,
-                                                author: repo,
-                                                sourceName: source.name,
-                                                resolvedCover: source.icon,
-                                                resolvedUrl: `https://cdn.jsdelivr.net/gh/${repo}@main/${file.name}${file.type === 'dir' ? '/index.html' : ''}`
+                                                name: file.name.replace('.html', ''), id: file.sha, author: repo, sourceName: source.name,
+                                                resolvedCover: source.icon, resolvedUrl: `https://cdn.jsdelivr.net/gh/${repo}@main/${file.name}${file.type === 'dir' ? '/index.html' : ''}`
                                             });
                                         }
                                     });
@@ -567,48 +479,33 @@
                             } catch (e) {}
                         }
                     }
-                } catch (error) {
-                    console.error("Failed to load source:", source.name);
-                }
+                } catch (error) { console.error("Failed to load source:", source.name); }
                 return sourceData;
             });
 
             const results = await Promise.all(fetchPromises);
             results.forEach(data => newZones = newZones.concat(data));
             
-            const uniqueZones = [];
-            const seen = new Set();
+            const uniqueZones = []; const seen = new Set();
             for (const item of newZones) {
                 const key = item.name + item.resolvedUrl;
-                if (!seen.has(key)) {
-                    seen.add(key);
-                    uniqueZones.push(item);
-                }
+                if (!seen.has(key)) { seen.add(key); uniqueZones.push(item); }
             }
 
             allZones = uniqueZones;
             localStorage.setItem('gamesDataCache', JSON.stringify(allZones));
             
-            if (searchInput.value.trim() === '') {
-                updateCountAndRender(allZones);
-            } else {
-                handlePeakSearch();
-            }
+            if (searchInput.value.trim() === '') updateCountAndRender(allZones); else handlePeakSearch();
         }
 
         function updateCountAndRender(gamesToRender) {
             gameCountText.textContent = `Showing ${gamesToRender.length} games`;
             zonesWrapper.innerHTML = '';
-
-            if (gamesToRender.length === 0) {
-                zonesWrapper.innerHTML = '<p class="loading-text">No games found.</p>';
-                return;
-            }
+            if (gamesToRender.length === 0) { zonesWrapper.innerHTML = '<p class="loading-text">No games found.</p>'; return; }
 
             const fragment = document.createDocumentFragment();
             gamesToRender.forEach(file => {
-                const item = document.createElement("div");
-                item.className = "zone-item";
+                const item = document.createElement("div"); item.className = "zone-item";
                 item.innerHTML = `
                     <div class="source-tag">${file.sourceName}</div>
                     <img src="${file.resolvedCover}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x200/111827/ffffff?text=${encodeURIComponent(file.name)}'">
@@ -622,39 +519,67 @@
 
         function handlePeakSearch() {
             const query = searchInput.value.toLowerCase().trim();
-            
-            if (query === '') {
-                updateCountAndRender(allZones);
-                return;
-            }
-
+            if (query === '') { updateCountAndRender(allZones); return; }
             const searchTokens = query.split(/\s+/);
-            
             const results = allZones.filter(z => {
                 const targetStr = `${z.name} ${z.author || ''} ${z.sourceName || ''}`.toLowerCase();
                 return searchTokens.every(token => targetStr.includes(token));
             });
-
             updateCountAndRender(results);
         }
 
-        searchInput.addEventListener('input', () => {
-            clearTimeout(window.searchTimeout);
-            window.searchTimeout = setTimeout(handlePeakSearch, 150);
-        });
+        searchInput.addEventListener('input', () => { clearTimeout(window.searchTimeout); window.searchTimeout = setTimeout(handlePeakSearch, 150); });
+
+        function populateSidebar() {
+            const grid = document.getElementById('sidebarGrid');
+            grid.innerHTML = '';
+            if(allZones.length < 4) return;
+            
+            // Pick 4 random games
+            let shuffled = [...allZones].sort(() => 0.5 - Math.random());
+            let selected = shuffled.slice(0, 4);
+
+            selected.forEach(file => {
+                const imgUrl = file.resolvedCover || `https://via.placeholder.com/200x200/111827/ffffff?text=${encodeURIComponent(file.name)}`;
+                const item = document.createElement('div');
+                item.className = 'suggested-item';
+                item.innerHTML = `<img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/200x200/111827/ffffff?text=${encodeURIComponent(file.name)}'" title="${file.name}">`;
+                item.onclick = () => { openZone(file); };
+                grid.appendChild(item);
+            });
+        }
 
         function openZone(file) {
             const url = file.resolvedUrl;
             const cacheBusterUrl = url + (url.includes('?') ? '&' : '?') + "t=" + Date.now();
             
             zoneFrame.src = "about:blank";
-            document.getElementById('zoneName').textContent = "Connecting to " + file.name + "...";
-            document.getElementById('zoneAuthor').textContent = "AUTHOR: " + (file.author || "UNKNOWN");
-            zoneViewer.style.display = "flex";
+            
+            // Populate UI Elements
+            document.getElementById('zoneName').textContent = file.name;
+            document.getElementById('pageGameTitle').textContent = file.name;
+            document.getElementById('zoneAuthor').textContent = file.author || file.sourceName || "Unknown Source";
+            document.getElementById('toolbarIcon').src = file.resolvedCover;
+            document.getElementById('fakeUrl').textContent = "https://sigmaw.network/play/" + file.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            
+            // Dynamic Description (Simulating AI)
+            document.getElementById('aiDescription').innerHTML = `Launch into the action with <strong>${file.name}</strong>! Navigate treacherous tracks filled with deadly obstacles, jumps, and traps in this thrilling physics-based game. Master the art of control as you play through increasingly challenging levels that will test your reflexes and patience. One wrong move could send you tumbling!`;
+
+            // Randomize tag colors
+            const badgeBgColor = ['#3d0c14', '#0c243d', '#3d2b0c', '#153d0c'][Math.floor(Math.random() * 4)];
+            const badgeTextColor = ['#ff4d4d', '#4d94ff', '#ffb84d', '#70ff4d'][['#3d0c14', '#0c243d', '#3d2b0c', '#153d0c'].indexOf(badgeBgColor)];
+            const badgeEl = document.getElementById('pageGameBadge');
+            badgeEl.style.background = badgeBgColor;
+            badgeEl.style.color = badgeTextColor;
+            badgeEl.style.borderColor = badgeTextColor;
+            
+            // Populate random sidebar games
+            populateSidebar();
+            
+            zoneViewer.style.display = "block";
 
             if (url.startsWith("/") || (url.startsWith("http") && !url.includes("cdn.jsdelivr.net") && !url.includes("api.github.com"))) {
                 zoneFrame.src = url; 
-                document.getElementById('zoneName').textContent = file.name; 
                 return;
             }
 
@@ -662,32 +587,17 @@
                 .then(res => { if (!res.ok) throw new Error('Network Issue'); return res.text(); })
                 .then(html => {
                     if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
-                    
                     const safetyScript = `<script>
                         window.onbeforeunload = function() { return "Staying in site!"; };
-                        
-                        window.open = function() { 
-                            return null; 
-                        };
-                        
-                        setInterval(function() {
-                            const ads = document.querySelectorAll('.ad, .ads, .adsbygoogle, .banner-ads, [id^="ad-"], iframe[src*="doubleclick"], iframe[src*="googleads"], #sidebarad1, #sidebarad2');
-                            ads.forEach(ad => ad.remove());
-                        }, 500); 
+                        window.open = function() { return null; };
+                        setInterval(function() { document.querySelectorAll('.ad, .ads, .banner-ads, iframe').forEach(ad => { if(ad.src.includes('google')) ad.remove() }); }, 500); 
                     <\/script>`;
                     
-                    let finalHtml = html.toLowerCase().includes('<head>') 
-                        ? html.replace(/<head>/i, '<head>' + safetyScript) 
-                        : safetyScript + html;
-                        
+                    let finalHtml = html.toLowerCase().includes('<head>') ? html.replace(/<head>/i, '<head>' + safetyScript) : safetyScript + html;
                     currentBlobUrl = URL.createObjectURL(new Blob([finalHtml], { type: 'text/html;charset=utf-8' }));
                     zoneFrame.src = currentBlobUrl; 
-                    document.getElementById('zoneName').textContent = file.name;
                 })
-                .catch(err => { 
-                    zoneFrame.src = url; 
-                    document.getElementById('zoneName').textContent = file.name; 
-                });
+                .catch(err => { zoneFrame.src = url; });
         }
 
         function closeZone() {
@@ -701,13 +611,6 @@
             else if (zoneFrame.mozRequestFullScreen) zoneFrame.mozRequestFullScreen();
             else if (zoneFrame.msRequestFullscreen) zoneFrame.msRequestFullscreen();
         }
-
-        // Close viewer by clicking the backdrop area
-        zoneViewer.addEventListener('click', function(e) {
-            if(e.target === zoneViewer) {
-                closeZone();
-            }
-        });
 
         window.onload = loadAllSources;
     </script>
