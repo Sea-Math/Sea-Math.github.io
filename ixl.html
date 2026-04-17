@@ -182,22 +182,7 @@
             cursor: pointer; transition: 0.2s; font-size: 1rem;
         }
         .toolbar-btn.wide { width: auto; padding: 0 15px; gap: 8px; font-weight: 600; font-size: 0.9rem;}
-        .toolbar-btn:hover { background: var(--btn-hover); }
-
-        .feedback-bar {
-            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px;
-            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .feedback-bar span { color: var(--text-sub); font-weight: 600; font-size: 0.95rem; }
-        .feedback-actions { display: flex; gap: 10px; }
-        .feedback-btn {
-            border: none; border-radius: 6px; padding: 8px 16px; font-weight: 800; font-size: 0.9rem;
-            cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;
-        }
-        .btn-yes { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
-        .btn-yes:hover { background: rgba(34, 197, 94, 0.2); }
-        .btn-no { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-        .btn-no:hover { background: rgba(239, 68, 68, 0.2); }
+        .toolbar-btn:hover { background: var(--btn-hover); color: var(--accent-cyan); }
 
         .game-meta-header { margin-top: 10px; }
         .game-meta-title { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
@@ -317,17 +302,10 @@
                             <div class="toolbar-right">
                                 <button class="toolbar-btn wide"><i class="fa-regular fa-thumbs-up"></i> <span id="likesCount">...</span></button>
                                 <button class="toolbar-btn wide"><i class="fa-regular fa-thumbs-down"></i> <span id="dislikesCount">...</span></button>
+                                <button class="toolbar-btn" onclick="openGameInAboutBlank()" title="Open Game in about:blank"><i class="fa-solid fa-up-right-from-square"></i></button>
                                 <button class="toolbar-btn" onclick="reloadFrame()" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
                                 <button class="toolbar-btn" onclick="fullscreenZone()" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="feedback-bar">
-                        <span>Does this game work?</span>
-                        <div class="feedback-actions">
-                            <button class="feedback-btn btn-yes"><i class="fa-solid fa-check"></i> Yes</button>
-                            <button class="feedback-btn btn-no"><i class="fa-solid fa-xmark"></i> No</button>
                         </div>
                     </div>
 
@@ -410,6 +388,23 @@
             iframe.style.border = 'none'; iframe.style.width = '100%'; iframe.style.height = '100%'; iframe.src = window.location.href;
             win.document.body.appendChild(iframe);
             window.location.replace('https://classroom.google.com'); 
+        }
+
+        // New function to open the active game in about:blank
+        function openGameInAboutBlank() {
+            if (!zoneFrame.src || zoneFrame.src === 'about:blank') return;
+            let win = window.open('about:blank', '_blank');
+            win.document.body.style.margin = '0';
+            win.document.body.style.height = '100vh';
+            win.document.body.style.overflow = 'hidden';
+            let iframe = win.document.createElement('iframe');
+            iframe.style.border = 'none';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.margin = '0';
+            iframe.src = zoneFrame.src;
+            win.document.body.appendChild(iframe);
+            closeZone();
         }
 
         function reloadFrame() {
