@@ -7,8 +7,12 @@
     
     <script src="bbno$.js"></script>
 
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,600;0,800;0,900;1,400&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --bg-outer: #0a0e14;
@@ -33,13 +37,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
 
         body {
-            background-color: var(--bg-outer);
-            color: var(--text-main);
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            overflow: hidden;
-            position: relative;
+            background-color: var(--bg-outer); color: var(--text-main);
+            height: 100vh; width: 100vw; display: flex; overflow: hidden; position: relative;
         }
 
         /* --- MAIN PAGE STYLES --- */
@@ -79,10 +78,7 @@
             border-radius: 8px; position: relative; z-index: 101;
         }
         .inputcontainer:focus-within { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.05); }
-        .inputcontainer input {
-            background: none; border: none; outline: none; color: var(--text-main); font-size: 1.1rem; width: 100%;
-            text-align: center; font-style: italic;
-        }
+        .inputcontainer input { background: none; border: none; outline: none; color: var(--text-main); font-size: 1.1rem; width: 100%; text-align: center; font-style: italic; }
         .inputcontainer input:focus { text-align: left; font-style: normal; }
         .inputcontainer input::placeholder { color: rgba(255, 255, 255, 0.5); }
 
@@ -100,8 +96,7 @@
         .zone-item:hover img { opacity: 0.7; }
         .source-tag {
             position: absolute; top: 10px; right: 10px; background: rgba(6, 11, 21, 0.85); color: var(--accent-cyan);
-            border: 1px solid var(--accent-cyan); padding: 4px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 800;
-            text-transform: uppercase; z-index: 5; pointer-events: none;
+            border: 1px solid var(--accent-cyan); padding: 4px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; z-index: 5; pointer-events: none;
         }
         .zone-name {
             position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95));
@@ -110,7 +105,7 @@
         }
         .zone-item:hover .zone-name { opacity: 1; }
 
-        /* --- NEW FULL-PAGE GAME VIEWER UI (FLIPPED) --- */
+        /* --- FULL-PAGE GAME VIEWER (FLIPPED) --- */
         #zoneViewer {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #09090b; z-index: 2000; display: none; overflow-y: auto;
@@ -129,40 +124,22 @@
         }
         .back-nav button:hover { background: var(--btn-hover); }
 
-        /* FLIPPED LAYOUT: Sidebar (300px) on Left, Game (1fr) on Right */
         .game-layout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: start; }
         
-        /* Sidebar (Now on Left) */
+        /* Sidebar */
         .game-col-side { display: flex; flex-direction: column; gap: 20px; }
-        
         .suggested-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .suggested-item {
-            aspect-ratio: 1; background: #111; border-radius: 12px; overflow: hidden;
-            cursor: pointer; border: 1px solid var(--border-color); transition: 0.2s;
-        }
+        .suggested-item { aspect-ratio: 1; background: #111; border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid var(--border-color); transition: 0.2s; }
         .suggested-item:hover { border-color: var(--accent-cyan); transform: scale(1.02); }
         .suggested-item img { width: 100%; height: 100%; object-fit: cover; }
+        .ai-loading-status { background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.2); color: var(--accent-cyan); padding: 15px; border-radius: 8px; text-align: center; font-size: 0.85rem; font-weight: 600; display: none; }
 
-        .ai-loading-status {
-            background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.2);
-            color: var(--accent-cyan); padding: 15px; border-radius: 8px; text-align: center;
-            font-size: 0.85rem; font-weight: 600; display: none;
-        }
-
-        /* Main Game Column (Now on Right) */
+        /* Game Column */
         .game-col-main { display: flex; flex-direction: column; gap: 15px; }
-        
-        .iframe-container {
-            width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px 12px 0 0; overflow: hidden;
-            border: 1px solid var(--border-color); border-bottom: none;
-        }
+        .iframe-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px 12px 0 0; overflow: hidden; border: 1px solid var(--border-color); border-bottom: none; }
         #zoneFrame { width: 100%; height: 100%; border: none; }
 
-        .game-toolbar {
-            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 0 0 12px 12px;
-            padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
-        }
-
+        .game-toolbar { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 0 0 12px 12px; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
         .toolbar-left { display: flex; align-items: center; gap: 12px; }
         .toolbar-icon { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
         .toolbar-title { display: flex; flex-direction: column; }
@@ -170,68 +147,41 @@
         .toolbar-title span:last-child { font-size: 0.75rem; color: var(--text-muted); }
 
         .toolbar-center { flex-grow: 1; max-width: 400px; margin: 0 20px; }
-        .fake-url-bar {
-            background: #0d0d0d; border-radius: 6px; padding: 8px 15px; color: var(--text-muted);
-            font-size: 0.8rem; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
+        .fake-url-bar { background: #0d0d0d; border-radius: 6px; padding: 8px 15px; color: var(--text-muted); font-size: 0.8rem; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .toolbar-right { display: flex; gap: 8px; }
-        .toolbar-btn {
-            background: var(--btn-bg); border: none; color: white; width: 40px; height: 40px;
-            border-radius: 8px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s; font-size: 1rem;
-        }
+        .toolbar-btn { background: var(--btn-bg); border: none; color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-size: 1rem; }
         .toolbar-btn.wide { width: auto; padding: 0 15px; gap: 8px; font-weight: 600; font-size: 0.9rem;}
         .toolbar-btn:hover { background: var(--btn-hover); color: var(--accent-cyan); }
+        .toolbar-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .game-meta-header { margin-top: 10px; }
         .game-meta-title { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
         .game-meta-title h1 { font-size: 2.2rem; font-weight: 900; }
-        .badge {
-            background: var(--badge-bg); color: var(--badge-text); border: 1px solid rgba(255, 77, 77, 0.3);
-            padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
+        .badge { background: var(--badge-bg); color: var(--badge-text); border: 1px solid rgba(255, 77, 77, 0.3); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
         .tags-container { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tag {
-            background: var(--tag-bg); color: var(--text-sub); border: 1px solid var(--border-color);
-            padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;
-        }
+        .tag { background: var(--tag-bg); color: var(--text-sub); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
 
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .info-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; }
         .info-card.full-width { grid-column: 1 / -1; }
         .info-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; color: white; display: flex; align-items: center; gap: 10px; }
-        .info-card p { color: var(--text-sub); font-size: 0.95rem; line-height: 1.6; }
-        .info-card ul { color: var(--text-sub); font-size: 0.95rem; line-height: 1.6; margin-left: 20px; }
-        
+        .info-card p, .info-card ul { color: var(--text-sub); font-size: 0.95rem; line-height: 1.6; }
+        .info-card ul { margin-left: 20px; }
         .ai-sparkle { color: var(--accent-cyan); font-size: 1.1rem; }
 
-        /* Modal specific styles */
-        #infoModal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 3000;
-            display: none; justify-content: center; align-items: center;
-        }
-        .modal-content {
-            background: var(--bg-panel); border: 1px solid var(--accent-cyan); padding: 40px;
-            border-radius: 20px; width: 90%; max-width: 500px; position: relative;
-        }
-        .modal-close {
-            position: absolute; top: 20px; right: 20px; background: none; border: none;
-            color: var(--text-sub); font-size: 1.5rem; cursor: pointer; transition: color 0.2s;
-        }
+        #infoModal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 3000; display: none; justify-content: center; align-items: center; }
+        .modal-content { background: var(--bg-panel); border: 1px solid var(--accent-cyan); padding: 40px; border-radius: 20px; width: 90%; max-width: 500px; position: relative; }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-sub); font-size: 1.5rem; cursor: pointer; transition: color 0.2s; }
         .modal-close:hover { color: var(--accent-cyan); }
         .modal-title { font-size: 2rem; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; }
 
         .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; grid-column: 1 / -1; padding: 40px; }
-        .spinner {
-            width: 40px; height: 40px; border: 4px solid rgba(0, 229, 255, 0.1);
-            border-left-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
-        }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(0, 229, 255, 0.1); border-left-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-text { color: var(--text-sub); font-style: italic; font-size: 1.2rem; }
+        
+        .fire-stats { font-size: 0.85rem; color: var(--accent-cyan); font-weight: 800; margin-left: 10px; }
     </style>
 </head>
 <body>
@@ -256,7 +206,7 @@
                 <div id="zonesWrapper" class="combined-grid">
                     <div class="loading-container">
                         <div class="spinner"></div>
-                        <p class="loading-text">Fetching and loading data...</p>
+                        <p class="loading-text">Fetching and sorting data...</p>
                     </div>
                 </div>
             </div>
@@ -265,25 +215,18 @@
 
     <div id="zoneViewer">
         <div class="game-page-container">
-            
             <div class="back-nav">
                 <button onclick="closeZone()"><i class="fa-solid fa-chevron-left"></i> Back to Games</button>
             </div>
 
             <div class="game-layout">
-                
                 <div class="game-col-side">
-                    <div class="ai-loading-status" id="aiStatus">
-                        <i class="fa-solid fa-microchip fa-spin"></i> AI Synthesizing Game Info...
-                    </div>
-                    
-                    <h3 style="color:white; font-size:1.1rem; font-weight:800;">Suggested Games</h3>
-                    <div class="suggested-grid" id="sidebarGrid">
-                        </div>
+                    <div class="ai-loading-status" id="aiStatus"><i class="fa-solid fa-microchip fa-spin"></i> AI Synthesizing Game Info...</div>
+                    <h3 style="color:white; font-size:1.1rem; font-weight:800;">Top Suggested</h3>
+                    <div class="suggested-grid" id="sidebarGrid"></div>
                 </div>
 
                 <div class="game-col-main">
-                    
                     <div>
                         <div class="iframe-container">
                             <iframe id="zoneFrame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"></iframe>
@@ -300,8 +243,8 @@
                                 <div class="fake-url-bar" id="fakeUrl">https://sigmaw.unblocked/game/...</div>
                             </div>
                             <div class="toolbar-right">
-                                <button class="toolbar-btn wide"><i class="fa-regular fa-thumbs-up"></i> <span id="likesCount">...</span></button>
-                                <button class="toolbar-btn wide"><i class="fa-regular fa-thumbs-down"></i> <span id="dislikesCount">...</span></button>
+                                <button class="toolbar-btn wide" id="likeBtn" onclick="incrementGameStat('likes')"><i class="fa-regular fa-thumbs-up"></i> <span id="likesCount">...</span></button>
+                                <button class="toolbar-btn wide" id="dislikeBtn" onclick="incrementGameStat('dislikes')"><i class="fa-regular fa-thumbs-down"></i> <span id="dislikesCount">...</span></button>
                                 <button class="toolbar-btn" onclick="openGameInAboutBlank()" title="Open Game in about:blank"><i class="fa-solid fa-up-right-from-square"></i></button>
                                 <button class="toolbar-btn" onclick="reloadFrame()" title="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
                                 <button class="toolbar-btn" onclick="fullscreenZone()" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
@@ -313,10 +256,9 @@
                         <div class="game-meta-title">
                             <h1 id="pageGameTitle">Loading...</h1>
                             <span class="badge" id="pageGameBadge">...</span>
+                            <span class="fire-stats"><i class="fa-solid fa-fire"></i> <span id="playsCount">0</span> Plays</span>
                         </div>
-                        <div class="tags-container" id="pageTags">
-                            <span class="tag">loading AI tags...</span>
-                        </div>
+                        <div class="tags-container" id="pageTags"><span class="tag">loading AI tags...</span></div>
                     </div>
 
                     <div class="info-grid">
@@ -326,9 +268,7 @@
                         </div>
                         <div class="info-card">
                             <h3><i class="fa-solid fa-robot ai-sparkle"></i> AI Notes & Tips</h3>
-                            <ul id="aiNotes">
-                                <li>Analyzing gameplay elements...</li>
-                            </ul>
+                            <ul id="aiNotes"><li>Analyzing gameplay elements...</li></ul>
                         </div>
                         <div class="info-card">
                             <h3>Controls</h3>
@@ -336,7 +276,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -347,20 +286,29 @@
             <h3 class="modal-title">System Info</h3>
             <div class="info-card"><h4>Site Maker</h4><p>Mr Coffee duh</p></div>
             <div class="info-card"><h4>Games & Engine Source</h4><p>gn-math & Contributors</p></div>
-            <div class="info-card"><h4>Search Technology</h4><p>Enhanced Fast Search™</p></div>
         </div>
     </div>
 
     <script>
-        // AI API Configuration
+        // --- 1. FIREBASE SETUP ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpQ0VzuKLgi5uWHqi0oqCm3acAxqwu56k",
+            authDomain: "estdryfgihojkl.firebaseapp.com",
+            projectId: "estdryfgihojkl",
+            storageBucket: "estdryfgihojkl.firebasestorage.app",
+            messagingSenderId: "655218285663",
+            appId: "1:655218285663:web:9423da27bf31474c38cfea",
+            measurementId: "G-9P0PJF7NVQ"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // --- 2. AI CONFIG ---
         let API_KEY = "";
-        try {
-            if (typeof bbnoSecret !== 'undefined' && bbnoSecret.trim() !== "") {
-                API_KEY = atob(bbnoSecret.trim());
-            }
-        } catch (e) {}
+        try { if (typeof bbnoSecret !== 'undefined' && bbnoSecret.trim() !== "") API_KEY = atob(bbnoSecret.trim()); } catch (e) {}
         const MODEL_ID = 'nvidia/nemotron-3-nano-30b-a3b:free';
 
+        // --- 3. GLOBALS ---
         const zoneViewer = document.getElementById('zoneViewer');
         const zoneFrame = document.getElementById('zoneFrame');
         const searchInput = document.getElementById('dumbSearchInput');
@@ -368,12 +316,9 @@
         const gameCountText = document.getElementById('gameCount');
         
         let allZones = [];
+        let firebaseStats = {};
         let currentBlobUrl = null;
-
-        const balatroGame = {
-            name: "Balatro", sourceName: "Custom", author: "Local",
-            resolvedCover: "/baltro.jpg", resolvedUrl: "https://cdn.jsdelivr.net/gh/Sea-Math/game-files@main/balatro.svg"
-        };
+        let activeGameName = null;
 
         const sources = [
             { name: "GN Math Zone", type: "json", json: "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json", cover: "https://cdn.jsdelivr.net/gh/freebuisness/covers@main", html: "https://cdn.jsdelivr.net/gh/freebuisness/html@main" },
@@ -381,54 +326,63 @@
             { name: "Master Archive", type: "combined", repos: ["sea-bean-unblocked/Folder-1", "sea-bean-unblocked/Folder-2", "sea-bean-unblocked/Folder-3"], icon: "https://sea-math-official.neocities.org/Perfet.png" }
         ];
 
-        function openSiteInAboutBlank() {
-            let win = window.open('about:blank', '_blank');
-            win.document.body.style.margin = '0'; win.document.body.style.height = '100vh'; win.document.body.style.overflow = 'hidden';
-            let iframe = win.document.createElement('iframe');
-            iframe.style.border = 'none'; iframe.style.width = '100%'; iframe.style.height = '100%'; iframe.src = window.location.href;
-            win.document.body.appendChild(iframe);
-            window.location.replace('https://classroom.google.com'); 
-        }
-
-        // New function to open the active game in about:blank
-        function openGameInAboutBlank() {
-            if (!zoneFrame.src || zoneFrame.src === 'about:blank') return;
-            let win = window.open('about:blank', '_blank');
-            win.document.body.style.margin = '0';
-            win.document.body.style.height = '100vh';
-            win.document.body.style.overflow = 'hidden';
-            let iframe = win.document.createElement('iframe');
-            iframe.style.border = 'none';
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.margin = '0';
-            iframe.src = zoneFrame.src;
-            win.document.body.appendChild(iframe);
-            closeZone();
-        }
-
-        function reloadFrame() {
-            const currentSrc = zoneFrame.src;
-            zoneFrame.src = "about:blank";
-            setTimeout(() => { zoneFrame.src = currentSrc; }, 50);
-        }
-
-        function applyAdBlocker() {
-            const adSelectors = ['.ad', '.ads', '.adsbygoogle', '.banner-ads', '[id^="ad-"]', 'iframe[src*="doubleclick"]'];
+        // --- 4. FIREBASE LOGIC (FETCH & SORT) ---
+        async function fetchAllFirebaseStats() {
             try {
-                const innerDoc = zoneFrame.contentDocument || zoneFrame.contentWindow.document;
-                if (innerDoc) adSelectors.forEach(s => innerDoc.querySelectorAll(s).forEach(el => el.remove()));
-            } catch (e) {}
+                const snapshot = await db.collection('games').get();
+                snapshot.forEach(doc => { firebaseStats[doc.id] = doc.data(); });
+            } catch (error) {
+                console.error("Error fetching Firebase stats. Defaulting to 0.", error);
+            }
         }
-        zoneFrame.onload = applyAdBlocker;
 
-        async function loadAllSources() {
-            const cachedData = localStorage.getItem('gamesDataCache');
-            if (cachedData) {
-                try { allZones = JSON.parse(cachedData); updateCountAndRender(allZones); } catch(e) {}
+        function sortGamesByPopularity(gamesArray) {
+            return gamesArray.map(game => {
+                // Remove weird characters for DB ID consistency
+                const safeId = game.name.replace(/[^a-zA-Z0-9]/g, ''); 
+                const stats = firebaseStats[safeId] || { plays: 0, likes: 0, dislikes: 0 };
+                
+                // Views > Likes Algorithm
+                const score = (stats.likes * 10) + (stats.plays * 1) - (stats.dislikes * 5);
+                return { ...game, dbId: safeId, plays: stats.plays, likes: stats.likes, dislikes: stats.dislikes, score: score };
+            }).sort((a, b) => b.score - a.score);
+        }
+
+        async function incrementGameStat(statType) {
+            if (!activeGameName) return;
+            const safeId = activeGameName.replace(/[^a-zA-Z0-9]/g, '');
+            const gameRef = db.collection('games').doc(safeId);
+
+            // Optimistic UI Update for buttons
+            if(statType === 'likes') {
+                const el = document.getElementById('likesCount');
+                el.innerText = parseInt(el.innerText) + 1;
+                document.getElementById('likeBtn').disabled = true;
+                document.getElementById('dislikeBtn').disabled = true;
+            } else if (statType === 'dislikes') {
+                const el = document.getElementById('dislikesCount');
+                el.innerText = parseInt(el.innerText) + 1;
+                document.getElementById('likeBtn').disabled = true;
+                document.getElementById('dislikeBtn').disabled = true;
             }
 
-            let newZones = [balatroGame]; 
+            try {
+                const docSnap = await gameRef.get();
+                if (!docSnap.exists) {
+                    await gameRef.set({ 
+                        plays: statType === 'plays' ? 1 : 0, 
+                        likes: statType === 'likes' ? 1 : 0, 
+                        dislikes: statType === 'dislikes' ? 1 : 0 
+                    });
+                } else {
+                    await gameRef.update({ [statType]: firebase.firestore.FieldValue.increment(1) });
+                }
+            } catch (error) { console.error("Firebase update failed", error); }
+        }
+
+        // --- 5. INITIAL LOAD ---
+        async function loadAllSources() {
+            let newZones = []; 
             const fetchPromises = sources.map(async (source) => {
                 let sourceData = [];
                 try {
@@ -448,10 +402,7 @@
                                     const files = await res.json();
                                     files.forEach(file => {
                                         if (file.type === 'dir' || file.name.endsWith('.html')) {
-                                            sourceData.push({
-                                                name: file.name.replace('.html', ''), id: file.sha, author: repo, sourceName: source.name,
-                                                resolvedCover: source.icon, resolvedUrl: `https://cdn.jsdelivr.net/gh/${repo}@main/${file.name}${file.type === 'dir' ? '/index.html' : ''}`
-                                            });
+                                            sourceData.push({ name: file.name.replace('.html', ''), id: file.sha, author: repo, sourceName: source.name, resolvedCover: source.icon, resolvedUrl: `https://cdn.jsdelivr.net/gh/${repo}@main/${file.name}${file.type === 'dir' ? '/index.html' : ''}` });
                                         }
                                     });
                                 }
@@ -471,25 +422,22 @@
                 if (!seen.has(key)) { seen.add(key); uniqueZones.push(item); }
             }
 
-            allZones = uniqueZones;
-            localStorage.setItem('gamesDataCache', JSON.stringify(allZones));
+            // Fetch Firebase Stats & Sort based on popularity
+            await fetchAllFirebaseStats();
+            allZones = sortGamesByPopularity(uniqueZones);
             
             if (searchInput.value.trim() === '') updateCountAndRender(allZones); else handlePeakSearch();
         }
 
         function updateCountAndRender(gamesToRender) {
-            gameCountText.textContent = `Showing ${gamesToRender.length} games`;
+            gameCountText.textContent = `Showing ${gamesToRender.length} games (Sorted by Popularity)`;
             zonesWrapper.innerHTML = '';
             if (gamesToRender.length === 0) { zonesWrapper.innerHTML = '<p class="loading-text">No games found.</p>'; return; }
 
             const fragment = document.createDocumentFragment();
             gamesToRender.forEach(file => {
                 const item = document.createElement("div"); item.className = "zone-item";
-                item.innerHTML = `
-                    <div class="source-tag">${file.sourceName}</div>
-                    <img src="${file.resolvedCover}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x200/111827/ffffff?text=${encodeURIComponent(file.name)}'">
-                    <div class="zone-name">${file.name}</div>
-                `;
+                item.innerHTML = `<div class="source-tag">${file.sourceName}</div><img src="${file.resolvedCover}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x200/111827/ffffff?text=${encodeURIComponent(file.name)}'"><div class="zone-name">${file.name}</div>`;
                 item.onclick = (e) => { e.preventDefault(); openZone(file); };
                 fragment.appendChild(item);
             });
@@ -506,18 +454,14 @@
             });
             updateCountAndRender(results);
         }
-
         searchInput.addEventListener('input', () => { clearTimeout(window.searchTimeout); window.searchTimeout = setTimeout(handlePeakSearch, 150); });
 
+        // --- 6. GAME LAUNCHER & AI ---
         function populateSidebar() {
             const grid = document.getElementById('sidebarGrid');
             grid.innerHTML = '';
-            if(allZones.length < 6) return;
-            
-            // Pick 6 random games for the sidebar
-            let shuffled = [...allZones].sort(() => 0.5 - Math.random());
-            let selected = shuffled.slice(0, 6);
-
+            // Since allZones is sorted by popularity, the top 6 games are always suggested
+            let selected = allZones.slice(0, 6);
             selected.forEach(file => {
                 const imgUrl = file.resolvedCover || `https://via.placeholder.com/200x200/111827/ffffff?text=${encodeURIComponent(file.name)}`;
                 const item = document.createElement('div');
@@ -528,136 +472,88 @@
             });
         }
 
-        // --- AI API INTEGRATION FOR GAME NOTES, TAGS & LIKES ---
         async function fetchAIGameData(gameName) {
             document.getElementById('aiStatus').style.display = 'block';
-            
-            // Generate realistic random likes/dislikes as fallback/baseline
-            const randomLikes = Math.floor(Math.random() * 500) + 50;
-            const randomDislikes = Math.floor(Math.random() * 20);
-
             const fallbackSystem = () => {
-                document.getElementById('aiDescription').innerText = `${gameName} is an exciting web game filled with unique challenges and levels. Dive in to experience the thrilling mechanics tailored for endless fun right in your browser!`;
-                document.getElementById('aiNotes').innerHTML = `<li>Use your skills to adapt quickly.</li><li>Practice makes perfect in ${gameName}.</li><li>Watch out for unexpected obstacles!</li>`;
-                document.getElementById('pageTags').innerHTML = `<span class="tag">Arcade</span><span class="tag">Browser</span><span class="tag">WebGL</span>`;
+                document.getElementById('aiDescription').innerText = `${gameName} is an exciting web game. Dive in to experience the mechanics tailored for endless fun right in your browser!`;
+                document.getElementById('aiNotes').innerHTML = `<li>Use your skills to adapt quickly.</li><li>Practice makes perfect in ${gameName}.</li>`;
+                document.getElementById('pageTags').innerHTML = `<span class="tag">Arcade</span><span class="tag">Browser</span>`;
                 document.getElementById('pageGameBadge').innerText = "ARCADE";
-                document.getElementById('likesCount').innerText = randomLikes;
-                document.getElementById('dislikesCount').innerText = randomDislikes;
                 document.getElementById('aiStatus').style.display = 'none';
             };
 
-            if (!API_KEY) {
-                setTimeout(fallbackSystem, 600);
-                return;
-            }
+            if (!API_KEY) { setTimeout(fallbackSystem, 600); return; }
 
-            const promptText = `Generate metadata for a web game called "${gameName}". Respond strictly in JSON.
-Format:
-{
-    "description": "A 2-sentence exciting description.",
-    "notes": ["Tip 1", "Tip 2", "Tip 3"],
-    "tags": ["tag1", "tag2", "tag3"],
-    "category": "Main Category (e.g. Action, Puzzle)",
-    "likes": "A number",
-    "dislikes": "A smaller number"
-}`;
-
+            const promptText = `Generate metadata for a web game called "${gameName}". Respond strictly in JSON. Format: {"description": "A 2-sentence exciting description.", "notes": ["Tip 1", "Tip 2"], "tags": ["tag1", "tag2"], "category": "Main Category"}`;
             try {
                 const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        model: MODEL_ID,
-                        messages: [{ role: "user", content: promptText }]
-                    })
+                    method: "POST", headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({ model: MODEL_ID, messages: [{ role: "user", content: promptText }] })
                 });
-
                 const data = await response.json();
-                const aiText = data.choices[0].message.content.trim();
-                const cleanJson = aiText.replace(/```json/gi, '').replace(/```/g, '');
+                const cleanJson = data.choices[0].message.content.trim().replace(/```json/gi, '').replace(/```/g, '');
                 const resultObj = JSON.parse(cleanJson);
 
                 document.getElementById('aiDescription').innerText = resultObj.description;
-                document.getElementById('aiNotes').innerHTML = resultObj.notes.map(note => `<li>${note}</li>`).join('');
-                document.getElementById('pageTags').innerHTML = resultObj.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                document.getElementById('aiNotes').innerHTML = resultObj.notes.map(n => `<li>${n}</li>`).join('');
+                document.getElementById('pageTags').innerHTML = resultObj.tags.map(t => `<span class="tag">${t}</span>`).join('');
                 document.getElementById('pageGameBadge').innerText = resultObj.category.toUpperCase();
-                document.getElementById('likesCount').innerText = resultObj.likes || randomLikes;
-                document.getElementById('dislikesCount').innerText = resultObj.dislikes || randomDislikes;
-                
-            } catch (error) {
-                console.error("AI Error:", error);
-                fallbackSystem();
-            } finally {
-                document.getElementById('aiStatus').style.display = 'none';
-            }
+            } catch (error) { fallbackSystem(); } finally { document.getElementById('aiStatus').style.display = 'none'; }
         }
 
         function openZone(file) {
+            activeGameName = file.name;
             const url = file.resolvedUrl;
-            const cacheBusterUrl = url + (url.includes('?') ? '&' : '?') + "t=" + Date.now();
             
             zoneFrame.src = "about:blank";
-            
-            // Populate Basic UI Elements
             document.getElementById('zoneName').textContent = file.name;
             document.getElementById('pageGameTitle').textContent = file.name;
             document.getElementById('zoneAuthor').textContent = file.author || file.sourceName || "Unknown Source";
             document.getElementById('toolbarIcon').src = file.resolvedCover;
             document.getElementById('fakeUrl').textContent = "https://sigmaw.network/play/" + file.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             
-            // Reset AI fields before fetch
-            document.getElementById('aiDescription').innerText = "Analyzing...";
-            document.getElementById('aiNotes').innerHTML = "<li>Loading...</li>";
-            document.getElementById('pageTags').innerHTML = `<span class="tag">...</span>`;
-            document.getElementById('likesCount').innerText = "...";
-            document.getElementById('dislikesCount').innerText = "...";
+            // Set Firebase Stats in UI
+            document.getElementById('playsCount').innerText = file.plays || 0;
+            document.getElementById('likesCount').innerText = file.likes || 0;
+            document.getElementById('dislikesCount').innerText = file.dislikes || 0;
+            
+            // Reset Interaction Buttons
+            document.getElementById('likeBtn').disabled = false;
+            document.getElementById('dislikeBtn').disabled = false;
 
-            // Randomize badge colors dynamically
+            // Trigger Play Increment
+            incrementGameStat('plays');
+            
             const badgeBgColor = ['#3d0c14', '#0c243d', '#3d2b0c', '#153d0c'][Math.floor(Math.random() * 4)];
             const badgeTextColor = ['#ff4d4d', '#4d94ff', '#ffb84d', '#70ff4d'][['#3d0c14', '#0c243d', '#3d2b0c', '#153d0c'].indexOf(badgeBgColor)];
-            const badgeEl = document.getElementById('pageGameBadge');
-            badgeEl.style.background = badgeBgColor;
-            badgeEl.style.color = badgeTextColor;
-            badgeEl.style.borderColor = badgeTextColor;
+            document.getElementById('pageGameBadge').style.background = badgeBgColor;
+            document.getElementById('pageGameBadge').style.color = badgeTextColor;
             
             populateSidebar();
             fetchAIGameData(file.name);
-            
             zoneViewer.style.display = "block";
 
             if (url.startsWith("/") || (url.startsWith("http") && !url.includes("cdn.jsdelivr.net") && !url.includes("api.github.com"))) {
-                zoneFrame.src = url; 
-                return;
+                zoneFrame.src = url; return;
             }
 
-            fetch(cacheBusterUrl)
-                .then(res => { if (!res.ok) throw new Error('Network Issue'); return res.text(); })
+            fetch(url + (url.includes('?') ? '&' : '?') + "t=" + Date.now())
+                .then(res => res.text())
                 .then(html => {
                     if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
-                    const safetyScript = `<script>
-                        window.onbeforeunload = function() { return "Staying in site!"; };
-                        window.open = function() { return null; };
-                        setInterval(function() { document.querySelectorAll('.ad, .ads, .banner-ads, iframe').forEach(ad => { if(ad.src.includes('google')) ad.remove() }); }, 500); 
-                    <\/script>`;
-                    
+                    const safetyScript = `<script>window.onbeforeunload=function(){return"Staying in site!";};window.open=function(){return null;};setInterval(function(){document.querySelectorAll('.ad,.ads,.banner-ads,iframe').forEach(ad=>{if(ad.src.includes('google'))ad.remove()});},500);<\/script>`;
                     let finalHtml = html.toLowerCase().includes('<head>') ? html.replace(/<head>/i, '<head>' + safetyScript) : safetyScript + html;
                     currentBlobUrl = URL.createObjectURL(new Blob([finalHtml], { type: 'text/html;charset=utf-8' }));
                     zoneFrame.src = currentBlobUrl; 
-                })
-                .catch(err => { zoneFrame.src = url; });
+                }).catch(err => { zoneFrame.src = url; });
         }
 
-        function closeZone() {
-            zoneViewer.style.display = "none"; zoneFrame.src = "about:blank";
-            if (currentBlobUrl) { URL.revokeObjectURL(currentBlobUrl); currentBlobUrl = null; }
-        }
-
-        function fullscreenZone() {
-            if (zoneFrame.requestFullscreen) zoneFrame.requestFullscreen();
-            else if (zoneFrame.webkitRequestFullscreen) zoneFrame.webkitRequestFullscreen();
-            else if (zoneFrame.mozRequestFullScreen) zoneFrame.mozRequestFullScreen();
-            else if (zoneFrame.msRequestFullscreen) zoneFrame.msRequestFullscreen();
-        }
+        // --- 7. UTILS ---
+        function closeZone() { zoneViewer.style.display = "none"; zoneFrame.src = "about:blank"; if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl); activeGameName = null; }
+        function reloadFrame() { const c = zoneFrame.src; zoneFrame.src = "about:blank"; setTimeout(() => { zoneFrame.src = c; }, 50); }
+        function fullscreenZone() { if (zoneFrame.requestFullscreen) zoneFrame.requestFullscreen(); else if (zoneFrame.webkitRequestFullscreen) zoneFrame.webkitRequestFullscreen(); }
+        function openSiteInAboutBlank() { let w = window.open('about:blank', '_blank'); w.document.body.style.margin = '0'; w.document.body.style.height = '100vh'; w.document.body.style.overflow = 'hidden'; let i = w.document.createElement('iframe'); i.style.border = 'none'; i.style.width = '100%'; i.style.height = '100%'; i.src = window.location.href; w.document.body.appendChild(i); window.location.replace('https://classroom.google.com'); }
+        function openGameInAboutBlank() { if (!zoneFrame.src || zoneFrame.src === 'about:blank') return; let w = window.open('about:blank', '_blank'); w.document.body.style.margin = '0'; w.document.body.style.height = '100vh'; w.document.body.style.overflow = 'hidden'; let i = w.document.createElement('iframe'); i.style.border = 'none'; i.style.width = '100%'; i.style.height = '100%'; i.src = zoneFrame.src; w.document.body.appendChild(i); closeZone(); }
 
         window.onload = loadAllSources;
     </script>
