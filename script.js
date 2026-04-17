@@ -1,8 +1,8 @@
 // =====================================================
 // CONFIGURATION
 // =====================================================
-const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://military.marincareers.org/wisp/";
-const WISP_SERVERS = [{ name: "Default Wisp", url: "wss://military.marincareers.org/wisp/" }];
+const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://glseries.net/wisp/";
+const WISP_SERVERS = [{ name: "GLSeries", url: "wss://glseries.net/wisp/" }];
 
 if (!localStorage.getItem("proxServer")) {
     localStorage.setItem("proxServer", DEFAULT_WISP);
@@ -14,7 +14,7 @@ function getAllWispServers() {
 }
 
 // =====================================================
-// BULLETPROOF HEALTH & ERROR HANDLING
+// SERVER HEALTH CHECKING
 // =====================================================
 async function pingWispServer(url, timeout = 2000) {
     return new Promise((resolve) => {
@@ -29,31 +29,6 @@ async function pingWispServer(url, timeout = 2000) {
             ws.onerror = () => { clearTimeout(timer); ws.close(); resolve({ url, success: false, latency: null }); };
         } catch { resolve({ url, success: false, latency: null }); }
     });
-}
-
-async function findBestWispServer(servers, currentUrl) {
-    if (!servers || servers.length === 0) return currentUrl;
-    const results = await Promise.all(servers.map(s => pingWispServer(s.url, 2000)));
-    const working = results.filter(r => r.success).sort((a, b) => a.latency - b.latency);
-    return working.length > 0 ? working[0].url : currentUrl || servers[0]?.url;
-}
-
-async function initializeWithBestServer() {
-    const autoswitch = localStorage.getItem('wispAutoswitch') !== 'false';
-    const allServers = getAllWispServers();
-    if (!autoswitch || allServers.length <= 1) return;
-
-    const currentUrl = localStorage.getItem("proxServer") || DEFAULT_WISP;
-    const currentCheck = await pingWispServer(currentUrl, 2000);
-    
-    if (!currentCheck.success) {
-        console.log("Current server dead. Finding best server...");
-        const best = await findBestWispServer(allServers, currentUrl);
-        if (best && best !== currentUrl) {
-            localStorage.setItem("proxServer", best);
-            notify('info', 'Auto-switched', 'Switched to a faster proxy server.');
-        }
-    }
 }
 
 // =====================================================
@@ -76,7 +51,7 @@ const getActiveTab = () => tabs.find(t => t.id === activeTabId);
 const notify = (type, title, message) => { if (typeof Notify !== 'undefined') Notify[type](title, message); };
 
 // =====================================================
-// INITIALIZATION (With Auto-Nuke for Corruption)
+// PROXY INITIALIZATION
 // =====================================================
 async function getSharedScramjet() {
     if (sharedScramjet) return sharedScramjet;
@@ -94,12 +69,10 @@ async function getSharedScramjet() {
     try {
         await sharedScramjet.init();
     } catch (err) {
-        console.warn('Scramjet cache corrupted. Auto-nuking IndexedDB...', err);
-        try {
-            ['scramjet-data', 'scrambase', 'ScramjetData'].forEach(db => indexedDB.deleteDatabase(db));
-        } catch (e) {}
+        console.warn('Scramjet DB corrupted. Resetting...');
+        try { ['scramjet-data', 'scrambase', 'ScramjetData'].forEach(db => indexedDB.deleteDatabase(db)); } catch (e) {}
         sharedScramjet = null;
-        return getSharedScramjet(); // Retry after nuke
+        return getSharedScramjet(); 
     }
     return sharedScramjet;
 }
@@ -110,71 +83,24 @@ async function getSharedConnection() {
     sharedConnection = new BareMux.BareMuxConnection(getBasePath() + "bareworker.js");
     
     await sharedConnection.setTransport(
-        "https://cdn.jsdelivr.net/gh/Sea-Math/sail@main/libcurl/index.mjs",
+        "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
         [{ wisp: wispUrl }]
     );
     sharedConnectionReady = true;
     return sharedConnection;
 }
 
-// Check if SW is alive before navigating
-async function ensureServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        const reg = await navigator.serviceWorker.ready;
-        if (!navigator.serviceWorker.controller) {
-            console.warn("Service Worker asleep! Reloading window to wake it up...");
-            window.location.reload();
-        }
-    }
-}
-
+// =====================================================
+// UI BINDINGS
+// =====================================================
 async function initializeBrowser() {
-    const root = document.getElementById("app");
-    root.innerHTML = `
-        <div class="browser-container">
-            <div class="flex tabs" id="tabs-container"></div>
-            <div class="flex nav">
-                <button id="back-btn" title="Back"><i class="fa-solid fa-chevron-left"></i></button>
-                <button id="fwd-btn" title="Forward"><i class="fa-solid fa-chevron-right"></i></button>
-                <button id="reload-btn" title="Reload"><i class="fa-solid fa-rotate-right"></i></button>
-                <div class="address-wrapper">
-                    <input class="bar" id="address-bar" autocomplete="off" placeholder="Search or enter URL">
-                    <button id="home-btn-nav" title="Home"><i class="fa-solid fa-house"></i></button>
-                </div>
-                <button id="devtools-btn" title="DevTools"><i class="fa-solid fa-code"></i></button>
-                <button id="wisp-settings-btn" title="Proxy Settings"><i class="fa-solid fa-gear"></i></button>
-            </div>
-            <div class="loading-bar-container"><div class="loading-bar" id="loading-bar"></div></div>
-            <div class="iframe-container" id="iframe-container">
-                <div id="loading" class="message-container" style="display: none;">
-                    <div class="message-content">
-                        <div class="spinner"></div>
-                        <h1 id="loading-title">Connecting</h1>
-                        <p id="loading-url">Initializing proxy...</p>
-                        <button id="skip-btn">Skip</button>
-                    </div>
-                </div>
-                <div id="error" class="message-container" style="display: none;">
-                    <div class="message-content">
-                        <h1><i class="fa-solid fa-triangle-exclamation"></i> Connection Failed</h1>
-                        <p id="error-message">The proxy failed to load this page. It may be blocked or the server is down.</p>
-                        <button id="retry-error-btn" style="margin-top: 15px; padding: 8px 16px; cursor: pointer;">Try Again</button>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-
+    // UI elements are now in index.html, we just bind events to them
     document.getElementById('back-btn').onclick = () => getActiveTab()?.frame.back();
     document.getElementById('fwd-btn').onclick = () => getActiveTab()?.frame.forward();
     document.getElementById('reload-btn').onclick = () => getActiveTab()?.frame.reload();
     document.getElementById('home-btn-nav').onclick = () => window.location.href = '../index.html';
     document.getElementById('devtools-btn').onclick = toggleDevTools;
     document.getElementById('wisp-settings-btn').onclick = openSettings;
-    
-    document.getElementById('skip-btn').onclick = () => {
-        const tab = getActiveTab();
-        if (tab) { tab.loading = false; showIframeLoading(false); }
-    };
     
     document.getElementById('retry-error-btn').onclick = () => {
         document.getElementById("error").style.display = "none";
@@ -195,7 +121,7 @@ async function initializeBrowser() {
 }
 
 // =====================================================
-// BULLETPROOF TAB MANAGEMENT
+// TAB MANAGEMENT
 // =====================================================
 function createTab(makeActive = true) {
     const frame = sharedScramjet.createFrame();
@@ -231,44 +157,26 @@ function createTab(makeActive = true) {
         updateAddressBar();
         updateLoadingBar(tab, 10);
 
-        // Kill Switch: If it takes longer than 15 seconds, assume proxy failure.
         clearTimeout(tab.timeoutTracker);
         tab.timeoutTracker = setTimeout(() => {
             if (tab.loading && tab.id === activeTabId && tab.url && !tab.url.includes('NT.html')) {
                 showIframeLoading(false);
                 document.getElementById("error").style.display = "flex";
-                document.getElementById("error-message").textContent = "Connection Timed Out. The server took too long to respond.";
+                document.getElementById("error-message").textContent = "Connection Timed Out (30s). The Wisp server might be offline.";
                 tab.loading = false;
                 updateLoadingBar(tab, 100);
             }
-        }, 15000);
+        }, 30000);
     });
 
     frame.frame.addEventListener('load', () => {
         tab.loading = false;
         clearTimeout(tab.timeoutTracker);
 
-        if (tab.id === activeTabId) showIframeLoading(false);
-
-        // --- BULLETPROOF BLANK PAGE DETECTOR ---
-        let isBlank = false;
-        try {
-            const frameDoc = frame.frame.contentDocument || frame.frame.contentWindow.document;
-            if (frameDoc && frameDoc.body && frameDoc.body.innerHTML.trim() === "" && tab.url && !tab.url.includes('NT.html')) {
-                isBlank = true;
-            }
-        } catch (e) {
-            // Cross-origin error means it actually loaded successfully!
-            isBlank = false; 
-        }
-
-        if (isBlank && tab.id === activeTabId) {
-            document.getElementById("error").style.display = "flex";
-            document.getElementById("error-message").textContent = "The server returned an empty page. The site might be blocking proxies.";
-        } else if (tab.id === activeTabId) {
+        if (tab.id === activeTabId) {
+            showIframeLoading(false);
             document.getElementById("error").style.display = "none";
         }
-        // ---------------------------------------
 
         try { const title = frame.frame.contentWindow.document.title; if (title) tab.title = title; } catch {}
 
@@ -295,8 +203,6 @@ function showIframeLoading(show, url = '') {
     if (show) {
         document.getElementById("loading-title").textContent = "Connecting";
         document.getElementById("loading-url").textContent = url || "Loading content...";
-        document.getElementById("skip-btn").style.display = 'none';
-        setTimeout(() => { if (document.getElementById("skip-btn")) document.getElementById("skip-btn").style.display = 'inline-block'; }, 3000);
     }
 }
 
@@ -305,7 +211,6 @@ function switchTab(tabId) {
     const tab = getActiveTab();
     tabs.forEach(t => t.frame.frame.classList.toggle("hidden", t.id !== tabId));
     
-    // Clear error UI when switching tabs
     document.getElementById("error").style.display = "none";
 
     if (tab) showIframeLoading(tab.loading, tab.url);
@@ -351,7 +256,6 @@ function updateAddressBar() {
 }
 
 async function handleSubmit(url) {
-    await ensureServiceWorker(); // Check SW before sending request
     const tab = getActiveTab();
     let input = url ?? document.getElementById("address-bar").value.trim();
     if (!input) return;
@@ -411,19 +315,6 @@ function renderServerList() {
         list.appendChild(item);
         checkServerHealth(server.url, item);
     });
-
-    const isAutoswitch = localStorage.getItem('wispAutoswitch') !== 'false';
-    const toggleContainer = document.createElement('div');
-    toggleContainer.className = 'wisp-option';
-    toggleContainer.style.cssText = 'margin-top: 10px; cursor: default;';
-    toggleContainer.innerHTML = `<div class="wisp-option-header" style="justify-content: space-between;"><div class="wisp-option-name"><i class="fa-solid fa-rotate" style="margin-right:8px"></i> Auto-switch on failure</div><div class="toggle-switch ${isAutoswitch ? 'active' : ''}" id="autoswitch-toggle"><div class="toggle-knob"></div></div></div>`;
-    toggleContainer.onclick = () => {
-        const newState = !isAutoswitch;
-        localStorage.setItem('wispAutoswitch', newState);
-        document.getElementById('autoswitch-toggle').classList.toggle('active', newState);
-        navigator.serviceWorker.controller?.postMessage({ type: 'config', autoswitch: newState });
-    };
-    list.appendChild(toggleContainer);
 }
 
 function saveCustomWisp() {
@@ -481,7 +372,6 @@ function toggleDevTools() {
 // =====================================================
 document.addEventListener('DOMContentLoaded', async function () {
     try {
-        await initializeWithBestServer();
         await getSharedScramjet();
         await getSharedConnection();
 
@@ -493,7 +383,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 type: "config",
                 wispurl: localStorage.getItem("proxServer") ?? DEFAULT_WISP,
                 servers: getAllWispServers(),
-                autoswitch: localStorage.getItem('wispAutoswitch') !== 'false'
+                autoswitch: false
             };
 
             const sendConfig = () => {
@@ -501,7 +391,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 if (sw) sw.postMessage(swConfig);
             };
             sendConfig();
-            setTimeout(sendConfig, 1000); // Failsafe SW ping
+            setTimeout(sendConfig, 1000); 
         }
         await initializeBrowser();
     } catch (err) {
