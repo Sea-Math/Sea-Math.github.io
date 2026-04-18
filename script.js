@@ -2,7 +2,18 @@
 // CONFIGURATION
 // =====================================================
 const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://military.marincareers.org/wisp/";
-const WISP_SERVERS = [{ name: "Default Wisp", url: "wss://military.marincareers.org/wisp/" },{ name: "Default Wisp", url: "wss://military.marincareers.org/wisp/" }];
+const WISP_SERVERS = [
+    { name: "Wisp Server 1 (Default)", url: "wss://military.marincareers.org/wisp/" },
+    { name: "Wisp Server 2", url: "wss://military.marincareers.org/wisp/" },
+    { name: "Wisp Server 3", url: "wss://military.marincareers.org/wisp/" },
+    { name: "Wisp Server 4", url: "wss://military.marincareers.org/wisp/" },
+    { name: "Wisp Server 5", url: "wss://military.marincareers.org/wisp/" },
+    { name: "Wisp Server 6", url: "wss://military.marincareers.org/wisp/" },
+    { name: "Wisp Server 7", url: "wss://military.marincareers.org/wisp/" },
+    { name: "Wisp Server 8", url: "wss://military.marincareers.org/wisp/" },
+    { name: "Wisp Server 9", url: "wss://military.marincareers.org/wisp/" },
+    { name: "Wisp Server 10", url: "wss://military.marincareers.org/wisp/" }
+];
 
 const memoryStorage = {};
 function storageGetItem(key) {
@@ -408,6 +419,12 @@ function openSettings() {
 function renderServerList() {
     const list = document.getElementById('server-list');
     list.innerHTML = '';
+    
+    // Add inline styles for vertical scrolling
+    list.style.maxHeight = '300px'; 
+    list.style.overflowY = 'auto';
+    list.style.paddingRight = '5px'; 
+
     const currentUrl = storageGetItem('proxServer') ?? DEFAULT_WISP;
     const allWisps = [...WISP_SERVERS, ...getStoredWisps()];
 
