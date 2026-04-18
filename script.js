@@ -2,7 +2,7 @@
 // CONFIGURATION
 // =====================================================
 const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://military.marincareers.org/wisp/";
-const WISP_SERVERS = [{ name: "Default Wisp", url: "wss://military.marincareers.org/wisp/" }];
+const WISP_SERVERS = [{ name: "Default Wisp", url: "wss://military.marincareers.org/wisp/" },{ name: "Default Wisp", url: "wss://military.marincareers.org/wisp/" }];
 
 const memoryStorage = {};
 function storageGetItem(key) {
