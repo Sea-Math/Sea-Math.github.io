@@ -4,7 +4,7 @@
 const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://military.marincareers.org/wisp/";
 const WISP_SERVERS = [
     { name: "Wisp Server 1 (Default)", url: "wss://military.marincareers.org/wisp/" },
-    { name: "Wisp Server 2", url: "wss://technonyte-loves-x8r.installgentoo.com/wisp/" }
+    { name: "Wisp Server 2", url: "wss://wisp-deployer--asvasvavd.replit.app/" }
 ];
 
 const memoryStorage = {};
