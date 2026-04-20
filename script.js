@@ -91,6 +91,22 @@ const getBasePath = () => {
     const basePath = location.pathname.replace(/[^/]*$/, '');
     return basePath.endsWith('/') ? basePath : basePath + '/';
 };
+function getServiceWorkerUrl() {
+    const fallback = getBasePath() + 'sw.js';
+    const configured = window.SITE_CONFIG?.serviceWorkerUrl;
+    if (!configured) return fallback;
+
+    try {
+        const resolved = new URL(configured, window.location.href);
+        if (resolved.origin !== window.location.origin) {
+            console.warn('Service workers must be same-origin. Falling back to local sw.js:', resolved.href);
+            return fallback;
+        }
+        return resolved.pathname + resolved.search + resolved.hash;
+    } catch {
+        return fallback;
+    }
+}
 const getStoredWisps = () => { try { return JSON.parse(storageGetItem('customWisps') ?? '[]'); } catch { return []; } };
 const getActiveTab = () => tabs.find(t => t.id === activeTabId);
 const notify = (type, title, message) => { if (typeof Notify !== 'undefined') Notify[type](title, message); };
@@ -512,7 +528,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         await getSharedConnection();
 
         if ('serviceWorker' in navigator) {
-            const reg = await navigator.serviceWorker.register(getBasePath() + 'sw.js', { scope: getBasePath() });
+            const reg = await navigator.serviceWorker.register(getServiceWorkerUrl(), { scope: getBasePath() });
             await navigator.serviceWorker.ready;
             
             const swConfig = {
