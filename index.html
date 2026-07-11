@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>MIT Vanta</title>
+  <style>
+    :root{--bg:#060610;--surf:#0f0f1e;--surf2:#16162a;--brd:#222236;--ac:#7c6dfa;--a2:#b39dff;--tx:#e4e4f4;--mu:#555570;--gn:#22d16b;--glow:rgba(124,109,250,.14)}
+    *{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+    body{background:var(--bg);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      min-height:100vh;overflow:hidden}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+      background:radial-gradient(ellipse 70% 50% at 18% 22%,rgba(124,109,250,.09) 0%,transparent 60%),
+        radial-gradient(ellipse 50% 40% at 82% 78%,rgba(179,157,255,.07) 0%,transparent 60%)}
+    .wrap{position:relative;z-index:1;width:100%;max-width:640px;padding:2.2rem 1.4rem;
+      display:flex;flex-direction:column;align-items:center;gap:2rem}
+    .logo{display:flex;flex-direction:column;align-items:center;gap:.5rem}
+    .icon{width:60px;height:60px;border-radius:18px;
+      background:linear-gradient(135deg,var(--ac),var(--a2));
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-1px;
+      box-shadow:0 0 44px var(--glow),0 4px 18px rgba(0,0,0,.5)}
+    .name{font-size:1.45rem;font-weight:700;letter-spacing:-.5px;
+      background:linear-gradient(90deg,#fff 20%,var(--a2));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .tag{font-size:.68rem;color:var(--mu);letter-spacing:.1em;text-transform:uppercase}
+    .sw{width:100%;display:flex;flex-direction:column;gap:.6rem}
+    .bar{display:flex;align-items:center;gap:.45rem;background:var(--surf);
+      border:1.5px solid var(--brd);border-radius:14px;padding:.22rem .22rem .22rem 1.05rem;
+      transition:border-color .2s,box-shadow .2s}
+    .bar:focus-within{border-color:var(--ac);box-shadow:0 0 0 3px var(--glow),0 4px 22px rgba(0,0,0,.3)}
+    .bar input{flex:1;background:none;border:none;outline:none;color:var(--tx);
+      font-size:1rem;padding:.76rem 0;caret-color:var(--ac)}
+    .bar input::placeholder{color:var(--mu)}
+    .bar button{background:linear-gradient(135deg,var(--ac),var(--a2));border:none;
+      border-radius:10px;color:#fff;font-size:.87rem;font-weight:600;
+      padding:.65rem 1.3rem;cursor:pointer;transition:opacity .15s,transform .1s;white-space:nowrap}
+    .bar button:hover{opacity:.87}.bar button:active{transform:scale(.97)}
+    .quick{display:flex;gap:.38rem;flex-wrap:wrap;justify-content:center}
+    .quick button{background:var(--surf2);border:1.5px solid var(--brd);color:var(--mu);
+      border-radius:20px;padding:.28rem .78rem;font-size:.78rem;cursor:pointer;
+      transition:color .15s,border-color .15s,background .15s}
+    .quick button:hover{color:var(--tx);border-color:var(--ac);background:rgba(124,109,250,.08)}
+    .srow{display:flex;align-items:center;justify-content:center;gap:.9rem;flex-wrap:wrap}
+    .badge{display:inline-flex;align-items:center;gap:.36rem;
+      background:rgba(124,109,250,.09);border:1px solid rgba(124,109,250,.22);
+      border-radius:20px;padding:.26rem .75rem;font-size:.72rem;color:var(--a2);font-weight:500}
+    .dot-w{display:flex;align-items:center;gap:.38rem;font-size:.75rem;color:var(--mu)}
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;
+      background:#f59e0b;box-shadow:0 0 6px #f59e0baa;transition:background .3s,box-shadow .3s}
+    .dot.ok{background:var(--gn);box-shadow:0 0 6px #22d16baa}
+    .dot.err{background:#ef4444;box-shadow:0 0 6px #ef4444aa}
+    .panel{width:100%;background:var(--surf);border:1.5px solid var(--brd);border-radius:14px;overflow:hidden}
+    .ph{display:flex;align-items:center;justify-content:space-between;
+      padding:.82rem 1.1rem;cursor:pointer;user-select:none;
+      font-size:.8rem;color:var(--mu);transition:color .15s}
+    .ph:hover{color:var(--tx)}
+    .ph svg{width:14px;height:14px;stroke:currentColor;fill:none;transition:transform .2s}
+    .ph.open svg{transform:rotate(180deg)}
+    .pb{display:none;padding:0 1.1rem 1.1rem;flex-direction:column;gap:.72rem}
+    .pb.open{display:flex}
+    .fld{display:flex;flex-direction:column;gap:.28rem}
+    .fld label{font-size:.72rem;color:var(--mu)}
+    .fld input{background:var(--surf2);border:1.5px solid var(--brd);border-radius:8px;
+      color:var(--tx);font-size:.81rem;padding:.48rem .75rem;outline:none;transition:border-color .2s}
+    .fld input:focus{border-color:var(--ac)}
+    .fld .hint{font-size:.68rem;color:var(--mu);margin-top:.15rem}
+    .sbtn{align-self:flex-start;background:var(--ac);border:none;border-radius:8px;
+      color:#fff;font-size:.78rem;font-weight:600;padding:.46rem 1rem;cursor:pointer;transition:opacity .15s}
+    .sbtn:hover{opacity:.86}
+    .enc-demo{width:100%;background:var(--surf2);border:1px solid var(--brd);border-radius:10px;
+      padding:.7rem .9rem;font-size:.72rem;color:var(--mu);word-break:break-all;line-height:1.6}
+    .enc-demo strong{color:var(--a2)}
+    footer{position:fixed;bottom:.8rem;font-size:.67rem;color:var(--mu);opacity:.4;z-index:1;text-align:center}
+    #toast{position:fixed;bottom:1.8rem;left:50%;
+      transform:translateX(-50%) translateY(10px);
+      background:var(--surf2);border:1px solid var(--brd);border-radius:10px;
+      padding:.5rem 1rem;font-size:.78rem;color:var(--tx);
+      opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:99;white-space:nowrap}
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">
+    <div class="icon">V</div>
+    <div class="name">MIT Vanta</div>
+    <div class="tag">Custom Transport · 3-Digit Codec · WASM · GitHub Pages</div>
+  </div>
+
+  <div class="sw">
+    <div class="bar">
+      <input id="q" type="text" placeholder="Enter URL or search…"
+             autocomplete="off" autocorrect="off" spellcheck="false"/>
+      <button id="go">Go</button>
+    </div>
+    <div class="quick">
+      <button data-u="https://google.com">Google</button>
+      <button data-u="https://youtube.com">YouTube</button>
+      <button data-u="https://reddit.com">Reddit</button>
+      <button data-u="https://discord.com">Discord</button>
+      <button data-u="https://github.com">GitHub</button>
+      <button data-u="https://twitter.com">Twitter</button>
+      <button data-u="https://twitch.tv">Twitch</button>
+    </div>
+  </div>
+
+  <div class="srow">
+    <div class="badge">&#9889; Vanta Transport &middot; 3-Digit Decimal Codec</div>
+    <div class="dot-w">
+      <div class="dot" id="dot"></div>
+      <span id="stxt">Starting&hellip;</span>
+    </div>
+  </div>
+
+  <div class="enc-demo" id="enc-demo">
+    Type a URL above — encoding preview will appear here.<br/>
+    <strong>Codec:</strong> each character &#8594; 3-digit decimal
+    (e.g. <strong>h&#8594;104 e&#8594;101 :&#8594;058 /&#8594;047</strong>)
+  </div>
+
+  <div class="panel">
+    <div class="ph" id="ph">
+      <span>&#9881; Settings — required before first use</span>
+      <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="pb" id="pb">
+      <div class="fld">
+        <label>Your Wisp server URL <span style="color:#ef4444">*required</span></label>
+        <input id="wisp-in" type="text" placeholder="wss://yourserver.com/wisp/"/>
+        <div class="hint">Bare URL auto-derived: wss://host/wisp/ &#8594; https://host/bare/</div>
+      </div>
+      <div class="fld">
+        <label>Override bare server URL (optional)</label>
+        <input id="bare-in" type="text" placeholder="https://yourserver.com/bare/"/>
+      </div>
+      <button class="sbtn" id="svbtn">Save &amp; apply</button>
+    </div>
+  </div>
+</div>
+
+<footer>MIT Vanta &middot; Static &middot; No Node &middot; GitHub Pages &middot; 3-Digit Codec</footer>
+<div id="toast"></div>
+
+<!-- codec.js first — defines VantaCodec with dynamic BASE/PREFIX -->
+<script src="vanta/codec.js"></script>
+<script src="vanta/register.js"></script>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  function toast(m,d){var el=$('toast');el.textContent=m;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},d||2800);}
+  function setDot(cls,txt){$('dot').className='dot'+(cls?' '+cls:'');$('stxt').textContent=txt;}
+  function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  // ── Navigate ────────────────────────────────────────────────────────────────
+  function go(raw){
+    var u=(raw||'').trim();if(!u)return;
+    if(!/^https?:\/\//i.test(u)){
+      u=/^[\w-]+(\.[\w-]+)+(\/.*)?$/.test(u)?'https://'+u
+        :'https://www.google.com/search?q='+encodeURIComponent(u);
+    }
+    // VantaCodec.PREFIX is already scope-relative (derived in codec.js)
+    window.location.href = VantaCodec.toProxy(u);
+  }
+  $('go').addEventListener('click',function(){go($('q').value)});
+  $('q').addEventListener('keydown',function(e){if(e.key==='Enter')go($('q').value);});
+  document.querySelectorAll('.quick button').forEach(function(b){
+    b.addEventListener('click',function(){go(b.dataset.u);});
+  });
+
+  // ── Encoding preview ────────────────────────────────────────────────────────
+  $('q').addEventListener('input',function(){
+    var raw=$('q').value.trim();
+    if(!raw){
+      $('enc-demo').innerHTML='Type a URL above &#8212; encoding preview will appear here.<br/>'
+        +'<strong>Codec:</strong> each character &#8594; 3-digit decimal '
+        +'(e.g. <strong>h&#8594;104 e&#8594;101 :&#8594;058 /&#8594;047</strong>)';
+      return;
+    }
+    var sample=raw.slice(0,40);
+    var enc=VantaCodec.encodeJs(sample);
+    $('enc-demo').innerHTML=
+      '<strong>URL:</strong> '+escHtml(sample)+(raw.length>40?'&hellip;':'')+'<br/>'
+      +'<strong>Encoded:</strong> '+escHtml(enc.slice(0,90))+(enc.length>90?'&hellip;':'')+'<br/>'
+      +'<strong>Proxy path:</strong> '+escHtml(VantaCodec.PREFIX)+escHtml(enc.slice(0,60))+(enc.length>60?'&hellip;':'');
+  });
+
+  // ── Settings panel ──────────────────────────────────────────────────────────
+  $('ph').addEventListener('click',function(){
+    $('ph').classList.toggle('open');
+    $('pb').classList.toggle('open');
+  });
+
+  var sw=localStorage.getItem('vanta_wisp')||'';
+  var sb=localStorage.getItem('vanta_bare')||'';
+  if(sw)$('wisp-in').value=sw;
+  if(sb)$('bare-in').value=sb;
+  if(!sw){$('ph').classList.add('open');$('pb').classList.add('open');}
+
+  function deriveBare(wisp,override){
+    if(override)return override;
+    if(!wisp)return '';
+    try{var u=new URL(wisp);u.protocol=u.protocol==='wss:'?'https:':'http:';u.pathname='/bare/';return u.href;}
+    catch(e){return '';}
+  }
+
+  function sendConfig(){
+    var w=localStorage.getItem('vanta_wisp')||'';
+    var b=localStorage.getItem('vanta_bare')||'';
+    var bare=deriveBare(w,b);
+    if(navigator.serviceWorker&&navigator.serviceWorker.controller)
+      navigator.serviceWorker.controller.postMessage({type:'VANTA_CONFIG',bare:bare});
+  }
+
+  $('svbtn').addEventListener('click',function(){
+    var w=($('wisp-in').value||'').trim();
+    var b=($('bare-in').value||'').trim();
+    if(!w){toast('Enter your Wisp server URL first.');return;}
+    localStorage.setItem('vanta_wisp',w);
+    if(b)localStorage.setItem('vanta_bare',b);else localStorage.removeItem('vanta_bare');
+    sendConfig();
+    toast('Saved! Ready to proxy.');
+    $('ph').classList.remove('open');$('pb').classList.remove('open');
+  });
+
+  navigator.serviceWorker&&navigator.serviceWorker.addEventListener('controllerchange',sendConfig);
+  navigator.serviceWorker&&navigator.serviceWorker.addEventListener('message',function(e){
+    if(e.data&&e.data.type==='VANTA_NEED_CONFIG')sendConfig();
+  });
+
+  // ── SW events ───────────────────────────────────────────────────────────────
+  document.addEventListener('vanta:ready',function(){
+    var w=localStorage.getItem('vanta_wisp');
+    if(!w)setDot('','Ready — open Settings and enter your Wisp server URL');
+    else setDot('ok','Vanta ready \u00b7 cookies on \u00b7 all sites load');
+    sendConfig();
+  });
+  document.addEventListener('vanta:error',function(e){
+    setDot('err','SW error: '+e.detail);
+  });
+  if(!('serviceWorker' in navigator))setDot('err','Service workers not supported');
+})();
+</script>
+</body>
+</html>
